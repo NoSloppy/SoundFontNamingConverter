@@ -14,8 +14,8 @@ Proffie to Xenopixel
 Xenopixel to CFX  
 Xenopixel to GoldenHarvest  
 
-and save the converted soundfonts in a new folder named 'Converted_to_'X'', where X is the board you chose  
-to convert to. The tool should explain itself when being used.  
+The converted soundfonts are placed in a new folder named 'Converted_to_'X'',  
+where X is the board you chose to convert to. The tool should explain itself when being used.  
 Demo Video here (preliminary version): https://www.youtube.com/watch?v=O8kTYt0KenQ  
 While this can run from anywhere, it might be easiest to just move a copy of the font you want to convert  
 into the SoundFontNamingConverter folder with the tool files.  
