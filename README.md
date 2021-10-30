@@ -1,7 +1,7 @@
 # SoundFontNamingConverter
 Script to automate cross-platform saber sound fonts.
 
-Welcome to the multi-board soundfont renamingconversion tool for Windows
+Welcome to the multi-board soundfont renaming conversion tool!
 - by r/Mormegil, modified by r/NoSloppy.
 
 This tool will convert from:
