@@ -4,13 +4,15 @@ Script to automate cross-platform saber sound fonts.
 Welcome to the multi-board soundfont renaming conversion tool!
 - by r/Mormegil, modified by r/NoSloppy.
 
-This tool will convert from:
-CFX to Proffie
-CFX to Xenopixel
-Proffie to CFX
-Proffie to Xenopixel
-Xenopixel to CFX
-Xenopixel to Proffie
+This tool will convert from:  
+Proffie to (proper) Proffie, including adding .ini files for you
+CFX to GoldenHarvest  
+CFX to Xenopixel  
+Proffie to CFX  
+Proffie to GoldenHarvest  
+Proffie to Xenopixel  
+Xenopixel to CFX  
+Xenopixel to GoldenHarvest  
 
 It will save the converted soundfonts in a new folder named "Converted_to_X", where X is the board you chose to convert to.
 The tool should explain itself when being used.
