@@ -41,7 +41,7 @@ They are abbreviated logically, so
 - PtoP is Proffie to Proffie  
 and so on.
 
-*Note PtoP functionality:
+*Note PtoP functionality:  
 Script will copy and bring over any files in the font root that are not renamed/organized sounds.  
 This includes .ini files, .txt, .bmp images, styles in .h files...anything not .wav.  
 However, if you have other stored files in subfolders (like an 'Extras' folder),  
