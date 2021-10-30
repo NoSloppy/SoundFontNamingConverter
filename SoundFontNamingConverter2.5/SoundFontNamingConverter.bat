@@ -1,1 +1,1 @@
-Runas /profile /user: administrator powershell -noexit -command "bash convert.sh"
+start powershell -noexit -command "bash convert.sh"
