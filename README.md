@@ -14,15 +14,15 @@ Proffie to Xenopixel
 Xenopixel to CFX  
 Xenopixel to GoldenHarvest  
 
-and save the converted soundfonts in a new folder named 'Converted_to_'X'', where X is the board you chose to convert to.
-The tool should explain itself when being used.  
-Demo Video here (preliminary version):
-https://www.youtube.com/watch?v=O8kTYt0KenQ  
-While this can run from anywhere, it might be easiest to just move a copy of the font you want to convert into the SoundFontNamingConverter folder with the tool files.  
+and save the converted soundfonts in a new folder named 'Converted_to_'X'', where X is the board you chose  
+to convert to. The tool should explain itself when being used.  
+Demo Video here (preliminary version): https://www.youtube.com/watch?v=O8kTYt0KenQ  
+While this can run from anywhere, it might be easiest to just move a copy of the font you want to convert  
+into the SoundFontNamingConverter folder with the tool files.  
 See example below.
 
-*NOTE!!* -- It is highly recommended you DO NOT USE SPACES in any folder or filenames when dealing with fonts.  
-Use underscores instead.
+*NOTE!!* -- It is highly recommended you DO NOT USE SPACES in any folder or filenames  
+when dealing with fonts. Use underscores instead.
 
 Starting the tool:
 -----------------
@@ -44,8 +44,10 @@ and so on.
 *Note PtoP functionality:
 Script will copy and bring over any files in the font root that are not renamed/organized sounds.  
 This includes .ini files, .txt, .bmp images, styles in .h files...anything not .wav.  
-However, if you have other stored files in subfolders (like an 'Extras' folder), these will need to be handled manually, as they are not really core font contents anyway.
-Additional bonus - If your source font was missing a config.ini or smoothsw.ini file, the default versions of them will be added for you. 
+However, if you have other stored files in subfolders (like an 'Extras' folder),  
+these will need to be handled manually, as they are not really core font contents anyway.  
+Additional bonus - If your source font was missing a config.ini or smoothsw.ini file,  
+the default versions of them will be added for you. 
 
 -----------------------------
 Exemplary folder structure:
@@ -65,23 +67,27 @@ Exemplary folder structure:
 ```
 In this example, we have a folder named 'Proffie' containing Proffie fonts,  
 a folder full of CFX fonts,  
-and 'Font4' which has been copied directly into the SoundFontNamingConverter folder (Where you ARE when running the tool).
+and 'Font4' which has been copied directly into the SoundFontNamingConverter folder  
+(where you ARE when running the tool).
 	
 Step 2: Process a single or multiple fonts at once.
-- Single - choose option 1, then enter the path to the actual font folder.  
+- Single - Choose option 1, then enter the path to the actual font folder.  
 If you copied your font into the same folder as the working tool directory (as 'Font4' above shows),  
 then the path is simply the font folder name:`Font4`  
 If the target font is inside 1 subfolder (like a folder named for the font maker, character, other),  
 then the path might be something like `Luke/The_Return`.  
-In our example above, a valid single font conversion path would be `Proffie/SoundfontMakerA/Font2_Proffie`.
+In our example above, a valid single font conversion path would be  
+`Proffie/SoundfontMakerA/Font2_Proffie`.
 
-- Multiple at the same time - choose option 2, then enter the path to the FOLDER CONTAINING the fonts to convert,  
+- Multiple at the same time -  
+Choose option 2, then enter the path to the FOLDER CONTAINING the fonts to convert,  
 In our example above, a valid multiple font conversion path would be `Proffie/SoundfontMakerA`  
-Notice that the path stops one level earlier because our target is the folder containing the multiple fonts.
-Font1_Proffie and Font2_Profiie would be processed and placed in a folder named 'Converted_to_'X'', where X is the board you chose in step 1.
+Notice that the path stops one level earlier because our target is the folder containing the multiple fonts.  
+Font1_Proffie and Font2_Profiie would be processed and placed in a folder named 'Converted_to_'X'',  
+where X is the board you chose in step 1.
 
-Once the converted version is finished and in the 'Converted_to_'X'' folder, you are free to delete the source you converted from,  
-which in our example here would be everything within the 'SoundFontNamingConverter/Proffie' folder.
+Once the converted version is finished and in the 'Converted_to_'X'' folder, you are free to delete the source  
+you converted from, which in our example here would be everything within the 'SoundFontNamingConverter/Proffie' folder.
 (it's just copies that you brought over from your safe font library/collection stored somewhere else....right??)
 
 NOTE: Please understand the differences of the correct paths as described above.  
