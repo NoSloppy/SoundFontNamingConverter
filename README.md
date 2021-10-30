@@ -47,7 +47,7 @@ This includes .ini files, .txt, .bmp images, styles in .h files...anything not .
 However, if you have other stored files in subfolders (like an 'Extras' folder),  
 these will need to be handled manually, as they are not really core font contents anyway.  
 Additional bonus - If your source font was missing a config.ini or smoothsw.ini file,  
-the default versions of them will be added for you. 
+the default versions of them will be added for you. ;)
 
 -----------------------------
 Exemplary folder structure:
