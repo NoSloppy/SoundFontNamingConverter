@@ -81,22 +81,23 @@ In our example above, a valid single font conversion path would be
 
 - Multiple at the same time -  
 Choose option 2, then enter the path to the FOLDER CONTAINING the fonts to convert,  
-In our example above, a valid multiple font conversion path would be `Proffie/SoundfontMakerA`  
+In our example above, a valid multiple font conversion path would be `Proffie/SoundfontMakerA`.  
 Notice that the path stops one level earlier because our target is the folder containing the multiple fonts.  
 Font1_Proffie and Font2_Profiie would be processed and placed in a folder named 'Converted_to_'X'',  
 where X is the board you chose in step 1.
 
 Once the converted version is finished and in the 'Converted_to_'X'' folder, you are free to delete the source  
-you converted from, which in our example here would be everything within the 'SoundFontNamingConverter/Proffie' folder.
+you converted from, which in our example here would be everything within the  
+'SoundFontNamingConverter/Proffie' folder.  
 (it's just copies that you brought over from your safe font library/collection stored somewhere else....right??)
 
 NOTE: Please understand the differences of the correct paths as described above.  
-Using an incomplete path will cause everything beneath to converted and mixed into one giant (probably pretty weird) soundfont.
+Using an incomplete path will cause everything beneath to converted and mixed into one giant  
+(and probably pretty weird) soundfont.
 This tool is useful, but not foolproof!
 
 If you have any questions or encounter any issues,  
-please contact Mormegil#4775 or NoSloppy#4203 on the lightsaber discord server:
-discord.gg/lightsabers,  
+please contact Mormegil#4775 or NoSloppy#4203 on the lightsaber discord server: discord.gg/lightsabers,  
 or reach out to NoSloppy here on GitHub, on https://crucible.hubbe.net/, therebelarmory.com,   
 a.k.a. Brian Conner on Facebook Open Source Sabers/Proffieboard Support groups.
 
