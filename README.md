@@ -43,7 +43,7 @@ and so on.
 
 -----------------------------
 Exemplary folder structure:
-
+```
 .../SoundfontNamingConverter
 	|_Proffie
 	.	|_SoundfontMaker 1
@@ -57,21 +57,23 @@ Exemplary folder structure:
 	convert.sh
 	ReadMe.txt
 	SoundFontConverter.bat
+```
 	
-In this example, we have a folder named 'Proffie' containing Proffie fonts,
+In this example, we have a folder named 'Proffie' containing Proffie fonts,  
 and a folder full of CFX fonts in the folder with the tool.
-- To convert all Proffie fonts of one SoundfontMaker at the same time,
-  you'd choose option 2, and enter the name of the folder containing the fonts to convert, in this case, 'SoundfontMaker 1'.
+- To convert all Proffie fonts of one SoundfontMaker at the same time,  
+  you'd choose option 2, and enter the name of the folder containing the fonts to convert, in this case, 'SoundfontMaker 1'.  
 Font 1 and Font 2 will be processed and placed in a folder named "Converted to X", where X is the board you chose in step 1.
 
-Alternatively you can choose to only convert one soundfont and then specifying the path to the actual font folder. If you moved the font into the same folder as the working tool directory (as Font 4 above shows), then the path is simply the font folder name
-Font4
-If You want to convert one font but it is inside a subfolder (like a folder named for the font maker, character, other), then the path would be "SoundfontMaker X/Font X". 
+- Alternatively you can choose to only convert one soundfont and then specifying the path to the actual font folder.  
+If you moved the font into the same folder as the working   tool directory (as Font 4 above shows), then the path is simply the font folder name  
+Font4  
+If You want to convert one font but it is inside a subfolder (like a folder named for the font maker, character, other), then the path would be "SoundfontMaker X/Font X".   
 
-NOTE: If you select to only convert one soundfont and then specify "SoundfontMaker 1" as the folder for example, 
-all the Fonts will be converted and mixed into one giant (probably pretty weird) soundfont called "SoundfontMaker 1".
-If you put the tool in "Soundfonts" and selected "Proffie" as the folder to be converted, something similar would happen. 
-Depending on your selection of one or several fonts to be converted you'd get a giant "Proffie" soundfont or several 
+NOTE: If you select to only convert one soundfont and then specify "SoundfontMaker 1" as the folder for example,  
+all the Fonts will be converted and mixed into one giant (probably pretty weird) soundfont called "SoundfontMaker 1".   
+If you put the tool in "Soundfonts" and selected "Proffie" as the folder to be converted, something similar would happen.  
+Depending on your selection of one or several fonts to be converted you'd get a giant "Proffie" soundfont or several  
 "SoundfontMaker X" soundfonts. 
 
 So please remember that this tool is useful, but not idiot-proof!
