@@ -21,7 +21,7 @@
 	echo "To convert a soundfont from Proffie to Xenopixel,      enter 'PtoX'"
 	echo " "
 	echo "To convert a soundfont from Xenopixel to CFX,          enter 'XtoC'"
-	echo "To convert a soundfont from Xenopixel to GoldenHarvest,enter 'PtoG'"
+	echo "To convert a soundfont from Xenopixel to GoldenHarvest,enter 'XtoG'"
 	echo " "
 
 	read boardchoice
