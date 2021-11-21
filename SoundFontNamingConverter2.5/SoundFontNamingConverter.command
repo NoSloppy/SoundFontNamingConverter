@@ -3,6 +3,7 @@ cd -- "$(dirname "$BASH_SOURCE")"
 	shopt -s extglob
 	IFS=$'\n'
 
+
 	echo " "
 	echo "***********************************************************************"
 	echo " Hello Saberfans! Welcome to the Soundfont Naming Converter."
@@ -17,21 +18,29 @@ cd -- "$(dirname "$BASH_SOURCE")"
 	echo "To convert a soundfont from CFX to Proffie,            enter 'CtoP'"
 	echo "To convert a soundfont from CFX to GoldenHarvest,      enter 'CtoG'"
 	echo "To convert a soundfont from CFX to Xenopixel,          enter 'CtoX'"
+#	echo "To convert a soundfont from CFX to Asteria,            enter 'CtoA'"
 	echo " "
 	echo "To convert a soundfont from Proffie to CFX,            enter 'PtoC'"
 	echo "To convert a soundfont from Proffie to GoldenHarvest,  enter 'PtoG'"
 	echo "To convert a soundfont from Proffie to Xenopixel,      enter 'PtoX'"
+#	echo "To convert a soundfont from Proffie to Asteria,        enter 'PtoA'"
 	echo " "
 	echo "To convert a soundfont from Xenopixel to CFX,          enter 'XtoC'"
-	echo "To convert a soundfont from Xenopixel to GoldenHarvest,enter 'PtoG'"
+	echo "To convert a soundfont from Xenopixel to GoldenHarvest,enter 'XtoG'"
 #	echo "To convert a soundfont from Xenopixel to Proffie,      enter 'XtoP'"
+#	echo "To convert a soundfont from Xenopixel to Asteria,      enter 'XtoA'"
 #	echo " "
 #	echo "To convert a soundfont from GoldenHarvest to Proffie,  enter 'GtoP'"
 #	echo "To convert a soundfont from GoldenHarvest to CFX,      enter 'GtoC'"
 #	echo "To convert a soundfont from GoldenHarvest to Xenopixel,enter 'GtoX'"
-
+#	echo "To convert a soundfont from GoldenHarvest to Asteria,  enter 'GtoA'"
+#	echo " "
+#	echo "To convert a soundfont from Asteria to Proffie,        enter 'AtoP'"
+#	echo "To convert a soundfont from Asteria to CFX,            enter 'AtoC'"
+#	echo "To convert a soundfont from Asteria to GoldenHarvest,  enter 'AtoG'"
+#	echo "To convert a soundfont from Asteria to Xenopixel,      enter 'AtoX'"
 	echo " "
-
+	
 	read boardchoice
 #-------------------------------------------------------------------------------------------------------------------------------------
 
