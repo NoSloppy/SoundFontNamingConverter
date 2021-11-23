@@ -27,7 +27,7 @@
 	echo " "
 	echo "To convert a soundfont from Xenopixel to CFX,          enter 'XtoC'"
 	echo "To convert a soundfont from Xenopixel to GoldenHarvest,enter 'XtoG'"
-#	echo "To convert a soundfont from Xenopixel to Proffie,      enter 'XtoP'"
+	echo "To convert a soundfont from Xenopixel to Proffie,      enter 'XtoP'"
 #	echo "To convert a soundfont from Xenopixel to Asteria,      enter 'XtoA'"
 #	echo " "
 #	echo "To convert a soundfont from GoldenHarvest to Proffie,  enter 'GtoP'"
@@ -3166,6 +3166,515 @@ elif [ "$boardchoice" = "XtoG" ]; then
 	echo "Soundfont conversion complete."
 	echo "  If you see files with a '~' at the end, this file already existed in the output folder"
 	echo "  before the conversion and was renamed to avoid accidental overwriting."
+	echo " "
+	echo " --- MTFBWY ---"
+#-------------------------------------------------------------------------------------------------------------------------------------
+
+elif [ "$boardchoice" = "XtoP" ]; then
+	echo "You chose Xenopixel to Proffie Soundfont converter."
+	echo "Do you wish to convert a single soundfont (enter '1') or a folder containing several soundfonts in subfolders (enter '2')?" 
+	echo "If you choose 2, Make sure each sub-folder only contains one soundfont. Otherwise the soundfonts will get mixed!"
+
+	read selection
+
+	if [ "$selection" = "1" ]; then
+		echo "You chose to convert a single soundfont. Please enter the name of the font folder containting the soundfont files."
+		echo "You may need to enter the path if it's a subfolder of where you are (such as 'SoundfontMaker/Font')"
+		
+		read input
+		dirs=$(find "$input" -maxdepth 0 -type d)
+		
+		echo "Found the following soundfont folder:"
+		echo $dirs
+		echo "Does this folder only contain one soundfont? (y/n)"
+		
+		read input2
+
+		if [ "$input2" = "y" ]; then
+			echo "Continuing conversion"
+		else
+			echo "Aborting program"
+			exit
+		fi
+		
+	elif [ "$selection" = "2" ]; then 
+		echo "You chose to convert several soundfonts. Each soundfont must be in a single subfolder."
+		echo "Please enter the name of the folder containing the soundfont folders."
+		
+		read input
+		dirs=$(find "$input" -mindepth 1 -maxdepth 1 -type d)
+		
+		echo "Found the following directories for soundfonts:"
+		echo $dirs
+		echo "Does each of these folders only contain one soundfont? (y/n)"
+
+		read input2
+
+		if [ "$input2" = "y" ]; then
+			echo "Continuing conversion"
+		else
+			echo "Aborting program"
+			exit
+		fi
+		
+	else
+		echo "Your selection is invalid. Aborting program"
+		exit
+	fi
+
+	echo "Do you wish a detailed conversion progess report ('1') or only the imporant steps ('2')?"
+	echo "Warning, the detailed report will produce a lot of console output!"
+
+	read verbosity
+
+	if [ "$verbosity" = "1" ]; then
+		echo "Logging progress to console"
+	else
+		echo "Logging only important steps"
+	fi
+
+
+	for dir in ${dirs[@]}; do
+			
+		sounds=$(find "$dir" -type f -name '*.wav')
+
+		echo Converting soundfont in "${dir}".
+
+		targetpath="Converted_to_Proffie"
+		mkdir -p "${targetpath}"
+
+		if [ -d "${dir}/tracks" ]; then
+			mkdir -p "${targetpath}/${dir}/tracks"
+			rsync -ab "${dir}/tracks/" "${targetpath}/${dir}/tracks"
+		fi
+
+		blastercounter=1
+		# bootcounter=1
+		clashcounter=1
+		# colorcounter=1
+		dragcounter=1
+		# endlockcounter=1
+		fontcounter=1
+		forcecounter=1
+		hswingcounter=1
+		humcounter=1
+		incounter=1
+		lockcounter=1
+		lswingcounter=1
+		outcounter=1
+		# preoncounter=1
+		# spincounter=1
+		# stabcounter=1
+		# swingcounter=1
+
+		for src in ${sounds[@]}/!(tracks); do
+			case "${src##*/}" in
+
+				blaster*([0-9]).wav)
+				if [ $blastercounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/blst"
+					mv "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/blst subfolder"
+				fi
+				if [ "$blastercounter" -lt 10 ]; then 
+					targetfile=$(printf %q "blst0$blastercounter.wav")	
+				else
+					targetfile=$(printf %q "blst$blastercounter.wav")
+				fi
+				if [ $blastercounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/blst/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				blastercounter=$((blastercounter+1))
+				;;
+					
+		# boot sounds are currently not supported by Xenopixel and therefore ignored. 
+		# Uncomment counter above and code here and adapt targetfile if needed later.
+		# 		boot**([0-9]).wav)
+		# 		if [ "$bootcounter" -lt 10 ]; then
+		# 			targetfile=$(printf %q "boot0$bootcounter.wav")	
+		# 		else
+		# 			targetfile=$(printf %q "boot$bootcounter.wav")
+		# 		fi
+		# 		bootcounter=$((bootcounter+1))
+		# 		target="./$targetpath/${dir}/boot/$targetfile"
+		# 		if [ "$verbosity" = "1" ]; then
+		# 			echo "Converting ${src} to ${target}"
+		# 		fi
+		# 		rsync -ab "${src}" "${target}" 
+		# 		;;
+				
+				clash*([0-9]).wav)
+				if [ $clashcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/clsh"
+					mv "${target}" "./${targetpath}/${dir}/clsh/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/clsh subfolder"
+				fi
+				if [ "$clashcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "clsh0$clashcounter.wav")	
+				else
+					targetfile=$(printf %q "clsh$clashcounter.wav")
+				fi
+				if [ $clashcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/clsh/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				clashcounter=$((clashcounter+1))
+				;;
+				
+		# color sounds are currently not supported by Xenopixel and therefore ignored. 
+		# Uncomment counter above and code here and adapt targetfile if needed later.
+		# 		color**([0-9]).wav)
+		# 		targetfile=$(printf %q "ccchage$colorcounter.wav")
+		# 		colorcounter=$((colorcounter+1))
+		# 		target="./$targetpath/${dir}/ccchange/$targetfile"
+		# 		if [ "$verbosity" = "1" ]; then
+		# 			echo "Converting ${src} to ${target}"
+		# 		fi
+		# 		rsync -ab "${src}" "${target}"
+		# 		;;
+				
+				drag*([0-9]).wav)
+				if [ $dragcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/drag"
+					mv "${target}" "./${targetpath}/${dir}/drag/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/drag subfolder"
+				fi
+				if [ "$dragcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "drag0$dragcounter.wav")	
+				else
+					targetfile=$(printf %q "drag$dragcounter.wav")
+				fi
+				if [ $dragcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/drag/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				dragcounter=$((dragcounter+1))
+				;;
+				
+		# endlock sounds are currently not supported by Xenopixel and therefore ignored. 
+		# Uncomment counter above and code here and adapt targetfile if needed later.
+		# 		endlock**([0-9]).wav)
+		# 		targetfile=$(printf %q "endlock$endlockcounter.wav")
+		# 		endlockcounter=$((endlockcounter+1))
+		# 		target="./$targetpath/${dir}/endlock/$targetfile"
+		# 		if [ "$verbosity" = "1" ]; then
+		# 			echo "Converting ${src} to ${target}"
+		# 		fi
+		# 		rsync -ab "${src}" "${target}"
+		# 		;;
+				
+				font*([0-9]).wav)
+				if [ $fontcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/font"
+					mv "${target}" "./${targetpath}/${dir}/font/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/font subfolder"
+				fi
+				if [ "$fontcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "font0$fontcounter.wav")	
+				else
+					targetfile=$(printf %q "font$fontcounter.wav")
+				fi
+				if [ $fontcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/font/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				fontcounter=$((fontcounter+1))
+				;;
+				
+				force*([0-9]).wav)
+				if [ $forcecounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/force"
+					mv "${target}" "./${targetpath}/${dir}/force/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/force subfolder"
+				fi
+				if [ "$forcecounter" -lt 10 ]; then 
+					targetfile=$(printf %q "force0$forcecounter.wav")	
+				else
+					targetfile=$(printf %q "force$forcecounter.wav")
+				fi
+				if [ $forcecounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/force/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				forcecounter=$((forcecounter+1))
+				;;
+				
+				hswing*([0-9]).wav)
+				if [ $hswingcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/swingh"
+					mv "${target}" "./${targetpath}/${dir}/swingh/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/swingh subfolder"
+				fi
+				if [ "$hswingcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "swingh0$hswingcounter.wav")	
+				else
+					targetfile=$(printf %q "swingh$hswingcounter.wav")
+				fi
+				if [ $hswingcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/swingh/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				hswingcounter=$((hswingcounter+1))
+				;;
+
+				hum*([0-9]).wav)
+				if [ $humcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/hum"
+					mv "${target}" "./${targetpath}/${dir}/hum/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/hum subfolder"
+				fi
+				if [ "$humcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "hum0$humcounter.wav")	
+				else
+					targetfile=$(printf %q "hum$humcounter.wav")
+				fi
+				if [ $humcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/hum/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				humcounter=$((humcounter+1))
+				;;
+
+				lswing*([0-9]).wav)
+				if [ $lswingcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/swingl"
+					mv "${target}" "./${targetpath}/${dir}/swingl/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/swingl subfolder"
+				fi
+				if [ "$lswingcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "swingl0$lswingcounter.wav")	
+				else
+					targetfile=$(printf %q "swingl$lswingcounter.wav")
+				fi
+				if [ $lswingcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/swingl/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				lswingcounter=$((lswingcounter+1))
+				;;
+
+				in*([0-9]).wav)
+				if [ $incounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/in"
+					mv "${target}" "./${targetpath}/${dir}/in/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/in subfolder"
+				fi
+				if [ "$incounter" -lt 10 ]; then 
+					targetfile=$(printf %q "in0$incounter.wav")	
+				else
+					targetfile=$(printf %q "in$incounter.wav")
+				fi
+				if [ $incounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/in/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				incounter=$((incounter+1))
+				;;
+
+				out*([0-9]).wav)
+				if [ $outcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/out"
+					mv "${target}" "./${targetpath}/${dir}/out/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/out subfolder"
+				fi
+				if [ "$outcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "out0$outcounter.wav")	
+				else
+					targetfile=$(printf %q "out$outcounter.wav")
+				fi
+				if [ $outcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/out/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				outcounter=$((outcounter+1))
+				;;
+
+				lock*([0-9]).wav)
+				if [ $lockcounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/lock"
+					mv "${target}" "./${targetpath}/${dir}/lock/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/lock subfolder"
+				fi
+				if [ "$lockcounter" -lt 10 ]; then 
+					targetfile=$(printf %q "lock0$lockcounter.wav")	
+				else
+					targetfile=$(printf %q "lock$lockcounter.wav")
+				fi
+				if [ $lockcounter -ge 2 ]; then
+					target="./${targetpath}/${dir}/lock/${targetfile}"
+				else
+					target="./${targetpath}/${dir}/${targetfile}"
+				fi
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -ab "${src}" "${target}"
+				lockcounter=$((lockcounter+1))
+				;;
+
+	# preon sounds are currently not supported by Xenopixel and therefore ignored. 
+	# Uncomment counter above and code here and adapt targetfile if needed later.
+	# 			preon*([0-9]).wav)
+	# 			if [ $preoncounter = 2 ]; then
+	# 				mkdir -p "${targetpath}/${dir}/preon"
+	# 				mv "${target}" "./${targetpath}/${dir}/preon/${targetfile}"
+	# 				echo "Moving ${targetfile} into ${dir}/preon subfolder"
+	# 			fi
+	# 			if [ "$preoncounter" -lt 10 ]; then 
+	# 				targetfile=$(printf %q "preon0$preoncounter.wav")	
+	# 			else
+	# 				targetfile=$(printf %q "preon$preoncounter.wav")
+	# 			fi
+	# 			if [ $preoncounter -ge 2 ]; then
+	# 				target="./${targetpath}/${dir}/preon/${targetfile}"
+	# 			else
+	# 				target="./${targetpath}/${dir}/${targetfile}"
+	# 			fi
+	# 			if [ "$verbosity" = "1" ]; then
+	# 				echo "Converting ${src} to ${target}"
+	# 			fi
+	# 			rsync -ab "${src}" "${target}"
+	# 			preoncounter=$((preoncounter+1))
+	# 			;;
+
+	# spin sounds are currently not supported by Xenopixel and therefore ignored. 
+	# Uncomment counter above and code here and adapt targetfile if needed later.
+	# 			spin*([0-9]).wav)
+	# 			if [ $spincounter = 2 ]; then
+	# 				mkdir -p "${targetpath}/${dir}/spin"
+	# 				mv "${target}" "./${targetpath}/${dir}/spin/${targetfile}"
+	# 				echo "Moving ${targetfile} into ${dir}/spin subfolder"
+	# 			fi
+	# 			if [ "$spincounter" -lt 10 ]; then 
+	# 				targetfile=$(printf %q "spin0$spincounter.wav")	
+	# 			else
+	# 				targetfile=$(printf %q "spin$spincounter.wav")
+	# 			fi
+	# 			if [ $spincounter -ge 2 ]; then
+	# 				target="./${targetpath}/${dir}/spin/${targetfile}"
+	# 			else
+	# 				target="./${targetpath}/${dir}/${targetfile}"
+	# 			fi
+	# 			if [ "$verbosity" = "1" ]; then
+	# 				echo "Converting ${src} to ${target}"
+	# 			fi
+	# 			rsync -ab "${src}" "${target}"
+	# 			spincounter=$((spincounter+1))
+	# 			;;
+
+	# stab sounds are currently not supported by Xenopixel and therefore ignored. 
+	# Uncomment counter above and code here and adapt targetfile if needed later.
+	# 			stab*([0-9]).wav)
+	# 			if [ $stabcounter = 2 ]; then
+	# 				mkdir -p "${targetpath}/${dir}/stab"
+	# 				mv "${target}" "./${targetpath}/${dir}/stab/${targetfile}"
+	# 				echo "Moving ${targetfile} into ${dir}/stab subfolder"
+	# 			fi
+	# 			if [ "$stabcounter" -lt 10 ]; then 
+	# 				targetfile=$(printf %q "stab0$stabcounter.wav")	
+	# 			else
+	# 				targetfile=$(printf %q "stab$stabcounter.wav")
+	# 			fi
+	# 			if [ $stabcounter -ge 2 ]; then
+	# 				target="./${targetpath}/${dir}/stab/${targetfile}"
+	# 			else
+	# 				target="./${targetpath}/${dir}/${targetfile}"
+	# 			fi
+	# 			if [ "$verbosity" = "1" ]; then
+	# 				echo "Converting ${src} to ${target}"
+	# 			fi
+	# 			rsync -ab "${src}" "${target}"
+	# 			stabcounter=$((stabcounter+1))
+	# 			;;
+
+	# Accent Swing sounds are currently not supported by Xenopixel and therefore ignored. 
+	# Uncomment counter above and code here and adapt targetfile if needed later.
+	# 			swing*([0-9]).wav)
+	# 			if [ $swingcounter = 2 ]; then
+	# 				mkdir -p "${targetpath}/${dir}/swng"
+	# 				mv "${target}" "./${targetpath}/${dir}/swng/${targetfile}"
+	# 				echo "Moving ${targetfile} into ${dir}/swng subfolder"
+	# 			fi
+	# 			if [ "$swingcounter" -lt 10 ]; then 
+	# 				targetfile=$(printf %q "swng0$swingcounter.wav")	
+	# 			else
+	# 				targetfile=$(printf %q "swng$swingcounter.wav")
+	# 			fi
+	# 			if [ $swingcounter -ge 2 ]; then
+	# 				target="./${targetpath}/${dir}/swng/${targetfile}"
+	# 			else
+	# 				target="./${targetpath}/${dir}/${targetfile}"
+	# 			fi
+	# 			if [ "$verbosity" = "1" ]; then
+	# 				echo "Converting ${src} to ${target}"
+	# 			fi
+	# 			rsync -ab "${src}" "${target}"
+	# 			swingcounter=$((swingcounter+1))
+	# 			;;
+
+				
+				*)
+				echo "No match found, ignoring file $src"
+
+			esac
+		done
+
+		echo Coverted soundfont saved in "${targetpath}"
+	done
+
+	echo "Soundfont conversion complete. If you see files with a '~' at the end, this file already existed in the output folder"
+	echo "before the conversion and was renamed to avoid accidental overwriting."
 	echo " "
 	echo " --- MTFBWY ---"
 
