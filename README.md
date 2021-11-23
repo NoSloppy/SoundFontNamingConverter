@@ -17,7 +17,7 @@ Xenopixel to GoldenHarvest
 The converted soundfonts are placed in a new folder named 'Converted_to_'X'',  
 where X is the board you chose to convert to.   
 Demo Video here (preliminary version): https://www.youtube.com/watch?v=O8kTYt0KenQ  
-While this can run from anywhere, it might be easiest to just move a copies of the fonts you want to convert  
+Just move a copy of the fonts you want to convert  
 into the SoundFontNamingConverter folder with the tool files.  
 See example below.
 
