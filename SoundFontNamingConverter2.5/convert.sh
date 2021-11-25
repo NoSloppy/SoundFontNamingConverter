@@ -64,7 +64,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing renaming"
 		else
 			echo "Aborting program"
@@ -84,7 +84,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing renaming"
 		else
 			echo "Aborting program"
@@ -223,7 +223,7 @@ elif [ "$boardchoice" = "CtoP" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -243,7 +243,7 @@ elif [ "$boardchoice" = "CtoP" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -822,7 +822,6 @@ elif [ "$boardchoice" = "CtoP" ]; then
 	echo "Soundfont conversion complete. If you see files with a '~' at the end, this file already existed in the output folder"
 	echo "before the conversion and was renamed to avoid accidental overwriting."
 	echo " "
-
 #-------------------------------------------------------------------------------------------------------------------------------------
 
 elif [ "$boardchoice" = "CtoG" ]; then
@@ -849,7 +848,7 @@ elif [ "$boardchoice" = "CtoG" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -869,7 +868,7 @@ elif [ "$boardchoice" = "CtoG" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1215,7 +1214,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1235,7 +1234,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1540,7 +1539,7 @@ elif [ "$boardchoice" = "PtoC" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1560,7 +1559,7 @@ elif [ "$boardchoice" = "PtoC" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1920,7 +1919,7 @@ elif [ "$boardchoice" = "PtoG" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -1940,7 +1939,7 @@ elif [ "$boardchoice" = "PtoG" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2268,7 +2267,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2288,7 +2287,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2591,7 +2590,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2611,7 +2610,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2907,7 +2906,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -2927,7 +2926,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -3167,6 +3166,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 	echo "  before the conversion and was renamed to avoid accidental overwriting."
 	echo " "
 	echo " --- MTFBWY ---"
+
 #-------------------------------------------------------------------------------------------------------------------------------------
 
 elif [ "$boardchoice" = "XtoP" ]; then
@@ -3189,7 +3189,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 		
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
@@ -3209,7 +3209,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 
 		read input2
 
-		if [ "$input2" = "y" ]; then
+		if [ "$input2" = "y" ] | [ "$input2" = "Y" ]; then
 			echo "Continuing conversion"
 		else
 			echo "Aborting program"
