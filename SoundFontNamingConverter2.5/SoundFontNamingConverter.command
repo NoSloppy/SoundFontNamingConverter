@@ -270,21 +270,32 @@ elif [ "$boardchoice" = "CtoP" ]; then
 	for dir in ${dirs[@]}; do
 			
 		sounds=$(find "$dir" -type f -name '*.wav')
-
+echo "Sounds to rename/organize:"
+echo "${sounds[*]}"
+		otherfiles=$(find "$dir" -type f ! -name '*.wav' -and ! -name '.*')
+		echo " "
+echo "Other files to move:"
+echo "${otherfiles[*]}"
+echo " "
 		echo Converting soundfont in "${dir}".
 
 		targetpath="Converted_to_Proffie"
 		mkdir -p "${targetpath}/${dir}"
 
-		if [ -d "${dir}/tracks" ]; then
-			mkdir -p "${targetpath}/${dir}/tracks"
-			rsync -ab "${dir}/tracks/" "${targetpath}/${dir}/tracks"
-		fi
     	echo "Adding missing config.ini"
     	rsync -ab "./inis/config.ini" "${targetpath}/${dir}"
     	echo "Adding missing smoothsw.ini"
     	rsync -ab "./inis/smoothsw.ini" "${targetpath}/${dir}"
 
+    	for o in ${otherfiles}; do
+			echo "Moving "${o}" to converted folder"
+			rsync -ab "${o}" "${targetpath}/${dir}"
+		done
+		if [ -d "${dir}/tracks" ]; then
+			mkdir -p "${targetpath}/${dir}/tracks"
+			echo "Moving tracks to converted folder"
+			rsync -ab "${dir}/tracks/" "${targetpath}/${dir}/tracks"
+		fi
 		blastercounter=1
 		bootcounter=1
 		clashcounter=1
