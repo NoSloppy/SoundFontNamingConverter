@@ -620,7 +620,7 @@ echo " "
 				if [ $poweroffcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/in"
 					echo "making ${dir}/in subfolder"
-					if [[ ${target} == *"preon"* ]]; then
+					if [[ ${target} != *"in"* ]]; then
 					mv "./${targetpath}/${dir}/in01.wav" "./${targetpath}/${dir}/in/in01.wav"
 					echo "Moving in01.wav into ${dir}/in subfolder"
 					fi
