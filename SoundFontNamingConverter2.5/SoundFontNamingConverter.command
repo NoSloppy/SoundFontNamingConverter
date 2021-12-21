@@ -134,19 +134,21 @@ echo " "
 
 		for o in ${otherfiles}; do
 			if  [[ "${o}" == *"xtras"* ]] ; then
-			mkdir -p "${targetpath}/${font}/Extras"
-			echo "Moving "${o}" to Extras folder"
-			rsync -ab ${o} "${targetpath}/${font}/Extras"
+			path=`dirname ${o}`
+			echo "Moving "${o}" to "${targetpath}/${path}
+			mkdir -p "${targetpath}/${path}"
+			echo ""
+			rsync -rab "${o}" "${targetpath}/${path}"
 			continue;
 			fi
 			echo "Moving "${o}" to root converted folder"
 			rsync -ab "${o}" "${targetpath}/${font}"
 		done
-		
+
 		if [[ "${sounds[*]}" == *"tracks"* ]]; then
 			mkdir -p "${targetpath}/${font}/tracks"
 			echo "Moving tracks to tracks folder"
-			rsync -ab "${font}/tracks/" "${targetpath}/${font}/tracks"
+			rsync -rab "${font}/tracks/" "${targetpath}/${font}/tracks"
 		fi
 
 		counter=1
