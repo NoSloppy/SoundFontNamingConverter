@@ -117,7 +117,7 @@ echo "${sounds[*]}"
 echo "Other files to move:"
 echo "${otherfiles[*]}"
 echo " "
-		echo Converting soundfont in "${font}".
+		echo "Converting soundfont in ${font}".
 
 		targetpath="Converted_to_Proper_Proffie"
 		mkdir -p "${targetpath}/${font}"
@@ -134,19 +134,18 @@ echo " "
 		for o in ${otherfiles}; do
 			if  [[ "${o}" == *"xtras"* ]] ; then
 			path=`dirname ${o}`
-			echo "Moving "${o}" to "${targetpath}/${path}
+			echo "Moving "${o}" to -> "${targetpath}/${path}
 			mkdir -p "${targetpath}/${path}"
-			echo ""
 			rsync -rab "${o}" "${targetpath}/${path}"
 			continue;
 			fi
-			echo "Moving "${o}" to root converted folder"
+			echo "Moving "${o}" to -> "${targetpath}/${font}
 			rsync -ab "${o}" "${targetpath}/${font}"
 		done
 
 		if [[ "${sounds[*]}" == *"tracks"* ]]; then
 			mkdir -p "${targetpath}/${font}/tracks"
-			echo "Moving tracks to tracks folder"
+			echo "Moving all tracks to -> tracks folder"
 			rsync -rab "${font}/tracks/" "${targetpath}/${font}/tracks"
 		fi
 
@@ -195,7 +194,7 @@ echo " "
 		done
 
 		echo " "
-		echo Coverted soundfont saved in "${targetpath}"
+		echo "Coverted soundfont saved in ${targetpath}"
 	done
 
 	echo " "
