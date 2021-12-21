@@ -113,7 +113,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 		sounds=$(find "$font" -type f -name '*.wav')
 echo "Sounds to rename/organize:"
 echo "${sounds[*]}"
-		otherfiles=$(find "$font" -type f ! -name '*.wav' -and ! -name '.*')
+		otherfiles=$(find -s "$font" -type f ! -name '*.wav' -and ! -name '.*')
 		echo " "
 echo "Other files to move:"
 echo "${otherfiles[*]}"
@@ -133,12 +133,19 @@ echo " "
     	fi
 
 		for o in ${otherfiles}; do
-			echo "Moving "${o}" to converted folder"
+			if  [[ "${o}" == *"xtras"* ]] ; then
+			mkdir -p "${targetpath}/${font}/Extras"
+			echo "Moving "${o}" to Extras folder"
+			rsync -ab ${o} "${targetpath}/${font}/Extras"
+			continue;
+			fi
+			echo "Moving "${o}" to root converted folder"
 			rsync -ab "${o}" "${targetpath}/${font}"
 		done
-		if [ -d "${font}/tracks" ]; then
+		
+		if [[ "${sounds[*]}" == *"tracks"* ]]; then
 			mkdir -p "${targetpath}/${font}/tracks"
-			echo "Moving tracks to converted folder"
+			echo "Moving tracks to tracks folder"
 			rsync -ab "${font}/tracks/" "${targetpath}/${font}/tracks"
 		fi
 
