@@ -17,7 +17,7 @@ Xenopixel to GoldenHarvest
 The converted soundfonts are placed in a new folder named 'Converted_to_'X'',  
 where X is the board you chose to convert to.   
 Demo Video here (preliminary version): https://www.youtube.com/watch?v=O8kTYt0KenQ  
-While this can run from anywhere, it might be easiest to just move a copies of the fonts you want to convert  
+Just move a copy of the fonts you want to convert  
 into the SoundFontNamingConverter folder with the tool files.  
 See example below.
 
@@ -44,8 +44,7 @@ and so on.
 *Note PtoP functionality:  
 Script will copy and bring over any files in the font root that are not renamed/organized sounds.  
 This includes .ini files, .txt, .bmp images, styles in .h files...anything not .wav.  
-However, if you have other stored files in subfolders (like an 'Extras' folder),  
-these will need to be handled manually, as they are not really core font contents anyway.  
+If you have other stored files in a subfolder named 'Extras', these will be carried over as well.   
 Additional bonus - If your source font was missing a config.ini or smoothsw.ini file,  
 the default versions of them will be added for you. ;)
 
@@ -103,3 +102,5 @@ a.k.a. Brian Conner on Facebook Open Source Sabers/Proffieboard Support groups.
 
 Enjoy! I hope this is helpful.... and if you poke around, maybe learn a thing or two from it.
  (⌐■_■)
+
+
