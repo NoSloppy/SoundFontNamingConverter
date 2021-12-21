@@ -44,8 +44,7 @@ and so on.
 *Note PtoP functionality:  
 Script will copy and bring over any files in the font root that are not renamed/organized sounds.  
 This includes .ini files, .txt, .bmp images, styles in .h files...anything not .wav.  
-However, if you have other stored files in subfolders (like an 'Extras' folder),  
-these will need to be handled manually, as they are not really core font contents anyway.  
+If you have other stored files in a subfolder named 'Extras', these will be carried over as well.   
 Additional bonus - If your source font was missing a config.ini or smoothsw.ini file,  
 the default versions of them will be added for you. ;)
 
