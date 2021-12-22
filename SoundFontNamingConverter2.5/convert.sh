@@ -1919,7 +1919,6 @@ elif [ "$boardchoice" = "PtoG" ]; then
 	echo "You chose Proffie to GoldenHarvest Soundfont converter."
 	echo "*NOTE* Single font file supported."
 	echo "- If you have multiple font.wavs in the source font, the last one will be used"
-	echo "- save.wav generated from endlb file. "
 	echo "Do you wish to convert a single soundfont (enter '1') or a folder containing several soundfonts in subfolders (enter '2')?" 
 	echo "If you choose 2, Make sure each sub-folder only contains one soundfont. Otherwise the soundfonts will get mixed!"
 
@@ -2175,15 +2174,6 @@ for dir in ${dirs[@]}; do
 					echo "Converting ${src} to ${target}"
 				fi
 				rsync -ab "${src}" "${target}"
-				;;
-
-				endlb*([0-9]).wav)
-				targetfile=$(printf %q "save.wav")
-				target="./${targetpath}/${dir}/${targetfile}"
-				if [ "$verbosity" = "1" ]; then
-					echo "Converting ${src} to ${target}"
-				fi
-				rsync -ab "${src}" "${target}" 
 				;;
 
 				spin*([0-9]).wav)
