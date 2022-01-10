@@ -132,17 +132,11 @@ echo " "
     		rsync -Ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${font}"
     	fi
 
-		for o in ${otherfiles}; do
-			if  [[ "${o}" == *"xtras"* ]] ; then
-			path=`dirname ${o}`
-			echo "Moving "${o}" to -> "${targetpath}/${path}
-			mkdir -p "${targetpath}/${path}"
-			rsync -rAb --no-perms "${o}" "${targetpath}/${path}"
-			continue;
-			fi
-			echo "Moving "${o}" to -> "${targetpath}/${font}
-			rsync -Ab --no-perms "${o}" "${targetpath}/${font}"
-		done
+		if [[ "${sounds[*]}" == *"xtra"* ]]; then
+			mkdir -p "${targetpath}/${font}/extras"
+			echo "Moving all extras to -> extras folder"
+			rsync -rAb --no-perms "${font}/extras/" "${targetpath}/${font}/extras"
+		fi
 
 		if [[ "${sounds[*]}" == *"tracks"* ]]; then
 			mkdir -p "${targetpath}/${font}/tracks"
@@ -150,15 +144,33 @@ echo " "
 			rsync -rAb --no-perms "${font}/tracks/" "${targetpath}/${font}/tracks"
 		fi
 
+		for o in ${otherfiles}; do
+			if  [[ "${o}" == *"xtra"* ]] ; then
+			# path=`dirname ${o}`
+			# echo "Moving "${o}" to -> "${targetpath}/${path}
+			# mkdir -p "${targetpath}/${path}"
+			# rsync -rAb --no-perms "${o}" "${targetpath}/${path}"
+			continue;
+			fi
+			echo "Moving "${o}" to -> "${targetpath}/${font}
+			rsync -Ab --no-perms "${o}" "${targetpath}/${font}"
+		done
+
 		counter=1
 		oldeffect="old"
 
 		for src in ${sounds[@]}; do
+			# Move extras folder as-is.
+			if [[ "${src}" == *"xtra"* ]]; then
+				echo "Already moved extras."
+				continue;
+			fi
 			# Move tracks folder as-is.
 			if [[ "${src}" == *"tracks"* ]]; then
 				echo "Already moved tracks."
 				continue;
 			fi
+
 			# Strip digits, path, and extension from filename
 			effectfile="${src//[0-9]/}"
 			effect="${effectfile##*/}"
