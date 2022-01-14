@@ -2159,7 +2159,7 @@ for dir in ${dirs[@]}; do
 				;;
 				
 				lock*([0-9]).wav)
-				targetfile=$(printf %q "lockup$lockcounter.wav")
+				targetfile=$(printf %q "lock$lockcounter.wav")
 				lockcounter=$((lockcounter+1))
 				target="./$targetpath/$targetfile"
 				if [ "$verbosity" = "1" ]; then
