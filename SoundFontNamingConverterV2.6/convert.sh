@@ -948,7 +948,7 @@ for dir in ${dirs[@]}; do
 		lockupcounter=1
 		lswingcounter=1
 		preoncounter=1
-		# pstoffcounter=1
+		pstoffcounter=1
 		poweroffcounter=1
 		poweroncounter=1
 		# savecounter=1
@@ -1120,17 +1120,15 @@ for dir in ${dirs[@]}; do
 				rsync -Ab --no-perms "${src}" "${target}"
 				;;
 
-	# pstoff sounds are currently not supported by GoldenHarvest and therefore ignored. 
-	# Uncomment counter above and code here and adapt targetfile if needed later.
-	# 	    	*stoff**([0-9]).wav)
-	# 			targetfile=$(printf %q "pstoff$pstoffcounter.wav")
-	# 			pstoffcounter=$((pstoffcounter+1))
-	# 			target="./${targetpath}/${dir}/pstoff/${targetfile}"
-	# 			if [ "$verbosity" = "1" ]; then
-	# 				echo "Converting ${src} to ${target}"
-	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}" 
-	# 			;;
+		    	*stoff**([0-9]).wav)
+				targetfile=$(printf %q "pstoff$pstoffcounter.wav")
+				pstoffcounter=$((pstoffcounter+1))
+				target="./$targetpath/$targetfile"
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -Ab --no-perms "${src}" "${target}" 
+				;;
 
 				*oweroff|*wroff*([0-9]).wav)
 				targetfile=$(printf %q "pwroff$poweroffcounter.wav")
@@ -2193,6 +2191,15 @@ for dir in ${dirs[@]}; do
 				rsync -Ab --no-perms "${src}" "${target}"
 				;;
 
+		    	pstoff**([0-9]).wav)
+				targetfile=$(printf %q "pstoff$pstoffcounter.wav")
+				pstoffcounter=$((pstoffcounter+1))
+				target="./$targetpath/$targetfile"
+				if [ "$verbosity" = "1" ]; then
+					echo "Converting ${src} to ${target}"
+				fi
+				rsync -Ab --no-perms "${src}" "${target}"
+				;;
 
 				spin*([0-9]).wav)
 				targetfile=$(printf %q "spin$spincounter.wav")
