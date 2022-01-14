@@ -125,11 +125,11 @@ echo " "
 
 		if [[ ! " ${otherfiles[*]} " =~ ${font}'/config.ini' ]]; then
     		echo "Adding missing config.ini"
-    		rsync -Ab --no-perms "./inis/config.ini" "${targetpath}/${font}"
+    		rsync -ab --no-perms "./inis/config.ini" "${targetpath}/${font}"
     	fi
 		if [[ ! " ${otherfiles[*]} " =~ ${font}'/smoothsw.ini' ]]; then
     		echo "Adding missing smoothsw.ini"
-    		rsync -Ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${font}"
+    		rsync -ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${font}"
     	fi
 
 		if [[ "${sounds[*]}" == *"xtra"* ]]; then
@@ -153,7 +153,7 @@ echo " "
 			continue;
 			fi
 			echo "Moving "${o}" to -> "${targetpath}/${font}
-			rsync -Ab --no-perms "${o}" "${targetpath}/${font}"
+			rsync -ab --no-perms "${o}" "${targetpath}/${font}"
 		done
 
 		counter=1
@@ -183,7 +183,7 @@ echo " "
 			if [ $counter = 2 ]; then
 				mkdir -p "${targetpath}/${font}/${effect}"
 				# ${}target} is still 01 from previous loop
-				rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${font}/${effect}/${targetfile}"
+				rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${font}/${effect}/${targetfile}"
 				echo "Moving ${targetfile} into ${font}/${effect} subfolder"
 			fi
 			# Check if leading zero is needed
@@ -201,7 +201,7 @@ echo " "
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms  "${src}" "${target}"
+			rsync -ab --no-perms  "${src}" "${target}"
 			# increment counter for next effect sound
 			counter=$((counter+1))
 			oldeffect="${effect}"
@@ -304,18 +304,18 @@ echo " "
 		mkdir -p "${targetpath}/${dir}"
 
     	echo "Adding missing config.ini"
-    	rsync -Ab --no-perms "./inis/config.ini" "${targetpath}/${dir}"
+    	rsync -ab --no-perms "./inis/config.ini" "${targetpath}/${dir}"
     	echo "Adding missing smoothsw.ini"
-    	rsync -Ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${dir}"
+    	rsync -ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${dir}"
 
     	for o in ${otherfiles}; do
 			echo "Moving "${o}" to converted folder"
-			rsync -Ab --no-perms "${o}" "${targetpath}/${dir}"
+			rsync -ab --no-perms "${o}" "${targetpath}/${dir}"
 		done
 		if [ -d "${dir}/tracks" ]; then
 			mkdir -p "${targetpath}/${dir}/tracks"
 			echo "Moving tracks to converted folder"
-			rsync -Ab --no-perms "${dir}/tracks/" "${targetpath}/${dir}/tracks"
+			rsync -ab --no-perms "${dir}/tracks/" "${targetpath}/${dir}/tracks"
 		fi
 		blastercounter=1
 		bootcounter=1
@@ -347,7 +347,7 @@ echo " "
 				mkdir -p "${targetpath}/${dir}"
 				if [ $blastercounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/blst"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/blst subfolder"
 				fi
 				if [ "$blastercounter" -lt 10 ]; then 
@@ -363,14 +363,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				blastercounter=$((blastercounter+1))
 				;;
 
 				*oot*([0-9]).wav)
 				if [ $bootcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/boot"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/boot/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/boot/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/boot subfolder"
 				fi
 				if [ "$bootcounter" -lt 10 ]; then 
@@ -386,14 +386,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				bootcounter=$((bootcounter+1))
 				;;
 
 				*lash*([0-9]).wav)
 				if [ $clashcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/clsh"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/clsh/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/clsh/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/clsh subfolder"
 				fi
 				if [ "$clashcounter" -lt 10 ]; then
@@ -409,7 +409,7 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				clashcounter=$((clashcounter+1))
 				;;
 				
@@ -434,14 +434,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				colorcounter=$((colorcounter+1))
 				;;
 				
 				*rag*([0-9]).wav)
 				if [ $dragcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/drag"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/drag/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/drag/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/drag subfolder"
 				fi
 				if [ "$dragcounter" -lt 10 ]; then
@@ -457,14 +457,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				dragcounter=$((dragcounter+1))
 				;;
 
 				*nddrag*([0-9]).wav)
 				if [ $enddragcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/enddrag"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/enddrag/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/enddrag/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/enddrag subfolder"
 				fi
 					targetfile=$(printf %q "enddrag$enddragcounter.wav")
@@ -476,14 +476,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				enddragcounter=$((enddragcounter+1))
 				;;
 
 				*ndlock*([0-9]).wav)
 				if [ $endlockcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/endlock"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/endlock/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/endlock/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/endlock subfolder"
 				fi
 					targetfile=$(printf %q "endlock$endlockcounter.wav")
@@ -495,14 +495,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				endlockcounter=$((endlockcounter+1))
 				;;
 
 				*ont*([0-9]).wav)
 				if [ $fontcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/font"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/font/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/font/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/font subfolder"
 				fi
 				if [ "$fontcounter" -lt 10 ]; then
@@ -518,14 +518,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				fontcounter=$((fontcounter+1))
 				;;
 				
 				*orce*|combo*([0-9]).wav)
 				if [ $forcecounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/force"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/force/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/force/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/force subfolder"
 				fi
 				if [ "$forcecounter" -lt 10 ]; then
@@ -541,14 +541,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				forcecounter=$((forcecounter+1))
 				;;
 				
 				hswing*([0-9]).wav)
 				if [ $hswingcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/swingh"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingh/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingh/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/swingh subfolder"
 				fi
 				if [ "$hswingcounter" -lt 10 ]; then
@@ -564,14 +564,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				hswingcounter=$((hswingcounter+1))
 				;;
 
 				*um**([0-9]).wav)
 				if [ $humcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/hum"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/hum/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/hum/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/hum subfolder"
 				fi
 				if [ "$humcounter" -lt 10 ]; then
@@ -587,14 +587,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				humcounter=$((humcounter+1))
 				;;	
 
 				lswing*([0-9]).wav)
 				if [ $lswingcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/swingl"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingl/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingl/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/swingl subfolder"
 				fi
 				if [ "$lswingcounter" -lt 10 ]; then
@@ -610,14 +610,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				lswingcounter=$((lswingcounter+1))
 				;;
 
 				*ock**([0-9]).wav)
 				if [ $lockupcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/lock"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/lock/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/lock/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/lock subfolder"
 				fi
 				if [ "$lockupcounter" -lt 10 ]; then
@@ -633,7 +633,7 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				lockupcounter=$((lockupcounter+1))
 				;;
 
@@ -642,7 +642,7 @@ echo " "
 					mkdir -p "${targetpath}/${dir}/in"
 					echo "making ${dir}/in subfolder"
 					if [[ ${target} != *"in"* ]]; then
-					rsync -Ab --no-perms --remove-source-files "./${targetpath}/${dir}/in01.wav" "./${targetpath}/${dir}/in/in01.wav"
+					rsync -ab --no-perms --remove-source-files "./${targetpath}/${dir}/in01.wav" "./${targetpath}/${dir}/in/in01.wav"
 					echo "Moving in01.wav into ${dir}/in subfolder"
 					fi
 				fi
@@ -659,14 +659,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				poweroffcounter=$((poweroffcounter+1))
 				;;
 
 				*oweron**([0-9]).wav)
 				if [ $poweroncounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/out"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/out/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/out/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/out subfolder"
 				fi
 				if [ "$poweroncounter" -lt 10 ]; then
@@ -682,14 +682,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				poweroncounter=$((poweroncounter+1))
 				;;
 
 				*reon*([0-9]).wav)
 				if [ $preoncounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/preon"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/preon/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/preon/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/preon subfolder"
 				fi
 				if [ "$preoncounter" -lt 10 ]; then
@@ -705,14 +705,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				preoncounter=$((preoncounter+1))
 				;;
 
 				*stoff*([0-9]).wav)
 				if [ $pstoffcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/pstoff"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/pstoff/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/pstoff/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/pstoff subfolder"
 				fi
 				if [ "$pstoffcounter" -lt 10 ]; then
@@ -728,14 +728,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				pstoffcounter=$((pstoffcounter+1))
 				;;
 
 				*pin*([0-9]).wav)
 				if [ $spincounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/spin"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/spin/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/spin/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/spin subfolder"
 				fi
 				if [ "$spincounter" -lt 10 ]; then
@@ -751,14 +751,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				spincounter=$((spincounter+1))
 				;;
 
 				*tab*([0-9]).wav)
 				if [ $stabcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/stab"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/stab/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/stab/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/stab subfolder"
 				fi
 				if [ "$stabcounter" -lt 10 ]; then
@@ -774,14 +774,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				stabcounter=$((stabcounter+1))
 				;;
 
 				*tartdrag*([0-9]).wav)
 				if [ $startdragcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/bgndrag"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/bgndrag/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/bgndrag/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/bgndrag subfolder"
 				fi
 					targetfile=$(printf %q "bgndrag$startdragcounter.wav")
@@ -794,14 +794,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				startdragcounter=$((startdragcounter+1))
 				;;
 
 				*tartlock*([0-9]).wav)
 				if [ $startlockcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/bgnlock"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/bgnlock/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/bgnlock/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/bgnlock subfolder"
 				fi
 					targetfile=$(printf %q "bgnlock$startlockcounter.wav")
@@ -814,14 +814,14 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				startlockcounter=$((startlockcounter+1))
 				;;
 
 				*wing*([0-9]).wav)
 				if [ $swingcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/swng"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swng/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swng/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/swng subfolder"
 				fi
 				if [ "$swingcounter" -lt 10 ]; then
@@ -837,7 +837,7 @@ echo " "
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				swingcounter=$((swingcounter+1))
 				;;
 				
@@ -968,7 +968,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				*tartlock*([0-9]).wav)
@@ -978,7 +978,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				*laster*([0-9]).wav)
@@ -988,7 +988,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				*oot*([0-9]).wav)
@@ -998,7 +998,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				*olor*([0-9]).wav)
@@ -1008,7 +1008,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*lash*([0-9]).wav)
@@ -1018,7 +1018,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*rag*([0-9]).wav)
@@ -1028,7 +1028,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*nddrag*([0-9]).wav)
@@ -1038,7 +1038,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*ndlock*([0-9]).wav)
@@ -1048,7 +1048,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*ont*([0-9]).wav)
@@ -1058,7 +1058,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*orce*|quote*([0-9]).wav)
@@ -1068,7 +1068,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				hswing*([0-9]).wav)
@@ -1078,7 +1078,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*umM*([0-9]).wav)
@@ -1088,7 +1088,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*ockup*([0-9]).wav)
@@ -1098,7 +1098,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				lswing*([0-9]).wav)
@@ -1108,7 +1108,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*reon*([0-9]).wav)
@@ -1118,7 +1118,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 	# pstoff sounds are currently not supported by GoldenHarvest and therefore ignored. 
@@ -1130,7 +1130,7 @@ for dir in ${dirs[@]}; do
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}" 
+	# 			rsync -ab --no-perms "${src}" "${target}" 
 	# 			;;
 
 				*oweroff|*wroff*([0-9]).wav)
@@ -1140,7 +1140,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*oweron*([0-9]).wav)
@@ -1150,7 +1150,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 	# save sounds are currently only supported by GoldenHarvest and therefore ignored
@@ -1163,7 +1163,7 @@ for dir in ${dirs[@]}; do
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}" 
+	# 			rsync -ab --no-perms "${src}" "${target}" 
 	# 			;;
 
 				*pin*([0-9]).wav)
@@ -1173,7 +1173,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*tab*([0-9]).wav)
@@ -1183,7 +1183,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				*wing*([0-9]).wav)
@@ -1193,7 +1193,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*rack*([0-9]).wav)
@@ -1202,7 +1202,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*)
@@ -1330,7 +1330,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}" 
+			rsync -ab --no-perms "${src}" "${target}" 
 			;;
 			
 	# boot sounds are converted to 'power on.wav and live in the 'set' folder.
@@ -1342,7 +1342,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}" 
+			rsync -ab --no-perms "${src}" "${target}" 
 			;;
 			
 			*lash*([0-9]).wav)
@@ -1352,7 +1352,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 	# color sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -1364,7 +1364,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 			
 			*rag*([0-9]).wav)
@@ -1374,7 +1374,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 	# endlock sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -1386,7 +1386,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 			
 			*ont*([0-9]).wav)
@@ -1396,7 +1396,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			*orce*|combo*([0-9]).wav)
@@ -1406,7 +1406,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			*um*|humM*([0-9]).wav)
@@ -1416,7 +1416,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			*oweroff*|*wroff*([0-9]).wav)
@@ -1426,7 +1426,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			*ock**([0-9]).wav)
@@ -1436,7 +1436,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			*oweron**([0-9]).wav)
@@ -1446,7 +1446,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 
 			hswing*([0-9]).wav)
@@ -1456,7 +1456,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			lswing*([0-9]).wav)
@@ -1466,7 +1466,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 
 			*reon*([0-9]).wav)
@@ -1481,7 +1481,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 
 	# spin sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -1493,7 +1493,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;		
 
 	# stab sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -1505,7 +1505,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 
 	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
@@ -1517,7 +1517,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 			
 			*rack*([0-9]).wav)
@@ -1527,7 +1527,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 				
 				*)
@@ -1657,7 +1657,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				bgnlock*([0-9]).wav)
@@ -1667,7 +1667,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				blst*([0-9]).wav)
@@ -1681,7 +1681,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				boot*([0-9]).wav)
@@ -1695,7 +1695,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				clsh*([0-9]).wav)
@@ -1705,7 +1705,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				ccchange*([0-9]).wav)
@@ -1719,7 +1719,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				drag*([0-9]).wav)
@@ -1733,7 +1733,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				enddrag*([0-9]).wav)
@@ -1743,7 +1743,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				endlock*([0-9]).wav)
@@ -1753,7 +1753,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				font*([0-9]).wav)
@@ -1767,7 +1767,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				force*|quote*([0-9]).wav)
@@ -1781,7 +1781,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				hum*([0-9]).wav)
@@ -1791,7 +1791,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				in*([0-9]).wav)
@@ -1807,7 +1807,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lock*([0-9]).wav)
@@ -1821,7 +1821,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				out*([0-9]).wav)
@@ -1835,7 +1835,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				preon*([0-9]).wav)
@@ -1845,7 +1845,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				spin*([0-9]).wav)
@@ -1855,7 +1855,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				stab*([0-9]).wav)
@@ -1865,7 +1865,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				swingh*([0-9]).wav)
@@ -1875,7 +1875,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				swingl*([0-9]).wav)
@@ -1885,7 +1885,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				swng*([0-9]).wav)
@@ -1895,7 +1895,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				track*([0-9]).wav)
@@ -1904,7 +1904,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*)
@@ -1931,7 +1931,8 @@ elif [ "$boardchoice" = "PtoG" ]; then
 	echo " "
 	echo "You chose Proffie to GoldenHarvest Soundfont converter."
 	echo "*NOTE* Single font file supported."
-	echo "- If you have multiple font.wavs in the source font, the last one will be used"
+	echo "- If you have multiple font.wavs in the source font, the first one will be used"
+	echo " "
 	echo "Do you wish to convert a single soundfont (enter '1') or a folder containing several soundfonts in subfolders (enter '2')?" 
 	echo "If you choose 2, Make sure each sub-folder only contains one soundfont. Otherwise the soundfonts will get mixed!"
 
@@ -2036,7 +2037,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				bgnlock*([0-9]).wav)
@@ -2046,7 +2047,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 
 				blst*([0-9]).wav)
@@ -2056,7 +2057,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				boot*([0-9]).wav)
@@ -2066,7 +2067,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 				clsh*([0-9]).wav)
@@ -2076,7 +2077,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				ccchange*([0-9]).wav)
@@ -2086,7 +2087,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				drag*([0-9]).wav)
@@ -2096,7 +2097,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				enddrag*([0-9]).wav)
@@ -2106,7 +2107,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				endlock*([0-9]).wav)
@@ -2116,17 +2117,21 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				font*([0-9]).wav)
-				#fontcounter=$((fontcounter+1))
 				targetfile=$(printf %q "font.wav")
+				fontcounter=$((fontcounter+1))
+				if [ $fontcounter -ge 3 ]; then
+				echo "More than one font.wav in source, using the first one."
+					continue;
+				fi
 				target="./$targetpath/$targetfile"
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				force*|quote*([0-9]).wav)
@@ -2136,7 +2141,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				hum*([0-9]).wav)
@@ -2146,7 +2151,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				in*([0-9]).wav)
@@ -2156,7 +2161,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lock*([0-9]).wav)
@@ -2166,7 +2171,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				out*([0-9]).wav)
@@ -2176,7 +2181,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				preon*([0-9]).wav)
@@ -2186,7 +2191,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 
@@ -2197,7 +2202,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				stab*([0-9]).wav)
@@ -2207,7 +2212,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				swingh*([0-9]).wav)
@@ -2217,7 +2222,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				swingl*([0-9]).wav)
@@ -2227,7 +2232,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				swng*([0-9]).wav)
@@ -2237,7 +2242,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				track*([0-9]).wav)
@@ -2246,7 +2251,7 @@ for dir in ${dirs[@]}; do
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*)
@@ -2374,7 +2379,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}" 
+			rsync -ab --no-perms "${src}" "${target}" 
 			;;
 				
 	# boot sounds are converted to 'power on.wav and live in the 'set' folder.
@@ -2386,7 +2391,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}" 
+			rsync -ab --no-perms "${src}" "${target}" 
 			;;
 			
 			clsh*([0-9]).wav)
@@ -2396,7 +2401,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 		 # color sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2408,7 +2413,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 		 # 	if [ "$verbosity" = "1" ]; then
 		 # 		echo "Converting ${src} to ${target}"
 		 # 	fi
-		 # 	rsync -Ab --no-perms "${src}" "${target}"
+		 # 	rsync -ab --no-perms "${src}" "${target}"
 		 # 	;;
 			
 			drag*([0-9]).wav)
@@ -2418,7 +2423,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 		# endlock sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2430,7 +2435,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 		# 	if [ "$verbosity" = "1" ]; then
 		# 		echo "Converting ${src} to ${target}"
 		# 	fi
-		# 	rsync -Ab --no-perms "${src}" "${target}"
+		# 	rsync -ab --no-perms "${src}" "${target}"
 		#  	;;
 			
 			font*([0-9]).wav)
@@ -2440,7 +2445,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			force*|quote*([0-9]).wav)
@@ -2450,7 +2455,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			hum*([0-9]).wav)
@@ -2460,7 +2465,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			in*([0-9]).wav)
@@ -2470,7 +2475,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			lock*([0-9]).wav)
@@ -2480,7 +2485,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			out*([0-9]).wav)
@@ -2490,7 +2495,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			swingh*([0-9]).wav)
 			targetfile="swingh ($swinghcounter).wav"
@@ -2499,7 +2504,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 			swingl*([0-9]).wav)
@@ -2509,7 +2514,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 
 			preon*([0-9]).wav)
@@ -2524,7 +2529,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 
 	# spin sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2536,7 +2541,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;		
 
 	# stab sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2548,7 +2553,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
 	# Uncomment and adapt targetfile if needed later.		
@@ -2559,7 +2564,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 	# 		if [ "$verbosity" = "1" ]; then
 	# 			echo "Converting ${src} to ${target}"
 	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
+	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 				
 			track*([0-9]).wav)
@@ -2569,7 +2574,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
-			rsync -Ab --no-perms "${src}" "${target}"
+			rsync -ab --no-perms "${src}" "${target}"
 			;;
 			
 				*)
@@ -2699,7 +2704,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 		# boot sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2711,7 +2716,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}" 
+		# 		rsync -ab --no-perms "${src}" "${target}" 
 		# 		;;
 				
 				clash**([0-9]).wav)
@@ -2721,7 +2726,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 		# color sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2733,7 +2738,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				drag**([0-9]).wav)
@@ -2747,7 +2752,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 		# endlock sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -2759,7 +2764,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				font**([0-9]).wav)
@@ -2773,7 +2778,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				force**([0-9]).wav)
@@ -2787,7 +2792,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				hum**([0-9]).wav)
@@ -2797,7 +2802,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				in**([0-9]).wav)
@@ -2813,7 +2818,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lock**([0-9]).wav)
@@ -2827,7 +2832,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				out**([0-9]).wav)
@@ -2841,7 +2846,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				hswing**([0-9]).wav)
@@ -2851,7 +2856,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lswing**([0-9]).wav)
@@ -2861,7 +2866,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 		# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
@@ -2873,7 +2878,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				track**([0-9]).wav)
@@ -2882,7 +2887,7 @@ elif [ "$boardchoice" = "XtoC" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*)
@@ -3011,7 +3016,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
+				rsync -ab --no-perms "${src}" "${target}" 
 				;;
 				
 		# boot sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -3023,7 +3028,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}" 
+		# 		rsync -ab --no-perms "${src}" "${target}" 
 		# 		;;
 				
 				clash**([0-9]).wav)
@@ -3033,7 +3038,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 		# color sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -3045,7 +3050,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				drag**([0-9]).wav)
@@ -3055,7 +3060,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 		# endlock sounds are currently not supported by Xenopixel and therefore ignored. 
@@ -3067,7 +3072,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				font**([0-9]).wav)
@@ -3077,7 +3082,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				force**([0-9]).wav)
@@ -3087,7 +3092,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				hum**([0-9]).wav)
@@ -3097,7 +3102,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				in**([0-9]).wav)
@@ -3107,7 +3112,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lock**([0-9]).wav)
@@ -3117,7 +3122,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				out*([0-9]).wav)
@@ -3127,7 +3132,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 				hswing**([0-9]).wav)
@@ -3137,7 +3142,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				lswing**([0-9]).wav)
@@ -3147,7 +3152,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 
 		# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
@@ -3159,7 +3164,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				track**([0-9]).wav)
@@ -3168,7 +3173,7 @@ elif [ "$boardchoice" = "XtoG" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				;;
 				
 				*)
@@ -3267,7 +3272,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 
 		if [ -d "${dir}/tracks" ]; then
 			mkdir -p "${targetpath}/${dir}/tracks"
-			rsync -Ab --no-perms "${dir}/tracks/" "${targetpath}/${dir}/tracks"
+			rsync -ab --no-perms "${dir}/tracks/" "${targetpath}/${dir}/tracks"
 		fi
 
 		blastercounter=1
@@ -3295,7 +3300,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				blaster*([0-9]).wav)
 				if [ $blastercounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/blst"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/blst subfolder"
 				fi
 				if [ "$blastercounter" -lt 10 ]; then 
@@ -3311,7 +3316,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				blastercounter=$((blastercounter+1))
 				;;
 					
@@ -3328,13 +3333,13 @@ elif [ "$boardchoice" = "XtoP" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}" 
+		# 		rsync -ab --no-perms "${src}" "${target}" 
 		# 		;;
 				
 				clash*([0-9]).wav)
 				if [ $clashcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/clsh"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/clsh/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/clsh/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/clsh subfolder"
 				fi
 				if [ "$clashcounter" -lt 10 ]; then 
@@ -3350,7 +3355,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				clashcounter=$((clashcounter+1))
 				;;
 				
@@ -3363,13 +3368,13 @@ elif [ "$boardchoice" = "XtoP" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				drag*([0-9]).wav)
 				if [ $dragcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/drag"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/drag/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/drag/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/drag subfolder"
 				fi
 				if [ "$dragcounter" -lt 10 ]; then 
@@ -3385,7 +3390,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				dragcounter=$((dragcounter+1))
 				;;
 				
@@ -3398,13 +3403,13 @@ elif [ "$boardchoice" = "XtoP" ]; then
 		# 		if [ "$verbosity" = "1" ]; then
 		# 			echo "Converting ${src} to ${target}"
 		# 		fi
-		# 		rsync -Ab --no-perms "${src}" "${target}"
+		# 		rsync -ab --no-perms "${src}" "${target}"
 		# 		;;
 				
 				font*([0-9]).wav)
 				if [ $fontcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/font"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/font/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/font/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/font subfolder"
 				fi
 				if [ "$fontcounter" -lt 10 ]; then 
@@ -3420,14 +3425,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				fontcounter=$((fontcounter+1))
 				;;
 				
 				force*([0-9]).wav)
 				if [ $forcecounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/force"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/force/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/force/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/force subfolder"
 				fi
 				if [ "$forcecounter" -lt 10 ]; then 
@@ -3443,14 +3448,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				forcecounter=$((forcecounter+1))
 				;;
 				
 				hswing*([0-9]).wav)
 				if [ $hswingcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/swingh"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingh/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingh/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/swingh subfolder"
 				fi
 				if [ "$hswingcounter" -lt 10 ]; then 
@@ -3466,14 +3471,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				hswingcounter=$((hswingcounter+1))
 				;;
 
 				hum*([0-9]).wav)
 				if [ $humcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/hum"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/hum/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/hum/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/hum subfolder"
 				fi
 				if [ "$humcounter" -lt 10 ]; then 
@@ -3489,14 +3494,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				humcounter=$((humcounter+1))
 				;;
 
 				lswing*([0-9]).wav)
 				if [ $lswingcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/swingl"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingl/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swingl/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/swingl subfolder"
 				fi
 				if [ "$lswingcounter" -lt 10 ]; then 
@@ -3512,14 +3517,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				lswingcounter=$((lswingcounter+1))
 				;;
 
 				in*([0-9]).wav)
 				if [ $incounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/in"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/in/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/in/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/in subfolder"
 				fi
 				if [ "$incounter" -lt 10 ]; then 
@@ -3535,14 +3540,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				incounter=$((incounter+1))
 				;;
 
 				out*([0-9]).wav)
 				if [ $outcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/out"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/out/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/out/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/out subfolder"
 				fi
 				if [ "$outcounter" -lt 10 ]; then 
@@ -3558,14 +3563,14 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				outcounter=$((outcounter+1))
 				;;
 
 				lock*([0-9]).wav)
 				if [ $lockcounter = 2 ]; then
 					mkdir -p "${targetpath}/${dir}/lock"
-					rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/lock/${targetfile}"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/lock/${targetfile}"
 					echo "Moving ${targetfile} into ${dir}/lock subfolder"
 				fi
 				if [ "$lockcounter" -lt 10 ]; then 
@@ -3581,7 +3586,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
 				fi
-				rsync -Ab --no-perms "${src}" "${target}"
+				rsync -ab --no-perms "${src}" "${target}"
 				lockcounter=$((lockcounter+1))
 				;;
 
@@ -3590,7 +3595,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			preon*([0-9]).wav)
 	# 			if [ $preoncounter = 2 ]; then
 	# 				mkdir -p "${targetpath}/${dir}/preon"
-	#			rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/preon/${targetfile}"
+	#			rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/preon/${targetfile}"
 	# 				echo "Moving ${targetfile} into ${dir}/preon subfolder"
 	# 			fi
 	# 			if [ "$preoncounter" -lt 10 ]; then 
@@ -3606,7 +3611,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}"
+	# 			rsync -ab --no-perms "${src}" "${target}"
 	# 			preoncounter=$((preoncounter+1))
 	# 			;;
 
@@ -3615,7 +3620,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			spin*([0-9]).wav)
 	# 			if [ $spincounter = 2 ]; then
 	# 				mkdir -p "${targetpath}/${dir}/spin"
-	#				rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/spin/${targetfile}"
+	#				rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/spin/${targetfile}"
 	# 				echo "Moving ${targetfile} into ${dir}/spin subfolder"
 	# 			fi
 	# 			if [ "$spincounter" -lt 10 ]; then 
@@ -3631,7 +3636,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}"
+	# 			rsync -ab --no-perms "${src}" "${target}"
 	# 			spincounter=$((spincounter+1))
 	# 			;;
 
@@ -3640,7 +3645,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			stab*([0-9]).wav)
 	# 			if [ $stabcounter = 2 ]; then
 	# 				mkdir -p "${targetpath}/${dir}/stab"
-	#				rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/stab/${targetfile}"
+	#				rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/stab/${targetfile}"
 	# 				echo "Moving ${targetfile} into ${dir}/stab subfolder"
 	# 			fi
 	# 			if [ "$stabcounter" -lt 10 ]; then 
@@ -3656,7 +3661,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}"
+	# 			rsync -ab --no-perms "${src}" "${target}"
 	# 			stabcounter=$((stabcounter+1))
 	# 			;;
 
@@ -3665,7 +3670,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			swing*([0-9]).wav)
 	# 			if [ $swingcounter = 2 ]; then
 	# 				mkdir -p "${targetpath}/${dir}/swng"
-	#				rsync -Ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swng/${targetfile}"
+	#				rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/swng/${targetfile}"
 	# 				echo "Moving ${targetfile} into ${dir}/swng subfolder"
 	# 			fi
 	# 			if [ "$swingcounter" -lt 10 ]; then 
@@ -3681,7 +3686,7 @@ elif [ "$boardchoice" = "XtoP" ]; then
 	# 			if [ "$verbosity" = "1" ]; then
 	# 				echo "Converting ${src} to ${target}"
 	# 			fi
-	# 			rsync -Ab --no-perms "${src}" "${target}"
+	# 			rsync -ab --no-perms "${src}" "${target}"
 	# 			swingcounter=$((swingcounter+1))
 	# 			;;
 
