@@ -1315,7 +1315,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 		preoncounter=1
 		# spincounter=1
 		# stabcounter=1
-		# swingcounter=1
+		swingcounter=1
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
@@ -1506,17 +1506,16 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
 
-	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
-	# Uncomment and adapt targetfile if needed later.		
-	#   	*wng*([0-9]).wav)
-	# 		targetfile="swing ($swingcounter).wav"
-	# 		swingcounter=$((swingcounter+1))
-	#		target="./${targetpath}/${dir}/${targetfile}"
-	# 		if [ "$verbosity" = "1" ]; then
-	# 			echo "Converting ${src} to ${target}"
-	# 		fi
-	# 		rsync -ab --no-perms "${src}" "${target}"
-	# 		;;
+
+		  	*wing*([0-9]).wav)
+			targetfile="swing ($swingcounter).wav"
+			swingcounter=$((swingcounter+1))
+			target="./${targetpath}/${dir}/${targetfile}"
+			if [ "$verbosity" = "1" ]; then
+				echo "Converting ${src} to ${target}"
+			fi
+			rsync -ab --no-perms "${src}" "${target}"
+			;;
 			
 			*rack*([0-9]).wav)
 			targetfile="track ($trackcounter).wav"
@@ -2376,7 +2375,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 		swinglcounter=1
 		# spincounter=1
 		# stabcounter=1
-		# swngcounter=1
+		swngcounter=1
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
@@ -2564,17 +2563,16 @@ elif [ "$boardchoice" = "PtoX" ]; then
 	# 		fi
 	# 		rsync -ab --no-perms "${src}" "${target}"
 	# 		;;
-	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
-	# Uncomment and adapt targetfile if needed later.		
-	# 		swng*([0-9]).wav)
-	# 		targetfile="swing ($swingcounter).wav"
-	# 		swingcounter=$((swingcounter+1))
-	#		target="./${targetpath}/${dir}/${targetfile}"
-	# 		if [ "$verbosity" = "1" ]; then
-	# 			echo "Converting ${src} to ${target}"
-	# 		fi
-	# 		rsync -ab --no-perms "${src}" "${target}"
-	# 		;;
+
+			swng*([0-9]).wav)
+			targetfile="swing ($swngcounter).wav"
+			swngcounter=$((swngcounter+1))
+			target="./${targetpath}/${dir}/${targetfile}"
+			if [ "$verbosity" = "1" ]; then
+				echo "Converting ${src} to ${target}"
+			fi
+			rsync -ab --no-perms "${src}" "${target}"
+			;;
 				
 			track*([0-9]).wav)
 			targetfile="track ($trackcounter).wav"
