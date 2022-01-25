@@ -131,11 +131,17 @@ echo " "
     		rsync -Ab --no-perms "./inis/smoothsw.ini" "${targetpath}/${font}"
     	fi
 
-		if [[ "${sounds[*]}" == *"xtra"* ]]; then
-			mkdir -p "${targetpath}/${font}/extras"
-			echo "Moving all extras to -> extras folder"
-			rsync -rAb --no-perms "${font}/extras/" "${targetpath}/${font}/extras"
-		fi
+		for o in ${otherfiles}; do
+			if  [[ "${o}" == *"xtras"* ]] ; then
+			path=`dirname ${o}`
+			echo "Moving "${o}" to -> "${targetpath}/${path}
+			mkdir -p "${targetpath}/${path}"
+			rsync -rAb --no-perms "${o}" "${targetpath}/${path}"
+			continue;
+			fi
+			echo "Moving "${o}" to -> "${targetpath}/${font}
+			rsync -Ab --no-perms "${o}" "${targetpath}/${font}"
+		done
 
 		if [[ "${sounds[*]}" == *"tracks"* ]]; then
 			mkdir -p "${targetpath}/${font}/tracks"
@@ -143,33 +149,15 @@ echo " "
 			rsync -rAb --no-perms "${font}/tracks/" "${targetpath}/${font}/tracks"
 		fi
 
-		for o in ${otherfiles}; do
-			if  [[ "${o}" == *"xtra"* ]] ; then
-			# path=`dirname ${o}`
-			# echo "Moving "${o}" to -> "${targetpath}/${path}
-			# mkdir -p "${targetpath}/${path}"
-			# rsync -rAb --no-perms "${o}" "${targetpath}/${path}"
-			continue;
-			fi
-			echo "Moving "${o}" to -> "${targetpath}/${font}
-			rsync -Ab --no-perms "${o}" "${targetpath}/${font}"
-		done
-
 		counter=1
 		oldeffect="old"
 
 		for src in ${sounds[@]}; do
-			# Move extras folder as-is.
-			if [[ "${src}" == *"xtra"* ]]; then
-				echo "Already moved extras."
-				continue;
-			fi
 			# Move tracks folder as-is.
 			if [[ "${src}" == *"tracks"* ]]; then
 				echo "Already moved tracks."
 				continue;
 			fi
-
 			# Strip digits, path, and extension from filename
 			effectfile="${src//[0-9]/}"
 			effect="${effectfile##*/}"
@@ -948,7 +936,7 @@ for dir in ${dirs[@]}; do
 		lockupcounter=1
 		lswingcounter=1
 		preoncounter=1
-		pstoffcounter=1
+		# pstoffcounter=1
 		poweroffcounter=1
 		poweroncounter=1
 		# savecounter=1
@@ -1120,15 +1108,17 @@ for dir in ${dirs[@]}; do
 				rsync -Ab --no-perms "${src}" "${target}"
 				;;
 
-		    	*stoff**([0-9]).wav)
-				targetfile=$(printf %q "pstoff$pstoffcounter.wav")
-				pstoffcounter=$((pstoffcounter+1))
-				target="./$targetpath/$targetfile"
-				if [ "$verbosity" = "1" ]; then
-					echo "Converting ${src} to ${target}"
-				fi
-				rsync -Ab --no-perms "${src}" "${target}" 
-				;;
+	# pstoff sounds are currently not supported by GoldenHarvest and therefore ignored. 
+	# Uncomment counter above and code here and adapt targetfile if needed later.
+	# 	    	*stoff**([0-9]).wav)
+	# 			targetfile=$(printf %q "pstoff$pstoffcounter.wav")
+	# 			pstoffcounter=$((pstoffcounter+1))
+	# 			target="./${targetpath}/${dir}/pstoff/${targetfile}"
+	# 			if [ "$verbosity" = "1" ]; then
+	# 				echo "Converting ${src} to ${target}"
+	# 			fi
+	# 			rsync -Ab --no-perms "${src}" "${target}" 
+	# 			;;
 
 				*oweroff|*wroff*([0-9]).wav)
 				targetfile=$(printf %q "pwroff$poweroffcounter.wav")
@@ -1314,7 +1304,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 		preoncounter=1
 		# spincounter=1
 		# stabcounter=1
-		# swingcounter=1
+		swingcounter=1
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
@@ -1505,17 +1495,16 @@ elif [ "$boardchoice" = "CtoX" ]; then
 	# 		rsync -Ab --no-perms "${src}" "${target}"
 	# 		;;
 
-	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
-	# Uncomment and adapt targetfile if needed later.		
-	#   	*wng*([0-9]).wav)
-	# 		targetfile="swing ($swingcounter).wav"
-	# 		swingcounter=$((swingcounter+1))
-	#		target="./${targetpath}/${dir}/${targetfile}"
-	# 		if [ "$verbosity" = "1" ]; then
-	# 			echo "Converting ${src} to ${target}"
-	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
-	# 		;;
+
+		  	*wing*([0-9]).wav)
+			targetfile="swing ($swingcounter).wav"
+			swingcounter=$((swingcounter+1))
+			target="./${targetpath}/${dir}/${targetfile}"
+			if [ "$verbosity" = "1" ]; then
+				echo "Converting ${src} to ${target}"
+			fi
+			rsync -Ab --no-perms "${src}" "${target}"
+			;;
 			
 			*rack*([0-9]).wav)
 			targetfile="track ($trackcounter).wav"
@@ -1928,8 +1917,7 @@ elif [ "$boardchoice" = "PtoG" ]; then
 	echo " "
 	echo "You chose Proffie to GoldenHarvest Soundfont converter."
 	echo "*NOTE* Single font file supported."
-	echo "- If you have multiple font.wavs in the source font, the first one will be used"
-	echo " "
+	echo "- If you have multiple font.wavs in the source font, the last one will be used"
 	echo "Do you wish to convert a single soundfont (enter '1') or a folder containing several soundfonts in subfolders (enter '2')?" 
 	echo "If you choose 2, Make sure each sub-folder only contains one soundfont. Otherwise the soundfonts will get mixed!"
 
@@ -2118,12 +2106,8 @@ for dir in ${dirs[@]}; do
 				;;
 
 				font*([0-9]).wav)
+				#fontcounter=$((fontcounter+1))
 				targetfile=$(printf %q "font.wav")
-				fontcounter=$((fontcounter+1))
-				if [ $fontcounter -ge 3 ]; then
-				echo "More than one font.wav in source, using the first one."
-					continue;
-				fi
 				target="./$targetpath/$targetfile"
 				if [ "$verbosity" = "1" ]; then
 					echo "Converting ${src} to ${target}"
@@ -2162,7 +2146,7 @@ for dir in ${dirs[@]}; do
 				;;
 				
 				lock*([0-9]).wav)
-				targetfile=$(printf %q "lock$lockcounter.wav")
+				targetfile=$(printf %q "lockup$lockcounter.wav")
 				lockcounter=$((lockcounter+1))
 				target="./$targetpath/$targetfile"
 				if [ "$verbosity" = "1" ]; then
@@ -2191,15 +2175,6 @@ for dir in ${dirs[@]}; do
 				rsync -Ab --no-perms "${src}" "${target}"
 				;;
 
-		    	pstoff**([0-9]).wav)
-				targetfile=$(printf %q "pstoff$pstoffcounter.wav")
-				pstoffcounter=$((pstoffcounter+1))
-				target="./$targetpath/$targetfile"
-				if [ "$verbosity" = "1" ]; then
-					echo "Converting ${src} to ${target}"
-				fi
-				rsync -Ab --no-perms "${src}" "${target}"
-				;;
 
 				spin*([0-9]).wav)
 				targetfile=$(printf %q "spin$spincounter.wav")
@@ -2373,7 +2348,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 		swinglcounter=1
 		# spincounter=1
 		# stabcounter=1
-		# swngcounter=1
+		swngcounter=1
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
@@ -2561,17 +2536,16 @@ elif [ "$boardchoice" = "PtoX" ]; then
 	# 		fi
 	# 		rsync -Ab --no-perms "${src}" "${target}"
 	# 		;;
-	# Accent Swings are currently not supported by Xenopixel and therefore ignored. 
-	# Uncomment and adapt targetfile if needed later.		
-	# 		swng*([0-9]).wav)
-	# 		targetfile="swing ($swingcounter).wav"
-	# 		swingcounter=$((swingcounter+1))
-	#		target="./${targetpath}/${dir}/${targetfile}"
-	# 		if [ "$verbosity" = "1" ]; then
-	# 			echo "Converting ${src} to ${target}"
-	# 		fi
-	# 		rsync -Ab --no-perms "${src}" "${target}"
-	# 		;;
+	
+			swng*([0-9]).wav)
+			targetfile="swing ($swingcounter).wav"
+			swingcounter=$((swingcounter+1))
+			target="./${targetpath}/${dir}/${targetfile}"
+			if [ "$verbosity" = "1" ]; then
+				echo "Converting ${src} to ${target}"
+			fi
+			rsync -Ab --no-perms "${src}" "${target}"
+			;;
 				
 			track*([0-9]).wav)
 			targetfile="track ($trackcounter).wav"
