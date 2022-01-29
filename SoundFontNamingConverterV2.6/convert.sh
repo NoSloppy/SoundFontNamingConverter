@@ -1463,8 +1463,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			else
 				preoncounter=$((preoncounter+1))
 			fi
-			target="./$targetpath/$targetfile"
-			target="./$targetpath/${dir}/set/$targetfile"
+			target="./${targetpath}/${dir}/${targetfile}"
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
@@ -2505,8 +2504,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			else
 				preoncounter=$((preoncounter+1))
 			fi
-			target="./$targetpath/$targetfile"
-			target="./$targetpath/${dir}/set/$targetfile"
+			target="./${targetpath}/${dir}/${targetfile}"
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
