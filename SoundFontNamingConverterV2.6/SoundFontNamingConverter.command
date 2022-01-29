@@ -343,6 +343,13 @@ echo " "
 		for src in ${sounds[@]}/!(tracks); do
 			case "${src##*/}" in
 
+	blaster*([0-9]).wav)
+				if [ $blastercounter = 2 ]; then
+					mkdir -p "${targetpath}/${dir}/blst"
+					rsync -ab --no-perms --remove-source-files "${target}" "./${targetpath}/${dir}/blst/${targetfile}"
+					echo "Moving ${targetfile} into ${dir}/blst subfolder"
+
+
 				*laster*([0-9]).wav)
 				mkdir -p "${targetpath}/${dir}"
 				if [ $blastercounter = 2 ]; then
@@ -1474,8 +1481,7 @@ elif [ "$boardchoice" = "CtoX" ]; then
 			else
 				preoncounter=$((preoncounter+1))
 			fi
-			target="./$targetpath/$targetfile"
-			target="./$targetpath/${dir}/set/$targetfile"
+			target="./${targetpath}/${dir}/${targetfile}"
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
@@ -2532,8 +2538,7 @@ elif [ "$boardchoice" = "PtoX" ]; then
 			else
 				preoncounter=$((preoncounter+1))
 			fi
-			target="./$targetpath/$targetfile"
-			target="./$targetpath/${dir}/set/$targetfile"
+			target="./${targetpath}/${dir}/${targetfile}"
 			if [ "$verbosity" = "1" ]; then
 				echo "Converting ${src} to ${target}"
 			fi
