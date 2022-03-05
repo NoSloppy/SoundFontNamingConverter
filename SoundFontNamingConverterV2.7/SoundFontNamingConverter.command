@@ -1843,6 +1843,7 @@ echo " "
 		outcounter=1
 		preoncounter=1
 		pstoffcounter=1
+		slshcounter=1
 		spincounter=1
 		stabcounter=1
 		swinghcounter=1
@@ -2124,7 +2125,17 @@ echo " "
 					rsync -ab --no-perms "${src}" "${target}"
 				;;
 
-				swng*|slsh*([0-9]).wav)
+				slsh*([0-9]).wav)
+					targetfile=$(printf %q "slash$slshcounter.wav")
+					slshcounter=$((slshcounter+1))
+					target="./$targetpath/$targetfile"
+					if [ "$verbosity" = "1" ]; then
+						echo "Converting ${src} to ${target}"
+					fi
+					rsync -ab --no-perms "${src}" "${target}"
+				;;
+
+				swng*([0-9]).wav)
 					targetfile=$(printf %q "swing$swngcounter.wav")
 					swngcounter=$((swngcounter+1))
 					target="./$targetpath/$targetfile"
@@ -2272,6 +2283,7 @@ echo " "
 		lockcounter=1
 		outcounter=1
 		preoncounter=1
+		slshcounter=1
 		spincounter=1
 		stabcounter=1
 		swinghcounter=1
@@ -2479,6 +2491,16 @@ echo " "
 						echo "Converting ${src} to ${target}"
 					fi
 					rsync -ab --no-perms "${src}" "${target}" 
+				;;
+
+				slsh**([0-9]).wav)
+					targetfile=$(printf %q "slash$slshcounter.wav")
+					slshcounter=$((slshcounter+1))
+					target="./$targetpath/$targetfile"
+					if [ "$verbosity" = "1" ]; then
+						echo "Converting ${src} to $target"
+					fi
+					rsync -ab --no-perms "${src}" "$target"
 				;;
 
 				spin*([0-9]).wav)
