@@ -151,11 +151,19 @@ echo " "
 
 		counter=1
 		extracounter=1
+		hiddencounter=1
 		trackcounter=1
 		oldeffect="old"
 
 		for src in ${sounds[@]}; do
 			# Move extras folder as-is.
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -334,6 +342,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humcounter=1
 		lockupcounter=1
@@ -351,6 +360,13 @@ echo " "
 		trackcounter=1
 		
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -1015,6 +1031,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humMcounter=1
 		lockupcounter=1
@@ -1031,6 +1048,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -1434,6 +1458,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humcounter=1
 		lswingcounter=1
@@ -1450,6 +1475,13 @@ echo " "
 
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -1803,6 +1835,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		humcounter=1
 		incounter=1
 		lockcounter=1
@@ -1817,6 +1850,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -2225,6 +2265,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		humcounter=1
 		incounter=1
 		lockcounter=1
@@ -2238,6 +2279,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -2620,6 +2668,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		humcounter=1
 		incounter=1
 		lockcounter=1
@@ -2633,6 +2682,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -2969,6 +3025,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humcounter=1
 		incounter=1
@@ -2982,6 +3039,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -3326,6 +3390,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humcounter=1
 		incounter=1
@@ -3339,6 +3404,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
@@ -3642,6 +3714,7 @@ echo " "
 		extracounter=1
 		fontcounter=1
 		forcecounter=1
+		hiddencounter=1
 		hswingcounter=1
 		humcounter=1
 		incounter=1
@@ -3655,6 +3728,13 @@ echo " "
 		trackcounter=1
 
 		for src in ${sounds[@]}; do
+			if [[ "${src}" == *._* ]]; then
+				if [[ $hiddencounter = 1 ]]; then
+					echo "- Hidden files found and ignored."
+					hiddencounter=$((hiddencounter+1))	
+				fi
+				continue;
+			fi
 			if [[ "${src}" == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "Already moved extras."
