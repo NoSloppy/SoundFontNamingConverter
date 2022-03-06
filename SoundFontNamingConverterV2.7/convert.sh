@@ -1019,7 +1019,7 @@ echo " "
 			rsync -rAb --no-perms ${dir}/*xtra*/ "$targetpath/extras"
 		fi
 
-		startdragounter=1
+		startdragcounter=1
 		startlockcounter=1
 		blastercounter=1
 		bootcounter=1
