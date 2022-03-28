@@ -1,0 +1,11 @@
+### Operating System Requirements:  
+### Windows (Windows 10 at time of writing):  
+
+Install Windows Subsystem for Linux  
+- Get Ubuntu App in the Microsoft Store. (required for “bash” and other commands). Download but don't choose open once it finishes installing.  
+https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab  
+- Type “Turn Windows features on or off” into the Windows search, open the top result, scroll down and enable "Windows Subsystem for Linux".  
+- Click "OK", then click "Reboot Now".  
+- Open the Ubuntu app and wait while it says "Installing, this may take a few minutes...".  
+- Choose a username and password. Once you get a green prompt (should be username+computername), close the window.  
+- Type “WSL” into the windows search and click the penguin image.
