@@ -4,7 +4,7 @@ z#!/bin/sh
 
 	echo " "
 	echo "***********************************************************************"
-	echo " Hello Saberfans! Welcome to the Soundfont Naming Converter v2.7"
+	echo " Hello Saberfans! Welcome to the Soundfont Naming Converter v2.7.52.7.5"
 	echo " - by @Mormegil and @NoSloppy - 2022"
 	echo "***********************************************************************"
 	echo " "
