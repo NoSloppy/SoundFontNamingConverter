@@ -1,4 +1,4 @@
-z#!/bin/sh
+#!/bin/sh
 	shopt -s extglob
 	IFS=$'\n'
 
