@@ -72,7 +72,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 		dirs=$(find "$input" -mindepth 1 -maxdepth 1 -type d)
 		echo " "
 		echo "Found the following directories for soundfonts:"
-		echo $dirs
+		printf '%s\n' "${dirs[@]}"
 		echo "Does each of these folders only contain one soundfont? (y/n)"
 		read input2
 		if [[ "$input2" = "y" || "$input2" = "Y" ]]; then
@@ -123,16 +123,26 @@ if [ "$boardchoice" = "PtoP" ]; then
 	    	fi
 	    fi
 
-		if [[ "${sounds[*]}" == *xtra* ]]; then
-			mkdir -p "$targetpath/$font/extras"
+		if [[ "$font" == *"Extra"* || "$font" == *"extra"* ]]; then
+			rsync -rab --no-perms "$font"/ "$targetpath/$font"
 			echo "Moving all extras to -> extras folder"
-			rsync -rab --no-perms "$font/extras/" "$targetpath/$font/extras"
+		else
+			if [[ "${sounds[*]}" == *"Extra"* || "${sounds[*]}" == *"extra"* ]]; then
+				mkdir -p "$targetpath/$font/extras"
+				echo "Moving all extras to -> extras folder"
+					rsync -rab --no-perms $font/*xtras*/ "$targetpath/$font/extras"
+			fi
 		fi
 
-		if [[ "${sounds[*]}" == *rack* ]]; then
-			mkdir -p "$targetpath/$font/tracks"
+		if [[ "$font" == *"Track"* || "$font" == *"track"* ]]; then
+			rsync -rab --no-perms "$font"/ "$targetpath/$font"
 			echo "Moving all tracks to -> tracks folder"
-			rsync -rab --no-perms "$font/tracks/" "$targetpath/$font/tracks"
+		else
+			if [[ "${sounds[*]}" == *"Track"* || "${sounds[*]}" == *"track"* ]]; then
+				mkdir -p "$targetpath/$font/tracks"
+				echo "Moving all tracks to -> tracks folder"
+				rsync -rab --no-perms "$font/tracks/" "$targetpath/$font/tracks"
+			fi
 		fi
 
 		for o in $otherfiles; do
@@ -156,7 +166,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 			fi
 			if [[ $src == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
-					echo "Already moved extras."
+					echo "- Already moved extras."
 					extracounter=$((extracounter+1))	
 				fi
 				continue;
@@ -164,7 +174,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 			# Move tracks folder as-is.
 			if [[ $src == *rack* ]]; then
 				if [[ $trackcounter = 1 ]]; then
-					echo "Already moved tracks."
+					echo "- Already moved tracks."
 					trackcounter=$((trackcounter+1))	
 				fi
 				continue;
