@@ -73,7 +73,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 		dirs=$(find "$input" -mindepth 1 -maxdepth 1 -type d)
 		echo " "
 		echo "Found the following directories for soundfonts:"
-		echo $dirs
+		printf '%s\n' "${dirs[@]}"
 		echo "Does each of these folders only contain one soundfont? (y/n)"
 		read input2
 		if [[ "$input2" = "y" || "$input2" = "Y" ]]; then
@@ -124,16 +124,27 @@ if [ "$boardchoice" = "PtoP" ]; then
 	    	fi
 	    fi
 
-		if [[ "${sounds[*]}" == *xtra* ]]; then
-			mkdir -p "$targetpath/$font/extras"
-			echo "Moving all extras to -> extras folder"
-			rsync -rab --no-perms "$font/extras/" "$targetpath/$font/extras"
+		if [[ "$font" == *"Extra"* || "$font" == *"extra"* ]]; then
+			rsync -rab --no-perms "$font"/ "$targetpath/$font"
+			echo "Moving all extras to -> extras folder - HORAAAAAAAAAAAAAAAAAYYYYY"
+		else
+																					echo "Apparently, "$font" does not contain ExtraWILD nor extraWILD"
+			if [[ "${sounds[*]}" == *"Extra"* || "${sounds[*]}" == *"extra"* ]]; then
+				mkdir -p "$targetpath/$font/extras"
+				echo "Moving all extras to -> extras folder - NORMAAAAAAAAAAAALLLLLL"
+					rsync -rab --no-perms $font/*xtras*/ "$targetpath/$font/extras"
+			fi
 		fi
 
-		if [[ "${sounds[*]}" == *rack* ]]; then
-			mkdir -p "$targetpath/$font/tracks"
-			echo "Moving all tracks to -> tracks folder"
-			rsync -rab --no-perms "$font/tracks/" "$targetpath/$font/tracks"
+		if [[ "$font" == *"Track"* || "$font" == *"track"* ]]; then
+			rsync -rab --no-perms "$font"/ "$targetpath/$font"
+			echo "Moving all tracks to -> tracks folder - HORAAAAAAAAAAAAAAAAAYYYYY"
+		else
+			if [[ "${sounds[*]}" == *"Track"* || "${sounds[*]}" == *"track"* ]]; then
+				mkdir -p "$targetpath/$font/tracks"
+				echo "Moving all tracks to -> tracks folder - NORMAAAAAAAAAAAALLLLLL"
+				rsync -rab --no-perms "$font/tracks/" "$targetpath/$font/tracks"
+			fi
 		fi
 
 		for o in $otherfiles; do
