@@ -126,23 +126,22 @@ if [ "$boardchoice" = "PtoP" ]; then
 
 		if [[ "$font" == *"Extra"* || "$font" == *"extra"* ]]; then
 			rsync -rab --no-perms "$font"/ "$targetpath/$font"
-			echo "Moving all extras to -> extras folder - HORAAAAAAAAAAAAAAAAAYYYYY"
+			echo "Moving all extras to -> extras folder"
 		else
-																					echo "Apparently, "$font" does not contain ExtraWILD nor extraWILD"
 			if [[ "${sounds[*]}" == *"Extra"* || "${sounds[*]}" == *"extra"* ]]; then
 				mkdir -p "$targetpath/$font/extras"
-				echo "Moving all extras to -> extras folder - NORMAAAAAAAAAAAALLLLLL"
+				echo "Moving all extras to -> extras folder"
 					rsync -rab --no-perms $font/*xtras*/ "$targetpath/$font/extras"
 			fi
 		fi
 
 		if [[ "$font" == *"Track"* || "$font" == *"track"* ]]; then
 			rsync -rab --no-perms "$font"/ "$targetpath/$font"
-			echo "Moving all tracks to -> tracks folder - HORAAAAAAAAAAAAAAAAAYYYYY"
+			echo "Moving all tracks to -> tracks folder"
 		else
 			if [[ "${sounds[*]}" == *"Track"* || "${sounds[*]}" == *"track"* ]]; then
 				mkdir -p "$targetpath/$font/tracks"
-				echo "Moving all tracks to -> tracks folder - NORMAAAAAAAAAAAALLLLLL"
+				echo "Moving all tracks to -> tracks folder"
 				rsync -rab --no-perms "$font/tracks/" "$targetpath/$font/tracks"
 			fi
 		fi
@@ -168,7 +167,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 			fi
 			if [[ $src == *xtra* ]]; then
 				if [[ $extracounter = 1 ]]; then
-					echo "Already moved extras."
+					echo "- Already moved extras."
 					extracounter=$((extracounter+1))	
 				fi
 				continue;
@@ -176,7 +175,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 			# Move tracks folder as-is.
 			if [[ $src == *rack* ]]; then
 				if [[ $trackcounter = 1 ]]; then
-					echo "Already moved tracks."
+					echo "- Already moved tracks."
 					trackcounter=$((trackcounter+1))	
 				fi
 				continue;
