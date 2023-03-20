@@ -1,5 +1,5 @@
 #!/bin/sh
-	cd "`dirname $0`"
+    cd -- "$(dirname -- "$0")"
 	shopt -s extglob
 	IFS=$'\n'
 
@@ -165,7 +165,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 				fi
 				continue;
 			fi
-			if [[ $src == *xtra* ]]; then
+			if [[ $src == *"xtra"* ]]; then
 				if [[ $extracounter = 1 ]]; then
 					echo "- Already moved extras."
 					extracounter=$((extracounter+1))	
@@ -173,7 +173,7 @@ if [ "$boardchoice" = "PtoP" ]; then
 				continue;
 			fi
 			# Move tracks folder as-is.
-			if [[ $src == *rack* ]]; then
+			if [[ $src == *"rack"* ]]; then
 				if [[ $trackcounter = 1 ]]; then
 					echo "- Already moved tracks."
 					trackcounter=$((trackcounter+1))	
