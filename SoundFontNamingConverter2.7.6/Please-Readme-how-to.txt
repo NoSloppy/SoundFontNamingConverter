@@ -27,7 +27,8 @@ when dealing with fonts. Use underscores instead.
 For Windows OS:  
 Linux subsystem for Windows is required before usage.
 This can be done without manually downloading anything.
-- Open Windows Powershell as administrator and then simply type in the following: wsl --install
+- Open Windows Powershell as administrator and then simply type in the following: wsl --install  
+  (You might need to use `wsl --install -d Ubuntu` instead)
 - Let Powershell run through its thing and wait till it mentions that it's finished and that in order for the changes to take effect you have to reboot/restart your computer.  
 - Restart your computer as told and Ubuntu should install itself after you log back in. 
 - For more info: https://docs.microsoft.com/en-us/windows/wsl/install
