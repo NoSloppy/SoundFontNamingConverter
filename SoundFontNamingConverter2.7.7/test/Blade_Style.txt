@@ -1,0 +1,76 @@
+ProffieBoard os 5.0 or later 
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//Revo's Edited Version:
+
+StylePtr<
+Layers<
+  StyleFire<StripesX<Int<3000>,Scale<SlowNoise<Int<2000>>,Int<-1000>,Int<-5000>>,BrownNoiseFlicker<RotateColorsX<Variation,Green>,Black,100>,RandomPerLEDFlicker<RotateColorsX<Variation,Rgb<0,60,0>>,RotateColorsX<Variation,Rgb<0,90,0>>>,RotateColorsX<Variation,Rgb<25,255,25>>,RotateColorsX<Variation,Rgb<0,128,0>>>,RotateColorsX<Variation,Rgb<0,80,0>>,0,5,FireConfig<3,3000,0>,FireConfig<3,3000,0>,FireConfig<3,3000,0>,FireConfig<3,3000,0>>,
+  AlphaL<Stripes<2500,-3000,Red,Rgb<10,0,0>,Pulsing<Rgb<30,0,0>,Black,800>>,SwingSpeed<600>>,
+  LockupTrL<Layers<
+    AlphaL<AudioFlickerL<White>,Bump<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Scale<SwingSpeed<100>,Int<14000>,Int<18000>>>>,
+    AlphaL<White,Bump<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Int<10000>>>>,TrConcat<TrInstant,White,TrFade<400>>,TrConcat<TrInstant,AlphaL<Mix<SmoothStep<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Int<1000>>,Stripes<1500,2000,White,Blue>,Stripes<1500,-2500,White,Blue>>,Int<18000>>,TrFade<400>>,SaberBase::LOCKUP_NORMAL>,
+  ResponsiveLightningBlockL<Strobe<White,AudioFlicker<White,Blue>,50,1>,TrConcat<TrInstant,AlphaL<White,Bump<Int<12000>,Int<18000>>>,TrFade<200>>,TrConcat<TrInstant,HumpFlickerL<AlphaL<White,Int<16000>>,30>,TrSmoothFade<600>>>,
+  ResponsiveStabL<Red>,
+  ResponsiveBlastL<Yellow,Int<400>,Scale<SwingSpeed<200>,Int<100>,Int<400>>>,
+  ResponsiveClashL<White,TrInstant,TrFade<400>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>,Int<20000>>,
+  LockupTrL<AlphaL<BrownNoiseFlickerL<White,Int<300>>,SmoothStep<Int<30000>,Int<5000>>>,TrWipeIn<400>,TrFade<300>,SaberBase::LOCKUP_DRAG>,
+  LockupTrL<AlphaL<Mix<TwistAngle<>,Red,Orange>,SmoothStep<Int<28000>,Int<5000>>>,TrWipeIn<600>,TrFade<300>,SaberBase::LOCKUP_MELT>,
+  InOutTrL<TrWipeSparkTip<White,1200>,TrWipeInSparkTip<White,1063>>,
+  TransitionEffectL<TrConcat<TrInstant,AlphaL<White,Bump<Int<0>,Int<10000>>>,TrFade<3000>,AlphaL<Orange,Bump<Int<0>,Int<8000>>>,TrFade<3000>,AlphaL<Red,Bump<Int<0>,Int<6000>>>,TrFade<2000>>,EFFECT_RETRACTION>,
+  TransitionEffectL<TrConcat<TrDelay<1500>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<3000>>>,TrFade<500>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<4000>>>,TrFade<1000>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<5000>>>,TrBoing<1950,7>>,EFFECT_PREON>,
+  TransitionEffectL<TrConcat<TrInstant,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<500>,Int<200>,Int<500>,Int<40>>>,TrDelay<1000>,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<300>,Int<300>,Int<300>,Int<40>>>,TrDelay<1300>,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<100>,Int<400>,Int<100>,Int<32768>>>,TrDelay<2000>,AlphaL<RotateColorsX<Variation,Blue>,Bump<Int<0>,Int<6000>>>,TrBoing<1450,5>>,EFFECT_PREON>>
+
+//Original Style:
+
+StylePtr<Layers<
+  StyleFire<StripesX<Int<3000>,Scale<SlowNoise<Int<2000>>,Int<-1000>,Int<-5000>>,BrownNoiseFlicker<RotateColorsX<Variation,Blue>,Black,100>,RandomPerLEDFlicker<RotateColorsX<Variation,Rgb<0,0,60>>,RotateColorsX<Variation,Rgb<0,0,10>>>,RotateColorsX<Variation,Rgb<25,25,255>>,RotateColorsX<Variation,Rgb<0,0,128>>>,RotateColorsX<Variation,Rgb<0,0,80>>,0,5,FireConfig<3,3000,0>,FireConfig<3,3000,0>,FireConfig<3,3000,0>,FireConfig<3,3000,0>>,
+  AlphaL<Stripes<2500,-3000,Red,Rgb<60,0,0>,Pulsing<Rgb<30,0,0>,Black,800>>,SwingSpeed<600>>,
+  LockupTrL<Layers<
+    AlphaL<AudioFlickerL<White>,Bump<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Scale<SwingSpeed<100>,Int<14000>,Int<18000>>>>,
+    AlphaL<White,Bump<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Int<10000>>>>,TrConcat<TrInstant,White,TrFade<400>>,TrConcat<TrInstant,AlphaL<Mix<SmoothStep<Scale<BladeAngle<>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>>,Int<1000>>,Stripes<1500,2000,White,Blue>,Stripes<1500,-2500,White,Blue>>,Int<18000>>,TrFade<400>>,SaberBase::LOCKUP_NORMAL>,
+  ResponsiveLightningBlockL<Strobe<White,AudioFlicker<White,Blue>,50,1>,TrConcat<TrInstant,AlphaL<White,Bump<Int<12000>,Int<18000>>>,TrFade<200>>,TrConcat<TrInstant,HumpFlickerL<AlphaL<White,Int<16000>>,30>,TrSmoothFade<600>>>,
+  ResponsiveStabL<Red>,
+  ResponsiveBlastL<Yellow,Int<400>,Scale<SwingSpeed<200>,Int<100>,Int<400>>>,
+  ResponsiveClashL<White,TrInstant,TrFade<400>,Scale<BladeAngle<0,16000>,Int<4000>,Int<26000>>,Int<6000>,Int<20000>>,
+  LockupTrL<AlphaL<BrownNoiseFlickerL<White,Int<300>>,SmoothStep<Int<30000>,Int<5000>>>,TrWipeIn<400>,TrFade<300>,SaberBase::LOCKUP_DRAG>,
+  LockupTrL<AlphaL<Mix<TwistAngle<>,Red,Orange>,SmoothStep<Int<28000>,Int<5000>>>,TrWipeIn<600>,TrFade<300>,SaberBase::LOCKUP_MELT>,
+  InOutTrL<TrWipeSparkTip<White,1200>,TrWipeInSparkTip<White,1063>>,
+  TransitionEffectL<TrConcat<TrInstant,AlphaL<White,Bump<Int<0>,Int<10000>>>,TrFade<3000>,AlphaL<Orange,Bump<Int<0>,Int<8000>>>,TrFade<3000>,AlphaL<Red,Bump<Int<0>,Int<6000>>>,TrFade<2000>>,EFFECT_RETRACTION>,
+  TransitionEffectL<TrConcat<TrDelay<1500>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<3000>>>,TrFade<500>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<4000>>>,TrFade<1000>,AlphaL<HumpFlickerL<RotateColorsX<Variation,Blue>,30>,Bump<Int<0>,Int<5000>>>,TrBoing<1950,7>>,EFFECT_PREON>,
+  TransitionEffectL<TrConcat<TrInstant,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<500>,Int<200>,Int<500>,Int<40>>>,TrDelay<1000>,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<300>,Int<300>,Int<300>,Int<40>>>,TrDelay<1300>,TransitionLoopL<TrWaveX<RotateColorsX<Variation,Blue>,Int<100>,Int<400>,Int<100>,Int<32768>>>,TrDelay<2000>,AlphaL<RotateColorsX<Variation,Blue>,Bump<Int<0>,Int<6000>>>,TrBoing<1450,5>>,EFFECT_PREON>>>()
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-If you need help to install your soundfont please ask your questions at :https://www.facebook.com/groups/proffieboardsupport/ 
+
+-Copyright: Jérôme Tremblay ( JayDaloRian) 
+
+
+                ._,.
+           "..-..pf.
+          -L   ..#'
+        .+_L  ."]#
+        ,'j' .+.j`                 -'.__..,.,p.
+       _~ #..<..0.                 .J-.``..._f.
+      .7..#_.. _f.                .....-..,`4'
+      ;` ,#j.  T'      ..         ..J....,'.j`
+     .` .."^.,-0.,,,,yMMMMM,.    ,-.J...+`.j@
+    .'.`...' .yMMMMM0M@^=`""g.. .'..J..".'.jH
+    j' .'1`  q'^)@@#"^".`"='BNg_...,]_)'...0-
+   .T ...I. j"    .'..+,_.'3#MMM0MggCBf....F.
+   j/.+'.{..+       `^~'-^~~""""'"""?'"``'1`
+   .... .y.}                  `.._-:`_...jf
+   g-.  .Lg'                 ..,..'-....,'.
+  .'.   .Y^                  .....',].._f
+  ......-f.                 .-,,.,.-:--&`
+                            .`...'..`_J`
+                            .~......'#'
+  Ray Brunner               '..,,.,_]`     Sienar Fleet Systems' TIE/In
+                            .L..`..``.     Space Superiority Starfighter (2)
+color scheme
+A A A
+fighterstar-warsstarfighterstarwarstransportation
