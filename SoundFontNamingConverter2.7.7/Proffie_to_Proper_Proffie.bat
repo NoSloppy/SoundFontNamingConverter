@@ -1,1 +1,0 @@
-start powershell -noexit -command "bash PtoP.sh"
