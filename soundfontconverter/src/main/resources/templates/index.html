@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sound Font Naming Converter</title>
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+    <style>
+
+body, html {
+    background-color: #202020;
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+}
+input, select, button {
+    background-color: #555;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 2px;
+}
+progress {
+    background: linear-gradient(to bottom, #FFFFFF, #00FF00);
+    border: 1px solid #00AA00;
+}
+progress::-webkit-progress-bar {
+    background: #222;
+}
+progress::-webkit-progress-value {
+    background: linear-gradient(to bottom, #FFFFFF, #00FF00);
+}
+progress::-moz-progress-bar {
+    background: linear-gradient(to bottom, #FFFFFF, #00FF00);
+}
+
+/* Style for the floating window */
+.floating-window {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 100;
+    transition: opacity 0.5s;
+    opacity: 0; /* Initially transparent */
+}
+
+/* Visible and faded-in state */
+.floating-window.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Style for the close button */
+.close-button {
+    float: right;
+    border: none;
+    background-color: transparent;
+    color: red;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Additional styles as needed... */
+
+.uploadProgressBar {
+    width: 42%;
+}
+.processProgressBar {
+    width: 42%;
+}
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="file"]:active + label {
+background-color: dodgerblue;
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="file"]:hover + label {
+    box-shadow: 0 0 2px 1px dodgerblue;
+}
+
+h1 {
+  text-align: center;
+}
+
+.optimize-checkbox, .optimize-label {
+    display: none;
+}
+.optimize-checkbox.show, .optimize-label.show {
+    display: inline-block;
+}
+.optimize-button.active, .download-button.active {
+    background-color: dodgerblue;
+    color: white;
+}
+.download-button {
+    display: none;
+    background-color: yellow;
+    color: black;
+    padding: 10px;
+    border-width: thick;
+    border-radius: 10px;
+    width: 275px; /* Fixed width */
+    font-size: 18px; /* Larger font size */
+    text-align: center; /* Center the text */
+}
+
+.download-button.show {
+    display: block;
+}
+.convert-button {
+    background-color: red;
+    height: 40px;
+    width: 140px;
+    font-size: x-large;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.convert-button.available {
+    background-color: forestgreen;
+}
+.log-stream {
+    height: 250px;
+    width: 42%;
+    font-size: small;
+    border: 1px solid #00AA00;
+    overflow-y: scroll
+}
+
+/* Footer */
+.footer-title {
+    min-width: 180px;
+    font-size: 16px;
+    padding-left: 10px;
+}
+.footer-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 6px 0px;
+}
+.other-sites {
+    float: right;
+    padding-right: 10px;
+    margin-left: 35px;
+}
+.footer-links {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 100px;
+}
+.footer-links a img {
+    height: 16px;
+    width: 16px;
+/*    margin-right: 5px;*/
+    padding-right: 10px;
+
+}
+.footer-links a:hover {
+    color: #000;
+}
+.donate-button {
+  width: 170px;
+  height: auto;
+}
+    </style>
+<body>
+    <h1>Welcome to the Sound Font Naming Converter 3.1.0</h1>
+
+<!-- Button to show the floating window -->
+<!-- <button id="infoButton">What is this?</button> -->
+
+<!-- Floating window (initially hidden) -->
+<!-- <div id="infoWindow" class="floating-window"> -->
+    <!-- Red X button -->    
+    <!-- <button id="closeButton" class="close-button">&#10006;</button> -->
+    <!-- <p>Popup Info goes here</p> -->
+    <!-- Add more content here as needed -->
+<!-- </div> -->
+
+    <!-- Message display for feedback -->
+    <div th:if="${message}" th:text="${message}"></div>
+
+    <p>1. Choose a source and target format from the drop down menus below.</p>
+    <!-- Form to get user input -->
+    <form id="uploadForm" action="/convert" method="post" enctype="multipart/form-data">
+        <!-- Dropdown for source board selection -->
+        <select id="sourceBoard" name="sourceBoard" title="Source board">
+            <option value="CFX">CFX</option>
+            <option value="GH3">GH3</option>
+            <option value="PROFFIE">PROFFIE</option>
+            <option value="VERSO">VERSO</option>
+            <option value="XENO3">XENO3</option>
+        </select>
+
+        <!-- Dropdown for target board selection -->
+        <select id="targetBoard" name="targetBoard" title="Target board">
+            <option value="CFX">CFX</option>
+            <option value="GH3">GH3</option>
+            <option value="PROFFIE">PROFFIE</option>
+            <option value="VERSO">VERSO</option>
+            <option value="XENO3">XENO3</option>
+        </select>
+
+        <input type="checkbox" id="optimizeCheckbox" name="optimizeCheckbox" class="optimize-checkbox" value="true" checked>
+
+        <label for="optimizeCheckbox" class="optimize-label">Optimize for FAT32 performance? You should ;)</label>
+        <br>
+        <br>
+        <br>
+<!--         <div>
+            <button id="proffieOptimizeButton" type="button" class="optimize-button" onclick="proffieOptimizer()"
+            title="Reorganizes an existing Proffie font for best performance. Just choose a source folder and the process is automated. Save the presented .zip file."> Proffie Easy Optimizer </button>
+        </div> -->
+
+        <br>
+
+        <p>2. Add the font folder you wish to convert.</p>
+
+        <!-- Directory input -->
+        <div>
+            <input type="file" id="files" name="files" webkitdirectory directory multiple>
+        </div>
+        <br>
+
+        <p>3. Click "Convert" and then Download the resulting zip file to your computer. Files will be available for 3 minutes.</p>
+        <!-- <p>   Files will be available for 3 minutes.</p> -->
+
+        <!-- Convert button -->
+        <input type="submit" value="Convert" id="convertInput" class="convert-button" title="Convert selected font folder." >
+
+        <!-- uploadProgressBar and its status message -->
+        <div>
+            <p>Upload status:</p>
+            <progress id="uploadProgressBar" class="uploadProgressBar" max="100" value="0" ></progress>
+            <p id="uploadProgressStatus"></p>
+        </div>
+
+ <!-- Live log window -->
+<div id="conversionLogStream" class="log-stream">
+    <p>Automated cross conversion of saber sound font naming conventions between 4 popular controller boards: Proffieboard, CFX, Golden Harvest 3, and Xenopixel 3.</p>
+    <p>No need to manually rename a font (or many fonts) so it can be used on a different platform. Just click and done.</p>
+    <p>Includes a Proffie to Proffie feature to organize and rename a ProffieOS sound font for the best performance when used on FAT32 formatted media.</p>
+    <p>Usage: Super easy. Barely an inconvenience.</p>
+    <ul>
+        <li>Choose a source and target sound board format.</li>
+        <li>Choose a font folder from your local computer.</li>
+        <li>Click the Convert button.</li>
+        <li>Click the Download button to retrieve a zip file containing the newly named font files.</li>
+    </ul>
+    <p>Donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>
+</div>
+
+
+<script>
+    const eventSource = new EventSource('/stream-conversion-logs');
+    let firstMessageReceived = false;
+
+    eventSource.onmessage = function(event) {
+//    console.log('Received SSE Message:', event.data); // Debugging line
+        const logStreamDiv = document.getElementById('conversionLogStream');
+
+        // Check if the message is a command to clear logs
+        if (event.data === 'CLEAR_LOGS') {
+            // Clear the log display element
+            logStreamDiv.innerHTML = '';
+        } else {
+            // Otherwise, append the message to the log display element
+            logStreamDiv.innerHTML += event.data + '<br>';
+            logStreamDiv.scrollTop = logStreamDiv.scrollHeight; // Auto-scroll to the bottom
+        }
+    };
+</script>
+
+
+
+        <div>
+        <!-- processProgressBar and its status message -->
+            <p>Progress....</p>
+            <progress id="processProgressBar" class="processProgressBar" max="100" value="0" ></progress>
+            <p id="processProgressStatus">Waiting for files to be uploaded. Choose Files and click 'Convert'.</p>
+        </div>
+
+        <!-- Download button (Hidden initially) -->
+        <input type="button" id="downloadButton" class="download-button" value="Download Converted Files" title="Download converted font." />
+        <div class="footer-container">
+          <span class="footer-title">NoSloppy - 2023</span>
+
+        <a href="https://www.buymeacoffee.com/BrianConner" title="Brian Conner supports the saber community. Support him back.">
+            <img class="donate-button" src="/donateButton.jpg"></a>
+
+          <span class="footer-links">
+            <span class="other-sites">Other sites: </span>
+            <a href="https://crucible.hubbe.net/" target="_blank" title="The Crucible"><img src="https://crucible.hubbe.net/uploads/default/optimized/1X/2237f551ca8f4f69ac478df5c64aee1c951c33f5_2_180x180.png" alt="Crucible logo"></a>
+            <a href="https://pod.hubbe.net/" target="_blank" title="ProffieOS Documentation site" ><img src="https://pod.hubbe.net/images/favicon.png" alt="Pod logo"></a>
+            <a href="https://fredrik.hubbe.net/lightsaber/" target="_blank" title="Profezzorn's Proffieboard site"><img src="https://fredrik.hubbe.net/favicon.ico" alt="Lightsaber logo"></a>
+            <a href="https://www.fett263.com/" target="_blank" title="Fett263's Style Library"><img src="https://www.fett263.com//favicon.ico" alt="Fett263 logo"></a>
+            <a href="https://www.facebook.com/groups/opensourcesabers/" target="_blank" title="Open Source Group"><img src="https://www.facebook.com/favicon.ico" alt="Facebook logo"></a>
+            <a href="https://crystalfocus.net/" target="_blank" title="crystalfocus.net"><img src="https://crystalfocus.net/images/logo.ico" alt="crystalfocus.net logo"></a>
+            <a href="https://https://sabertec.net/" target="_blank" title="https://sabertec.net"><img src="https://sabertec.net/wp-content/uploads/2016/12/cropped-Logo-Sabertec-Bildmarke-V2-Hintergrund-32x32.png" alt="https://sabertec.net logo"></a>
+            <a href="https://darkwolfsabers.com/" target="_blank" title="darkwolfsabers.com"><img src="https://img1.wsimg.com/isteam/ip/494b9647-5ed3-4359-92d3-188572d6d1f1/favicon/95b2b868-5641-4853-8c6d-057e8ebf1d55.jpeg/:/rs=w:16,h:16,m" alt="darkwolfsabers.com logo"></a>
+
+          </span>
+        </div>
+    </form>
+<script>
+    // let optimize_active_ = true;
+    let downloadReady_ = false;
+    let sourceDirName = "";
+    // let confirmAction;
+    let showed_popup_ = false;
+    let server_full_ = false;
+    // let disallow_conversion_ = false;
+    let processProgressValue = 0;
+    const sourceBoard = document.getElementById('sourceBoard');
+    const targetBoard = document.getElementById('targetBoard');
+    // const proffieOptimizeButton = document.getElementById('proffieOptimizeButton');
+    const fileInput = document.getElementById('files');
+    let selectedFiles = fileInput.files;
+    const optimizeCheckbox = document.getElementById('optimizeCheckbox');
+    const downloadButton = document.getElementById('downloadButton');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    const processProgressBar = document.getElementById('processProgressBar');
+    const processProgressStatus = document.getElementById('processProgressStatus');
+    const form = document.getElementById('uploadForm');
+    const convertButton = document.getElementById('convertInput');
+    var optimizeLabel = document.querySelector('label[for="optimizeCheckbox"]');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded and parsed');
+    });
+    const updateTitles = () => {
+        const elementsToUpdate = [optimizeCheckbox, optimizeLabel];
+            if (optimizeCheckbox.disabled) {
+                elementsToUpdate.forEach((element) => {
+                  element.setAttribute("title", "You've chosen Proffie to Proffie, this feature can not be disabled.");
+                });
+            } else {
+                elementsToUpdate.forEach((element) => {
+                  element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media. This feature is ON by default. You need to uncheck it to bypass.");
+                });
+            }
+    };
+
+optimizeCheckbox.addEventListener('change', function() {
+//    resetMessage(targetBoard);
+});
+
+    // Initialize titles on page load
+     updateTitles(targetBoard);
+
+    // document.getElementById('infoButton').addEventListener('click', function() {
+    //     document.getElementById('infoWindow').classList.add('visible');
+    // });
+
+    // document.getElementById('closeButton').addEventListener('click', function() {
+    //     document.getElementById('infoWindow').classList.remove('visible');
+    // });
+
+    sourceBoard.addEventListener('change', function() {
+        convertButton.classList.remove('available');
+        fileInput.value = '';
+        resetMessage(targetBoard);
+    });
+
+    targetBoard.addEventListener('change', function() {
+        resetMessage(targetBoard);
+        checkIfBoardsAreSame();
+        if (targetBoard.value === "PROFFIE") {
+            showOptimizeUI();
+            if (sourceBoard.value === "PROFFIE") {
+                optimizeCheckbox.checked = true;
+                optimizeCheckbox.disabled = true;
+                updateTitles();
+            }
+        } else {
+            hideOptimizeUI();
+        }
+    });
+
+    function checkIfBoardsAreSame() {
+console.log("((( checkIfBoardsAreSame() called\nsourceBoard.value = " + sourceBoard.value + "\ntargetBoard.value = " + targetBoard.value + "\nshowed_popup_ = " + showed_popup_ + "\nselectedFiles.length = " + selectedFiles.length + "\n convertButton available = " + convertButton.classList.contains('available'));
+
+        if (sourceBoard.value === "CFX" && (targetBoard.value === "PROFFIE" || targetBoard.value === "GH3")) {
+            if (targetBoard.value === "PROFFIE" && !showed_popup_) {
+                alert("Conversion from CFX to PROFFIE is not required.\nProffieboards already natively support Plecter fonts.\nHowever, you can continue anyway.");
+                showed_popup_ = true;
+console.log("((( CFX to PROFFIE is not required - showed_popup_ = " + showed_popup_);
+
+            } else if (targetBoard.value === "GH3") {
+                window.alert("Conversion from CFX to GH3 is not required.\nGH3 already natively supports Plecter fonts.");
+                convertButton.classList.remove('available');
+console.log("((( CFX to GH3 is not required - convertButton available = " + convertButton.classList.contains('available'));
+                fileInput.value = '';
+                return;
+
+            }
+        } else if (sourceBoard.value === targetBoard.value) {
+            if (sourceBoard.value === "PROFFIE") {
+                optimizeCheckbox.checked = true;
+                optimizeCheckbox.disabled = true;
+                updateTitles();
+                if (!showed_popup_) alert("You've chosen Proffie to Proffie, which optimizes the folder structure for best performance when using a FAT32 file system (which is what the SD card uses.)");
+                showed_popup_ = true;
+console.log("((( You've chosen Proffie to Proffie - showed_popup_ = " + showed_popup_);
+           //     fileInput.click();
+            } else {
+                optimizeCheckbox.disabled = false;
+                updateTitles();
+                window.alert("Conversion from " + sourceBoard.value + " to " + targetBoard.value + " is unnecessary.\nPlease choose a different conversion.");
+                convertButton.classList.remove('available');
+console.log("((( Same board and invalid - convertButton available = " + convertButton.classList.contains('available'));
+                fileInput.value = '';
+                return;
+            }
+        } else if (targetBoard.value != "PROFFIE") {
+            optimizeCheckbox.checked = false;
+        }
+        if (selectedFiles.length != 0) {
+            convertButton.classList.add('available');
+console.log("((( Last check in checkIfBoardsAreSame() - selectedFiles.length != 0, \nconvertButton available = " + convertButton.classList.contains('available'));
+        }
+console.log("((( EXITING checkIfBoardsAreSame() \nsourceBoard.value = " + sourceBoard.value + "\ntargetBoard.value = " + targetBoard.value + "\nshowed_popup_ = " + showed_popup_ + "\nselectedFiles.length = " + selectedFiles.length + "\n convertButton available = " + convertButton.classList.contains('available'));
+
+    }
+
+    function checkAgainIfBoardsAreSame() {
+}
+
+   function showOptimizeUI() {
+        optimizeCheckbox.classList.add('show');
+        optimizeLabel.classList.add('show');
+        optimizeCheckbox.checked = true;
+    }
+    function hideOptimizeUI() {
+        optimizeCheckbox.classList.remove('show');
+        optimizeLabel.classList.remove('show');
+    }
+
+    // Choose Files button
+    fileInput.addEventListener('mousedown', function(event) {
+        checkIfBoardsAreSame(event);
+    });
+
+    // Choose Files input (open files dialog)
+    fileInput.addEventListener('change', function() {
+        selectedFiles = fileInput.files;
+        convertButton.classList.add('available');
+    });
+
+
+    // Convert "Button"
+    form.addEventListener('submit', function(event) {
+        console.log("Convert Button: Form is being submitted. optimizeCheckbox.checked = ", optimizeCheckbox.checked, "selectedFiles.length = ", selectedFiles.length);
+
+        if (selectedFiles.length === 0) {
+            alert("No files selected. Please choose files before starting the conversion.");
+            convertButton.classList.remove('available');
+            event.preventDefault();
+            return;
+        }
+        checkIfBoardsAreSame();  // Check if target board has been changed to same board since choosing files
+        // if (disallow_conversion_) {
+        //     convertButton.classList.remove('available');
+        //     disallow_conversion_ = false;
+        //     event.preventDefault();
+        //     return;
+        // }
+        console.log("Convert Button activated with files chosen. Reset downloadReady_ = false");
+        // uploadProgressBar.value = 0;
+        // processProgressBar.value = 0;
+        downloadReady_ = false; // Reset the download ready state
+        event.preventDefault();
+        const formData = new FormData(form);
+
+
+        console.log("Is Safari: ", isSafari());
+
+        // Extract and append directory name if available
+        if (selectedFiles.length > 0 && selectedFiles[0].webkitRelativePath) {
+console.log(`webkitRelativePath is : '${selectedFiles[0].webkitRelativePath}'`);
+            sourceDirName = selectedFiles[0].webkitRelativePath.split('/')[0];
+            formData.append('sourceDirName', sourceDirName);
+        }
+
+console.log(`sourceDirName after appending: '${sourceDirName}'`);
+
+if (optimizeCheckbox.disabled) formData.append('optimizeCheckbox', optimizeCheckbox.checked ? 'true' : 'false');
+if (!optimizeCheckbox.checked) formData.append('optimizeCheckbox', 'false');
+
+
+// // Logging each file in FormData
+// for (let [key, value] of formData.entries()) {
+//     console.log("++Logging each file in FormData: ");
+//     console.log(`${key}: ${value instanceof File ? value.name : value}`);
+// }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/convert', true);
+        xhr.setRequestHeader("Accept", "application/json");
+
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                uploadProgressBar.value = percentComplete;
+
+                if (percentComplete < 100) {
+                    processProgressStatus.innerText = "Uploading files...";
+                 } else {
+                    if (optimizeCheckbox.checked && targetBoard.value === "PROFFIE") {
+                        processProgressStatus.innerText = "Optimizing Proffie font for performance on FAT32 formatted SD card.\nFiles uploaded. Converting " + sourceDirName + " to " + targetBoard.value + " ...";
+                    } else {
+                        processProgressStatus.innerText = "Files uploaded. Converting " + sourceDirName + " from " + sourceBoard + " to " + targetBoard.value + " ...\n\n";
+                    }
+                    updateProcessProgressBar();
+                }
+            }
+        };
+
+        // Server response
+        xhr.onload = function() {
+            if (xhr.status === 429) { // Check if the status code is 429
+                server_full_ = true;
+                const response = JSON.parse(this.responseText);
+                processProgressStatus.innerText = response.message; // Show server full message
+                resetMessage(targetBoard);
+
+            } else if (xhr.status >= 200 && xhr.status < 300) {
+                server_full_ = false;
+                const response = JSON.parse(this.responseText);
+            
+                if (response.status === "success") {
+                    downloadButton.dataset.dirIdentifier = response.dirIdentifier; // Store temporaryDirectory UUID Identifier
+                } else if (response.status === "info") {
+                    console.log('Response was info');
+                    processProgressStatus.innerText = response.message;
+                    downloadButton.classList.remove('show');
+                } else {
+                    console.log('Response was something else');
+                    processProgressStatus.innerText = response.message;
+                    downloadButton.classList.remove('show');
+                }
+                console.log("Conversion complete, setting downloadReady_ to true.");
+                downloadReady_ = true;
+            }
+        };
+        xhr.send(formData);
+    });
+
+function isSafari() {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
+    // Global variables to store interval and timeout IDs
+    let processIntervalId = null;
+    let downloadTimeoutId = null;
+
+    function updateProcessProgressBar() {
+        // Clear any existing interval and timeout
+        if (processIntervalId) clearInterval(processIntervalId);
+        if (downloadTimeoutId) clearTimeout(downloadTimeoutId);
+        let startTime = Date.now();
+        processIntervalId = setInterval(function() {
+            let elapsedTime = Date.now() - startTime;
+            if (!server_full_) {
+                processProgressValue = Math.min(100, (elapsedTime / 5000) * 100); 
+            } else {
+                processProgressValue = 0;
+            }
+            if (elapsedTime >= 2000 && downloadReady_) {
+                clearInterval(processIntervalId);
+                processProgressBar.value = 100;
+                downloadButton.classList.add('show');
+                
+                // Set a timer to hide the download button after 3 minutes
+                downloadTimeoutId = setTimeout(() => {
+                    downloadButton.classList.remove('show');
+                    downloadButton.value = "Download Converted Files";
+                    processProgressStatus.innerText = "Download expired. Please start a new conversion.";
+                },  180000);
+                processProgressStatus.innerText = "Conversion of " + sourceDirName + " from " + sourceBoard + " to " + targetBoard.value + " complete.\nDownload will expire in 3 minutes.";
+            } else {
+                processProgressBar.value = processProgressValue;
+            }
+        }, 50);
+    }
+
+
+    downloadButton.addEventListener('click', function() {
+        processProgressStatus.innerText = "Fetching converted files. Standby for .zip download ...\n\n";
+        const targetBoardValue = targetBoard.value;  // store this for later
+        const dirIdentifier = downloadButton.dataset.dirIdentifier; // Retrieve dirIdentifier
+        triggerDownload(targetBoardValue, dirIdentifier); // Pass dirIdentifier
+    });
+
+    function triggerDownload(targetBoard, dirIdentifier) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `/downloadConvertedFiles?targetBoard=${targetBoard}&dirIdentifier=${dirIdentifier}`, true);
+        xhr.responseType = 'blob';
+
+        xhr.onloadstart = function() {
+            // Download has started
+            downloadButton.classList.add('active');
+            downloadButton.value = "Downloading...";
+        };
+
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const blob = this.response;
+                const a = document.createElement('a');
+                const url = window.URL.createObjectURL(blob);
+
+                a.href = url;
+                a.download = `Converted_to_${targetBoard.toUpperCase()}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                // Delay the reset of the UI elements by 2 seconds to hide color reset behind download window ¯\_(ツ)_/¯
+                setTimeout(() => {
+                        optimizeCheckbox.disabled = false;
+                        updateTitles();
+                        downloadButton.classList.remove('active');
+                        downloadButton.value = "Re-Download Converted Files";
+                        if (optimizeCheckbox.checked && targetBoard.value === "PROFFIE") {
+                            processProgressStatus.innerText = "Optimized Proffie font for performance on FAT32 formatted SD card.\nZIP file created and ready for download. Will expire in 3 minutes.";
+                        } else {
+                            processProgressStatus.innerText = "ZIP file created and ready for download. Will expire in 3 minutes.\n\n";
+                        }
+                }, 2000);  // 2000 milliseconds = 2 seconds
+            } else {
+                console.error('Failed to download file:', this.status, this.statusText);
+                downloadButton.classList.remove('active');
+                downloadButton.value = "Download Converted Files";
+            }
+        };
+        xhr.onerror = function() {
+            // Handle any errors during download
+            console.error('Error during download.');
+            downloadButton.classList.remove('active');
+            downloadButton.value = "Download Converted Files";
+        };
+        xhr.send();
+    }
+
+    function resetMessage(targetBoard) {
+        downloadButton.classList.remove('show');
+        downloadButton.value = "Download Converted Files";
+        uploadProgressBar.value = 0;
+        processProgressBar.value = 0;
+        if (!server_full_) {
+            optimizeCheckbox.disabled = false;
+            updateTitles();
+            showed_popup_ = false;
+console.log("((( showed_popup_ = " + showed_popup_);
+
+            if (optimizeCheckbox.checked && targetBoard.value === "PROFFIE") {
+                processProgressStatus.innerText = "Optimizing Proffie font for performance on FAT32 formatted SD card.\nWaiting for files to be uploaded. Choose Files and click 'Convert'.";
+            } else {
+                processProgressStatus.innerText = "Waiting for files to be uploaded. Choose Files and click 'Convert'.\n\n";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
