@@ -3,11 +3,13 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{dd-MM-yyyy HH:mm:ss} - %msg%n</pattern>
+            <pattern>%d{MM-dd-yyyy hh:mm:ss a, GMT-5} - %msg%n</pattern>
         </encoder>
     </appender>
+    <logger name="org.springframework.web.context.request.async" level="ERROR"/>
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="ERROR"/>
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 

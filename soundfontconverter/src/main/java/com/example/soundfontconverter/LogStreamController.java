@@ -25,7 +25,7 @@ public class LogStreamController {
     @GetMapping("/stream-conversion-logs")
     public SseEmitter streamConversionLogs(HttpServletRequest request) {
         String sessionId = request.getSession().getId();
-        logger.info("Creating SSE Emitter for session: {}", sessionId);
+        logger.debug("Creating SSE Emitter for session: {}", sessionId);
         SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIMEOUT); // Set the timeout
         // Send "kick-start" message to make connection active(otherwise status just always (pending))
         try {
@@ -35,12 +35,12 @@ public class LogStreamController {
         }
         conversionLogService.addEmitter(sessionId, emitter);
         emitter.onCompletion(() -> {
-            logger.info("SSE Emitter completed for session: {}", sessionId);
+            logger.debug("SSE Emitter completed for session: {}", sessionId);
             conversionLogService.removeEmitter(sessionId);
         });
 
         emitter.onTimeout(() -> {
-            logger.info("SSE Emitter timed out for session: {}", sessionId);
+            logger.debug("SSE Emitter timed out for session: {}", sessionId);
             conversionLogService.removeEmitter(sessionId);
         });
 

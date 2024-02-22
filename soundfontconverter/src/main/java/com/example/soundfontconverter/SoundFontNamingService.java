@@ -25,12 +25,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.soundfontconverter.AudioConverter;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.stream.StreamSupport;
 
 @Service
 public class SoundFontNamingService {
 
     private final ConversionLogService conversionLogService;
     private static final Logger logger = LoggerFactory.getLogger(SoundFontConverterController.class);
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
 
     @Autowired
     public SoundFontNamingService(ConversionLogService conversionLogService) {
@@ -55,6 +61,7 @@ public class SoundFontNamingService {
     private String zipTargetDir = "";
     private String originalSourceBoard = "";
     private String originalSourceDirName = "";
+    private boolean initialCleanupDone = false;
     private static final String DEFAULTS_PATH = "./inis";
     private static final Map<String, String> CFX_TO_PROFFIE = new HashMap<>();
     private static final Map<String, String> CFX_TO_VERSO = new HashMap<>();
@@ -147,7 +154,7 @@ public class SoundFontNamingService {
                 logger.info("** Creating directory: " + dirPath);
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error(ANSI_RED + "Exception occurred: " + ex.getClass().getSimpleName() + " - " + ex.getMessage() + ANSI_RESET);
         }
     }
 
@@ -155,8 +162,8 @@ public class SoundFontNamingService {
         try {
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            System.err.println("Error copying file from " + sourcePath + " to " + targetPath);
-            ex.printStackTrace();
+            logger.error(ANSI_RED + "Error copying file from " + sourcePath + " to " + targetPath + ANSI_RESET);
+            logger.error(ANSI_RED + "Exception occurred: " + ex.getClass().getSimpleName() + " - " + ex.getMessage() + ANSI_RESET);
         }
     }
 
@@ -181,22 +188,32 @@ public class SoundFontNamingService {
         return numberStr.isEmpty() ? 1 : Integer.parseInt(numberStr);
     }
 
+    // private boolean isSameAltDirectory(String prefix, String currentAltDirName, Map<String, String> lastAltDirForPrefix) {
+    //     String lastAltDir = lastAltDirForPrefix.getOrDefault(prefix, "");
+    //     lastAltDirForPrefix.put(prefix, currentAltDirName); // Update the map with the current alt directory
+    //     return lastAltDir.equals(currentAltDirName);
+    // }
+
     private void convertSounds(String sessionId, BoardType srcBoardType, BoardType tgtBoardType, String tempDirName, boolean optimizeCheckbox, String sourceDirName) throws IOException {
         soundCounter.clear();
         String key = BoardType.getKey(srcBoardType, tgtBoardType);
         String effectiveSourceDirName = (is_chained_ && second_loop_) ? originalSourceDirName : sourceDirName;
+        Map<String, String> lastAltDirForPrefix = new HashMap<>(); // Declare this map at the beginning of your method
+        
 
-        logger.info("--------------------------------------------------\n");
+        logger.info("--------------------------------------------------");
 
         if (is_chained_) {  // means neither source nor target boards are PROFFIE
             if (!second_loop_) {
                 logger.info("** First step: Converting " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
                 logger.info("** Second step: Converting from " + tgtBoardType + " to " + sourceDirName + "_" + realTargetBoard);
-                logger.info("** Last step: Zipping " + sourceDirName + "_" + realTargetBoard + " into CONVERTED_to_" + realTargetBoard + ".zip\n");
+                logger.info("** Last step: Zipping " + sourceDirName + "_" + realTargetBoard + " into CONVERTED_to_" + realTargetBoard + ".zip");
+                logger.info(" ");
             }
         } else {
             logger.info("** First step: Converting " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
-            logger.info("** Last step: Zipping " + sourceDirName + "_" + tgtBoardType + " into CONVERTED_to_" + tgtBoardType + ".zip\n");
+            logger.info("** Last step: Zipping " + sourceDirName + "_" + tgtBoardType + " into CONVERTED_to_" + tgtBoardType + ".zip");
+            logger.info(" ");
         }
 
         // Include a special case for GH3 output directory naming
@@ -213,28 +230,32 @@ public class SoundFontNamingService {
         String currentDate = sdf.format(new Date());
 
         if (!is_chained_) {
-            logger.info( "------------------------------------------------\n");
+            logger.info( "------------------------------------------------");
             conversionLogService.sendLogToEmitter(sessionId, "---------------------------------------------------------------------\n");
             logStringBuilder.append( "------------------------------------------------\n");
-            log(sessionId, "Converted with SoundFont Naming Converter 3.1.0");
+            log(sessionId, "Converted with SoundFont Naming Converter 4.0.0");
             log(sessionId, "Brian Conner a.k.a NoSloppy");
             log(sessionId, currentDate);
-            log(sessionId, "\n");
+            logger.info(" ");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            logStringBuilder.append("\n");
             log(sessionId, "Converting: " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
             if (tgtBoardType == BoardType.PROFFIE) log(sessionId, "Optimized for Fat32 performance: " + (optimizeCheckbox ? "Yes" : "No"));
-            log(sessionId, "\n");
+            logger.info(" ");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            logStringBuilder.append("\n");
         } else if (!second_loop_) {
-            logger.info( "------------------------------------------------\n");
-            logger.info( "Converted with SoundFont Naming Converter 3.1.0");
+            logger.info( "------------------------------------------------");
+            logger.info( "Converted with SoundFont Naming Converter 4.0.0");
             logger.info( "Brian Conner a.k.a NoSloppy");
             logger.info( currentDate);
-            logger.info( "\n");
+            logger.info(" ");
             logger.info( "Converting: " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
             if (tgtBoardType == BoardType.PROFFIE) logger.info( "Optimized for Fat32 performance: " + (optimizeCheckbox ? "Yes" : "No"));
-            logger.info( "\n");
+            logger.info(" ");
         } else {
             conversionLogService.sendLogToEmitter(sessionId, "---------------------------------------------------------------------\n");
-            conversionLogService.sendLogToEmitter(sessionId, "Converted with SoundFont Naming Converter 3.1.0");
+            conversionLogService.sendLogToEmitter(sessionId, "Converted with SoundFont Naming Converter 4.0.0");
             conversionLogService.sendLogToEmitter(sessionId, "Brian Conner a.k.a NoSloppy");
             conversionLogService.sendLogToEmitter(sessionId, currentDate);
             conversionLogService.sendLogToEmitter(sessionId, "\n");
@@ -244,7 +265,7 @@ public class SoundFontNamingService {
             conversionLogService.sendLogToEmitter(sessionId, "\n");
 
             logStringBuilder.append( "------------------------------------------------\n");
-            logStringBuilder.append( "Converted with SoundFont Naming Converter 3.1.0\n");
+            logStringBuilder.append( "Converted with SoundFont Naming Converter 4.0.0\n");
             logStringBuilder.append( "Brian Conner a.k.a NoSloppy\n");
             logStringBuilder.append( currentDate + "\n\n");
             logStringBuilder.append( "Converting: " + effectiveSourceDirName + " from " + originalSourceBoard + " to " + tgtBoardType + "\n");
@@ -272,43 +293,26 @@ public class SoundFontNamingService {
             fullPath = Paths.get(tempDirName, sourceDirName);
         }
 
-        // Check if source has directories named something like "Bonus Files" or "extra"
-        boolean hasExtrasDirectories = false;
-        try {
-            hasExtrasDirectories = Files.walk(fullPath, 1) // Only check immediate children
-            .filter(Files::isDirectory).anyMatch(path -> {
-                String dirName = path.getFileName().toString().toLowerCase();
-                return dirName.contains("bonus") || dirName.contains("extra");
-            });
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        // If "extras" directory is needed, create it now
-        if (hasExtrasDirectories) {
-            ensureDirectoryExists(extrasDirPath);
-        }
-
         // Main sound conversion
         try (Stream<Path> paths = Files.walk(fullPath)) {
             Map<String, Integer> fileNameCounter = new HashMap<>();
+            Map<String, Integer> altDirCountMap = new HashMap<>(); // This will store counts in the format "altDirName_prefix"
+            Map<String, Integer> existAsNumbered = new HashMap<>();
 
             paths.filter(Files::isRegularFile)
             .filter(path -> !path.getFileName().toString().startsWith("."))
-            .filter(path -> {
-                String fileName = path.getFileName().toString();
-                String parentDirName = path.getParent().getFileName().toString().toLowerCase();
-                if (parentDirName.contains("bonus") || parentDirName.contains("extra")) {
-                    Path extraFilePath = extrasDirPath.resolve(fileName);
-                    copyFile(path, extraFilePath);
-                    log(sessionId, "- Moved extra/bonus file -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/extras/" + fileName);
-                    return false;
-                }
-                return true;
-            })
             .sorted((path1, path2) -> {
                 String file1 = path1.getFileName().toString().toLowerCase();
                 String file2 = path2.getFileName().toString().toLowerCase();
+                // Check for purely numeric filenames
+                boolean file1IsNumeric = file1.matches("\\d+\\.wav$");
+                boolean file2IsNumeric = file2.matches("\\d+\\.wav$");
+
+                if (file1IsNumeric && !file2IsNumeric) {
+                    return -1; // Prioritize file1 if it is numeric and file2 is not
+                } else if (!file1IsNumeric && file2IsNumeric) {
+                    return 1; // Prioritize file2 if it is numeric and file1 is not
+                }
                 String prefix1 = file1.replaceAll("\\(\\d+\\)\\.wav$", "").replaceAll("\\d*\\.wav$", "");
                 String prefix2 = file2.replaceAll("\\(\\d+\\)\\.wav$", "").replaceAll("\\d*\\.wav$", "");
                 int prefixCompare = prefix1.compareTo(prefix2);
@@ -330,58 +334,169 @@ public class SoundFontNamingService {
 
             .forEach(path -> {
                 try {
+                    logger.info( ":----------------------------------------------> ");  // divider between each file
                     String fileName = path.getFileName().toString();
+                    Path outputPath = null;
+                    boolean isAltDirectory = false;
+                    boolean wasAudioConverted = false;
+                    String parentDirName = path.getParent().getFileName().toString().toLowerCase();
+                    int number = fileName.matches(".*\\d+\\.wav$") ? Integer.parseInt(fileName.replaceAll("\\D+", "")) : 1;
+                    String originalFilename = originalFilenames.getOrDefault(path.getFileName().toString(), path.getFileName().toString());
+                    Path relativeXtraPath = targetDirPath.relativize(path);
+                    String relativeXtraPathStr = relativeXtraPath.toString();
+                    Path destinationXtraPath = null;
+                    // Extract the relative part of the path for the source, excluding the top-level directory
+                    String sourcePathForLog = path.subpath(2, path.getNameCount()).toString();// String logCategory = "";
+
+                        Set<String> knownTracks = new HashSet<>();
+                        try (Stream<String> stream = Files.lines(Paths.get("./known_tracks.txt"))) {
+                            stream.map(String::toLowerCase).forEach(knownTracks::add);
+                        } catch (IOException e) {
+                            logger.error(ANSI_RED + "Problem reading map from ./known_tracks.txt " + e.getMessage() + ANSI_RESET);
+                        }
+
+                    // Right off the bat, let's move non-wav files directly to the target folder
+                    if (!fileName.endsWith(".wav") && !fileName.endsWith(".mp3")) {
+                        Path nonWavFilePath = targetDirPath.resolve(fileName);
+                        copyFile(path, nonWavFilePath);
+                        log(sessionId, "- Moved non-wav file -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + fileName);
+                        return;
+                    }
+
                     // Convert to lowercase only if the file is a .wav file
                     if (fileName.toLowerCase().endsWith(".wav")) {
                         fileName = fileName.toLowerCase();
                     }
 
-                        int number = fileName.matches(".*\\d+\\.wav$") ? Integer.parseInt(fileName.replaceAll("\\D+", "")) : 1;
-
-// Check and convert audio file if needed
-File inputFile = path.toFile();
-boolean wasConverted = false;
-try {
-    wasConverted = AudioConverter.convertToWavIfNeeded(inputFile);
-} catch (UnsupportedAudioFileException | IOException e) {
-    logger.error("Audio conversion failed: " + e.getMessage());
-}
-
-if (wasConverted) {
-    log(sessionId, "- File: " + fileName + " was converted to 44.1kHz, 16bit monaural .wav format.");
-}
-
-
-                    // Move non-wav files directly to the target folder
-                    if (!fileName.endsWith(".wav")) {
-                        Path nonWavFilePath = targetDirPath.resolve(fileName);
-                    copyFile(path, nonWavFilePath);
-                    log(sessionId, "- Moved non-wav file -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + fileName);
-                        return;
-                    }
-
-                    // Move "track" wav files to "tracks" folder if not xeno
-                    if (fileName.contains("track") || fileName.contains("theme")) {
-                        if (tgtBoardType == BoardType.XENO3) {
-                            log(sessionId, "Targetboard = Xeno, renaming files named 'track' or 'theme'");
-                        } else {
-                            ensureDirectoryExists(tracksDirPath);
-                            Path trackFilePath = tracksDirPath.resolve(fileName);
-                            copyFile(path, trackFilePath);
-                            log(sessionId,  "Moved track file -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + fileName);
-                            return;
+                        // Check and convert audio file if needed
+                    if (!is_chained_ || is_chained_ && second_loop_) {
+                        File inputFile = path.toFile();
+                        try {
+                            wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
+                            if (fileName.toLowerCase().endsWith(".mp3")) {
+                                fileName = fileName.replaceAll("\\.mp3$", ".wav"); // Update the filename extension to .wav
+                                path = Paths.get(inputFile.getParent(), fileName);
+                            }
+                        } catch (UnsupportedAudioFileException | IOException e) {
+                            logger.error(ANSI_RED + "Audio conversion failed: " + e.getMessage() + ANSI_RESET);
                         }
                     }
 
-                    // For other wav files, use the mapping
-                    String baseName = fileName.replaceAll("( \\(\\d+\\)| \\d+|\\(\\d+\\)|\\d+)+\\.wav$", ".wav");
+                    // Direct handling for file names on the known_tracks.txt list, and/or otherwise containing "track", "theme", or "song"
+                    if (knownTracks.contains(fileName.toLowerCase())
+                        || fileName.toLowerCase().contains("track")
+                        || fileName.toLowerCase().contains("theme")
+                        || fileName.toLowerCase().contains("song")
+                        || fileName.toLowerCase().contains("music")) {
+                        if (tgtBoardType != BoardType.XENO3) {
+                            Path targetFile = tracksDirPath.resolve(fileName); // Directly resolve the file in the tracks directory
+                            ensureDirectoryExists(tracksDirPath); // Ensure the tracks directory exists
+                            copyFile(path, targetFile); // Copy the file
 
+                    if (knownTracks.contains(fileName.toLowerCase()) || (!fileName.toLowerCase().contains("track") && !relativeXtraPathStr.matches("(?i).*track.*$"))) {
+                        log(sessionId, "(⌐■_■) This looks like a track file.");
+                    }
+                            log(sessionId, "- Moved track file: " + sourcePathForLog + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/tracks/" + fileName);
+                        } else {
+                            log(sessionId, "Xeno3 doesn't use tracks subfolders. Putting file in font root.");
+                        }
+                        return; // Exit early since this file has been handled
+                    }
+                    // Determine if the path suggests an "extras" or "tracks" destination
+                    if (relativeXtraPathStr.matches("(?i).*(bonus|extras?).*$")) {
+                        destinationXtraPath = extrasDirPath;
+                    }
+                    if (relativeXtraPathStr.matches("(?i).*track.*$")) {
+                        destinationXtraPath = tracksDirPath;
+                    }
+
+
+                    // Logic to find the key directory and handle the path from there
+                    if (destinationXtraPath != null && !(tgtBoardType == BoardType.XENO3)) {
+                        int keyDirIndex = -1;
+                        for (int i = 0; i < relativeXtraPath.getNameCount(); i++) {
+                            String component = relativeXtraPath.getName(i).toString().toLowerCase();
+                            if (component.contains("track") || component.contains("extra") || component.contains("bonus")) {
+                                keyDirIndex = i;
+                                break; // Find the first occurrence and break
+                            }
+                        }
+
+                        Path finalXtraPath;
+                        if (keyDirIndex != -1) {
+                            // Resolve the subpath from the key directory to maintain the structure
+                            Path subpathFromKeyDir = relativeXtraPath.subpath(keyDirIndex + 1, relativeXtraPath.getNameCount());
+                            finalXtraPath = destinationXtraPath.resolve(subpathFromKeyDir);
+                        } else {
+                            // If no key directory is found in the path, directly use the file name
+                            finalXtraPath = destinationXtraPath.resolve(fileName);
+                        }
+
+                    // log(sessionId, "Final destination path: " + finalXtraPath.toString());
+                        ensureDirectoryExists(finalXtraPath.getParent());
+                        copyFile(path, finalXtraPath);
+
+                        // Log handling
+                        String targetPathForLog = finalXtraPath.toString().substring(finalXtraPath.toString().indexOf(shortTargetDir) + shortTargetDir.length() + 1).replaceFirst("^/", "");
+                        String fileCategory = finalXtraPath.startsWith(tracksDirPath) ? "track" : "extra or bonus";
+                    // log(sessionId, "Logging as: Source - " + sourcePathForLog + ", Target - " + targetPathForLog);
+                        String logMessage = String.format("- Moved %s file: %s -> %s/%s", fileCategory, sourcePathForLog, effectiveSourceDirName + "_" + tgtBoardType.toString(), targetPathForLog);
+                        log(sessionId, logMessage);
+                        return;
+                    }
+
+
+
+
+                    boolean isNumericName = fileName.matches("\\d+\\.wav$");
+
+                    String baseName = "";
+
+                    if (isNumericName) {
+                        if (tgtBoardType == BoardType.PROFFIE) {
+                            // Copy the file over as-is for PROFFIE target board
+                            Path relativePath = path.subpath(2, path.getNameCount()); // Adjust the starting index if needed
+                            Path targetFilePath = targetDirPath.resolve(relativePath);
+                            ensureDirectoryExists(targetFilePath.getParent());
+                            copyFile(path, targetFilePath);
+
+                            // Adjust the logging to reflect the final structure
+                            String sourceFilePath = path.getParent().getFileName().toString() + "/" + path.getFileName().toString();
+                            String targetFilePathString = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + relativePath.toString();
+                            log(sessionId, "- Moved numeric file " + sourceFilePath + " -> " + targetFilePathString);
+                            // Update the existAsNumbered map
+                            int currentNumber = extractNumber(fileName);
+                            existAsNumbered.put(relativePath.getParent().getFileName().toString(), currentNumber);
+                            return; // Skip further processing for PROFFIE numeric files
+                        } else {
+                            // Traverse up the path to find the first non-numeric directory for non-PROFFIE target boards
+                            Path currentPath = path.getParent();
+                            String firstNonNumericPart = "";
+                            while (currentPath.getNameCount() > 0) {
+                                String part = currentPath.getName(currentPath.getNameCount() - 1).toString();
+                                if (!part.matches("\\d+")) {
+                                    firstNonNumericPart = part;
+                                    break;
+                                }
+                                currentPath = currentPath.getParent();
+                            }
+
+                            baseName = firstNonNumericPart.isEmpty() ? parentDirName : firstNonNumericPart + ".wav";
+                            // // Update the existAsNumbered map for non-PROFFIE targets
+                            // int currentNumber = extractNumber(fileName);
+                            // existAsNumbered.put(firstNonNumericPart.isEmpty() ? parentDirName : firstNonNumericPart, currentNumber);
+                        }
+                    } else {
+                        // Regular expression to extract baseName for non-numeric files
+                        baseName = fileName.replaceAll("( \\(\\d+\\)| \\d+|\\(\\d+\\)|\\d+)+\\.wav$", ".wav");
+                    }
                     // If we're doing Proffie to Proffie, keep the baseName as is
                     String convertedBaseName = (mapping == null) ? baseName : mapping.getOrDefault(baseName, baseName);
 
-                    String outputPath = "";
                     Path originalPath;
                     Path newPath;
+                    String altDirName = "";
+                    int altCount = 0;
 
                     if (convertedBaseName != null) {
                         int count = soundCounter.getOrDefault(convertedBaseName, 0) + 1;
@@ -392,14 +507,14 @@ if (wasConverted) {
                                         : convertedBaseName;
 
                         String formattedCount = String.valueOf(count);
+                        String formattedAltCount = "";
 
                         Set<String> loggedFiles = new HashSet<>();  // flag to prevent multi logging of poweroff case 
+
 
                         if (tgtBoardType == BoardType.CFX) {
                             String newPrefix;
                             int currentCounter;
-
-
                             String switchKey = convertedBaseName.toLowerCase().replaceAll("\\.wav$", "");
                             String commonKey;
                             switch (switchKey) {
@@ -411,24 +526,23 @@ if (wasConverted) {
                                         // Create poweroff.wav
                                         Path poweroffPath = targetDirPath.resolve("poweroff.wav");
                                         copyFile(path, poweroffPath);
-                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + poweroffPath.getFileName());
-
+                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
                                         // Also create pwroff2.wav
                                         Path pwroff2Path = targetDirPath.resolve("pwroff2.wav");
                                         copyFile(path, pwroff2Path);
-                                        log(sessionId, "Also create pwroff2.wav: " + path.getFileName() + " -> " + pwroff2Path.getFileName());
+                                        log(sessionId, "- Also create pwroff2.wav: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + pwroff2Path.getFileName());
                                     } else if (currentCounter == 2) {
                                         // Overwrite pwroff2.wav
                                         Path pwroff2Path = targetDirPath.resolve("pwroff2.wav");
                                         copyFile(path, pwroff2Path);
-                                        log(sessionId, "Updated pwroff2.wav: " + path.getFileName() + " -> " + pwroff2Path.getFileName());
+                                        log(sessionId, "- Updated pwroff2.wav: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + pwroff2Path.getFileName());
                                     } else {
                                         // Follow original pattern for subsequent files
                                         newPrefix = "poweroff" + (currentCounter - 1);
                                         Path poweroffPath = targetDirPath.resolve(newPrefix + ".wav");
                                         copyFile(path, poweroffPath);
                                         // Log the file creation
-                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + poweroffPath.getFileName());
+                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
                                     }
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     loggedFiles.add(path.getFileName().toString()); // Add the filename to the set
@@ -452,12 +566,10 @@ if (wasConverted) {
                                     commonKey = "font";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
                                     if (currentCounter == 1) {
-                                        Path fontPath = targetDirPath.resolve("font.wav");
-                                        outputPath = fontPath.toString();
+                                        outputPath = targetDirPath.resolve("font.wav");
                                     } else {
                                         int nextBootCounter = fileNameCounter.getOrDefault("boot", 1);
-                                        Path bootPath = targetDirPath.resolve("boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
-                                        outputPath = bootPath.toString();
+                                        outputPath = targetDirPath.resolve("boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
                                         fileNameCounter.put("boot", nextBootCounter + 1);
                                     }
                                     fileNameCounter.put(commonKey, currentCounter + 1);
@@ -467,16 +579,14 @@ if (wasConverted) {
                                 case "boot":
                                     commonKey = "boot";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path bootPath = targetDirPath.resolve("boot" + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = bootPath.toString();
+                                    outputPath = targetDirPath.resolve("boot" + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
 
                                 case "color":
                                     commonKey = "color";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path colorPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = colorPath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
                                 // case "blaster":
@@ -488,22 +598,19 @@ if (wasConverted) {
                                 case "poweron":
                                     commonKey = "poweron";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path poweronPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = poweronPath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
                                 case "lockup":
                                     commonKey = "lockup";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path lockupPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = lockupPath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
                                 case "drag":
                                     commonKey = "drag";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path dragPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = dragPath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
                                 // case "drag":
@@ -517,46 +624,106 @@ if (wasConverted) {
                                 case "force":
                                     commonKey = "force";
                                     currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
-                                    Path forcePath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
-                                    outputPath = forcePath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + (currentCounter == 1 ? "" : currentCounter) + ".wav");
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     break;
 
                                 default:
                                     currentCounter = fileNameCounter.getOrDefault(switchKey, 1);
-                                    Path defaultPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + currentCounter + ".wav");
-                                    outputPath = defaultPath.toString();
+                                    outputPath = targetDirPath.resolve(convertedBaseName.substring(0, convertedBaseName.length() - 4) + currentCounter + ".wav");
                                     fileNameCounter.put(switchKey, currentCounter + 1);
                                     break;
                             }
 
+
+
                         } else if (tgtBoardType == BoardType.PROFFIE) {
-                            if (prefix.length() > 6 && count == 1 && soundCounter.containsKey(baseName)) {
+                            // Check if a numeric file with this prefix has already been processed
+                            if (existAsNumbered.containsKey(prefix)) {
+                                int nextNumber = existAsNumbered.getOrDefault(prefix, 0) + 1;
+                                Path numericFileSubDirPath = targetDirPath.resolve(prefix);
+                                ensureDirectoryExists(numericFileSubDirPath);
+
+                                // Use only the number for the file name, not the prefix
+                                Path numericFilePath = numericFileSubDirPath.resolve(String.format("%04d.wav", nextNumber));
+                                copyFile(path, numericFilePath);
+                                log(sessionId, "- Moved non-numeric file as next numeric -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + prefix + "/" + numericFilePath.getFileName());
+                                existAsNumbered.put(prefix, nextNumber);
+                                return; // Skip further processing for this file
+                            }
+                            if (prefix.equals("tr")) {
+                                // Special handling for "tr" files
+                                formattedCount = String.format("%02d", count - 1); // Subtract 1 for offset
+                            } else if (prefix.length() > 6 && count == 1 && soundCounter.containsKey(baseName)) {
                                 formattedCount = String.valueOf(count);
                             } else {
                                 formattedCount = (prefix.length() > 6) ? String.valueOf(count) : String.format("%02d", count);
                             }
-                            if (optimizeCheckbox) {
-                                originalPath = count == 1 ? targetDirPath.resolve(prefix + ".wav") : targetDirPath.resolve(prefix).resolve(prefix + formattedCount + ".wav");
-                                outputPath = originalPath.toString();
 
-                                if (count == 2) {
-                                    originalPath = targetDirPath.resolve(prefix + ".wav");
-                                    newPath = targetDirPath.resolve(prefix).resolve(prefix + (prefix.length() > 6 ? "1.wav" : "01.wav"));
-                                    ensureDirectoryExists(targetDirPath.resolve(prefix));
-                                                                        Files.move(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-                                    log(sessionId, "- Numbered and moved first file to subdirectory: ");
-                                    log(sessionId, effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + prefix + ".wav" +
-                                                    " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + prefix + "/" + newPath.getFileName());
+                            if (optimizeCheckbox) {
+                                // Handle Alt directories as their own environment
+                                Path currentPath = path;
+                                while (currentPath.getParent() != null) {
+                                    String dirName = currentPath.getParent().getFileName().toString();
+                                   if (dirName.toLowerCase().contains("alt")) {
+                                        isAltDirectory = true;
+                                        altDirName = dirName;
+                                        break;
+                                    }
+                                    currentPath = currentPath.getParent();
                                 }
-                            } else {
-                                originalPath = targetDirPath.resolve((count > 1 ? prefix + formattedCount : prefix) + ".wav");
-                                outputPath = originalPath.toString();
+                                Path baseDirPath = targetDirPath.resolve(altDirName);
+                                if (isAltDirectory) {
+                                    // logger.info("** Alt file found");
+                                    ensureDirectoryExists(baseDirPath);
+                                    // mapping out count for alt files
+                                    String altDirPrefixKey = altDirName + "_" + prefix;
+                                    altCount = altDirCountMap.getOrDefault(altDirPrefixKey, 0) + 1;
+                                    altDirCountMap.put(altDirPrefixKey, altCount);
+                                    if (prefix.equals("tr")) {
+                                        // Special handling for "tr" files
+                                        formattedAltCount = String.format("%02d", altCount - 1); // Subtract 1 for offset
+                                    } else if (prefix.length() > 6 && altCount == 1 && soundCounter.containsKey(baseName)) {
+                                        formattedAltCount = String.valueOf(altCount);
+                                    } else {
+                                        formattedAltCount = (prefix.length() > 6) ? String.valueOf(altCount) : String.format("%02d", altCount);
+                                    }
+                                    outputPath = (altCount == 1) ? baseDirPath.resolve(prefix + (prefix.equals("tr") ? "00.wav" : ".wav")) 
+                                                                   : baseDirPath.resolve(prefix).resolve(prefix + formattedAltCount + ".wav");
+
+                                    if (altCount == 2) {
+                                        originalPath = baseDirPath.resolve(prefix + (prefix.equals("tr") ? "00.wav" : ".wav"));
+                                        newPath = baseDirPath.resolve(prefix).resolve(prefix + (prefix.equals("tr") ? "00.wav" : (prefix.length() > 6 ? "1.wav" : "01.wav")));
+                                        ensureDirectoryExists(baseDirPath.resolve(prefix));
+                                        Files.move(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                                        log(sessionId, "- Numbered and moved first 'alt' file to subdirectory: ");
+                                        log(sessionId, effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + altDirName + "/" + prefix + (prefix.equals("tr") ? "00.wav" : ".wav") +
+                                                        " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + altDirName + "/" + prefix + "/" + newPath.getFileName());
+                                    }
+                                } else {
+                                    // Process non-alt files
+                                    outputPath = (count == 1) ? targetDirPath.resolve(prefix + (prefix.equals("tr") ? "00.wav" : ".wav")) 
+                                                                : targetDirPath.resolve(prefix).resolve(prefix + formattedCount + ".wav");
+
+                                    // Handle moving of the first file for non-alt directories
+                                    if (count == 2) {
+                                        originalPath = targetDirPath.resolve(prefix + (prefix.equals("tr") ? "00.wav" : ".wav"));
+                                        newPath = targetDirPath.resolve(prefix).resolve(prefix + (prefix.equals("tr") ? "00.wav" : (prefix.length() > 6 ? "1.wav" : "01.wav")));
+                                        ensureDirectoryExists(targetDirPath.resolve(prefix));
+                                        Files.move(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                                        log(sessionId, "- Numbered and moved first file to subdirectory: ");
+                                        log(sessionId, effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + prefix + (prefix.equals("tr") ? "00.wav" : ".wav") +
+                                                                        " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + prefix + "/" + newPath.getFileName());
+                                    }
+                                }  // if (isAltDirectory)
+                            } else { // not optimize_checkbox. alt folders would only exist in a PROFFIE souce font. Optimize is assumed.
+                                outputPath = targetDirPath.resolve((count > 1 ? prefix + formattedCount : prefix) + ".wav");
 
                                 if (count == 2) {
                                     originalPath = targetDirPath.resolve(prefix + ".wav");
                                    newPath = targetDirPath.resolve(prefix + (prefix.length() > 6 ? "1.wav" : "01.wav"));
                                     Files.move(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                                    // FOR LOGGING PURPOSES
                                     // Update the map directly with the new numbered filename
                                     String newNumberedFilename = prefix + (prefix.length() > 6 ? "1.wav" : "01.wav");
                                     if (originalFilenames.containsKey(prefix + ".wav")) {
@@ -567,9 +734,12 @@ if (wasConverted) {
                                     }
                                    String logPathPrefix = is_chained_ ? shortTargetDir : effectiveSourceDirName + "_" + tgtBoardType.toString();
                                         log(sessionId, "- Numbered the first file: ");
+                                        // log is ok here. "Converted_to_PROFFIE" won't show in user logs if is_chained_
                                         log(sessionId, logPathPrefix + "/" + prefix + ".wav" + " -> " + logPathPrefix + "/" + newPath.getFileName());
                                 }
                             }
+
+
 
                         } else if (tgtBoardType == BoardType.VERSO && convertedBaseName.equals("font.wav")) {
                             String commonKey = "font";
@@ -578,99 +748,123 @@ if (wasConverted) {
 
                             if (currentCounter == 1) {
                                 originalPath = targetDirPath.resolve("font.wav");
-                                outputPath = originalPath.toString();
-                                copyFile(path, Paths.get(outputPath));
-                                log(sessionId, "Converted: " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                copyFile(path, originalPath);
+                                // log(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                logStringBuilder.append( "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
                             } else {
-                                log(sessionId, "Skipped additional 'font' file: " + fileName);
+                                log(sessionId, "- Skipped additional 'font' file: " + fileName);
                             }
                             return;
 
                         } else if (tgtBoardType == BoardType.XENO3) {
-                            originalPath = targetDirPath.resolve(prefix + " (" + count + ").wav");
-                            outputPath = originalPath.toString();
+                            outputPath = targetDirPath.resolve(prefix + " (" + count + ").wav");
 
+                        // Don't number first file if target = PROFFIE, it might be the only one of its kind
                         } else if (count > 1 || (tgtBoardType != BoardType.PROFFIE && count == 1)) {
-                            originalPath = targetDirPath.resolve(prefix + formattedCount + ".wav");
-                            outputPath = originalPath.toString();
+                            outputPath = targetDirPath.resolve(prefix + formattedCount + ".wav");
+
                         } else {
-                            originalPath = targetDirPath.resolve(prefix + ".wav");
-                            outputPath = originalPath.toString();
+                            outputPath = targetDirPath.resolve(prefix + ".wav");
                         }
+
+                    if (wasAudioConverted) {
+                        if (is_chained_ && second_loop_) {
+                            conversionLogService.sendLogToEmitter(sessionId, "Audio: Converting " + originalFilename + " to 44.1kHz, 16bit monaural .wav format.");
+                            logStringBuilder.append( "Audio: Converting " + originalFilename + " to 44.1kHz, 16bit monaural .wav format.");
+                        } else {
+                            conversionLogService.sendLogToEmitter(sessionId, "Audio: Converting " + fileName + " to 44.1kHz, 16bit monaural .wav format.");
+                            logStringBuilder.append( "Audio: Converting " + fileName + " to 44.1kHz, 16bit monaural .wav format.");
+                        }
+                    }
 
                         String proffieFilename = "";
 
                         // Store the original filename and its corresponding PROFFIE format filename
                         if (is_chained_ && !second_loop_) {
-                            proffieFilename = Paths.get(outputPath.toString()).getFileName().toString();
+                            proffieFilename = outputPath.getFileName().toString();
                             originalFilenames.put(proffieFilename, fileName);  // Map PROFFIE format name to original filename
                         }
+// Finally, we're doing something with the file. Here' we are copying it to the new target
+                        if (loggedFiles.contains(path.getFileName().toString())) return;
 
-                        if (!loggedFiles.contains(path.getFileName().toString())) {
-                            copyFile(path, Paths.get(outputPath));
-                            String targetPathLog;
+                        copyFile(path, outputPath);
 
-                            // Check if the conversion is chained and in the second loop
-                            if (is_chained_ && second_loop_) {
+                        String targetPathLog;
 
-                                // Retrieve the original filename using PROFFIE format name as key
-                                String originalFilename = originalFilenames.getOrDefault(path.getFileName().toString(), path.getFileName().toString());
-                                String finalTargetFilename;
+                        if (is_chained_ && second_loop_) {
 
-                                // Conditional logging based on target board type
-                                if (tgtBoardType == BoardType.VERSO) {
-                                    // Format for VERSO board
-                                    finalTargetFilename = prefix + formattedCount + ".wav";
-                                    targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
-                                    log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                } else if (tgtBoardType == BoardType.XENO3) {
-                                    // Format for XENO3 board
-                                    finalTargetFilename = prefix + " (" + count + ").wav";
-                                    targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
-                                    log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                } else {
-                                    // Default format for other boards
-                                    finalTargetFilename = prefix + formattedCount + ".wav";
-                                    targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
-                                    log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                }
+                            // For user logs: Retrieve the original filename using PROFFIE format name as key
+                            String finalTargetFilename;
+
+                            if (tgtBoardType == BoardType.XENO3) {
+                                // Format with parenthesis for when final target XENO3 board
+                                finalTargetFilename = prefix + " (" + count + ").wav";
+                                targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
+                                // log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
+                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
+                                logStringBuilder.append( "Converted: " + originalFilename + " -> " + targetPathLog);
+                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + targetPathLog);
                             } else {
-                                // Original logic for handling outputPath for non-chained or first loop conversions
-                                if ("PROFFIE".equals(realTargetBoard)) {
-                                    targetPathLog = count > 1 && optimizeCheckbox 
-                                        ? "DDC_PROFFIE/" + prefix + "/" + Paths.get(outputPath).getFileName().toString()
-                                        : "DDC_PROFFIE/" + Paths.get(outputPath).getFileName().toString();
+                                // target is not PROFFIE or XENO3 (so Loop 2 of chained)
+                                finalTargetFilename = prefix + formattedCount + ".wav";
+                                targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
+                                // log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
+                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
+                                logStringBuilder.append( "Converted: " + originalFilename + " -> " + targetPathLog);
+                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + targetPathLog);
+                            }
+                        } else {
+                            if ("PROFFIE".equals(realTargetBoard)) {
+                                if (isAltDirectory) {
+                                    // Special handling for logging alt files
+                                    // Get the relative path from the third element onwards and convert it to String for logging
+                                    String sourcePathLog = path.subpath(2, path.getNameCount()).toString();
+                                    String altTargetPath = altDirName + "/" 
+                                                           + (altCount > 1 ? prefix + "/" : "") 
+                                                           + outputPath.getFileName().toString();
+                                    targetPathLog = sourceDirName + "_" + realTargetBoard + "/" + altTargetPath;
+                                    log(sessionId, "Converted: " + sourcePathLog + " -> " + targetPathLog);
                                 } else {
-                                    targetPathLog = outputPath.replace(tempDirName + "/", "");
+                                    // Regular handling for non-alt files
+                                    targetPathLog = count > 1 && optimizeCheckbox 
+                                                    ? sourceDirName + "_" + realTargetBoard + "/" + prefix + "/" + outputPath.getFileName().toString()
+                                                    : sourceDirName + "_" + realTargetBoard + "/" + outputPath.getFileName().toString();
+                                    log(sessionId, "Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
                                 }
+                            } else if (srcBoardType == BoardType.PROFFIE) {
+                                // For all non-chained conversions when source is PROFFIE
+                                targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + outputPath.getFileName().toString();
                                 log(sessionId, "Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
+
+                            } else {
+                                // For Loop 1 of chained conversions when going to imtermediary PROFFIE
+                                targetPathLog = outputPath.toString().replace(tempDirName + "/", "");
+                                logger.info("Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
                             }
                         }
 
-
-
-
-
-
-
                     } else { // convertedBaseName = null
-                        logger.info("** Skipped wav file without mapping: " + fileName);
+                        logger.info("** convertedBaseName = null. Skipped wav file without mapping: " + fileName);
                     }
                 } catch (IOException e) {
-                    System.err.println("An IOException occurred: " + e.getMessage());
+                    logger.error(ANSI_RED + "An IOException occurred: " + e.getMessage() + ANSI_RESET);
                 }
-            });
+            });  // .forEach(path -> {
             zipTargetDir = targetDirPath.toString();
             if (!is_chained_) {
-                log(sessionId, "\n");
+                logger.info(" ");
+                conversionLogService.sendLogToEmitter(sessionId, "\n");
+                logStringBuilder.append("\n");
             } else if (!second_loop_) {
-                log(sessionId, "\nLoop 2:\n");
-            } else {
-                log(sessionId, "\n");
+                log(sessionId, "- - - - - - - - - - - - - - - - - - - - - - - -");
+                log(sessionId, "Loop 2:");
+                log(sessionId, "- - - - - - - - - - - - - - - - - - - - - - - -");
             }
 
-        } catch (IOException ex) {
-            System.err.println("An error occurred while reading the file: " + ex.getMessage());
+        } catch (IOException ex) {  //// Main sound conversion try block
+            logger.error(ANSI_RED + "An error occurred while reading the file: " + ex.getMessage() + ANSI_RESET);
         }
 
         // After processing all files, check for default INIs for Proffie
@@ -684,26 +878,106 @@ if (wasConverted) {
                         if (inisFile.exists()) {
                             try {
                                 Files.copy(inisFile.toPath(), targetDefaultFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                                log(sessionId, "Copied missing default file -> " + shortTargetDir + "/" + defaultFile);
+                                log(sessionId, "Added missing default file -> " + sourceDirName + "_" + realTargetBoard + "/" + defaultFile);
                             } catch (IOException e) {
                                 // e.printStackTrace();
-                                System.err.println("Error while copying file: " + defaultFile);
+                                logger.error(ANSI_RED + "Error while copying file: " + defaultFile + ANSI_RESET);
 
                             }
                         }
                     }
                 }
             }
-            log(sessionId, "------------- | **** MTFBWY **** | -------------");
-        } else if (second_loop_) {
-        log(sessionId, "------------- | **** MTFBWY **** | -------------");
+            logger.info(" ");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            logStringBuilder.append("\n");
+            logger.info( ANSI_YELLOW + "------------------ | **** MTFBWY **** | ------------------" + ANSI_RESET);
+            conversionLogService.sendLogToEmitter(sessionId, "------------------ | **** MTFBWY **** | ------------------");
+            logStringBuilder.append( "------------------ | **** MTFBWY **** | ------------------");
+            log(sessionId, " ");
+
+            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the converted font folder. ****");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            Files.writeString(Paths.get(zipTargetDir, "_Conversion_Log.txt"), logStringBuilder.toString());
+       } else if (second_loop_) {
+            logger.info(" ");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            logStringBuilder.append("\n");
+            logger.info( ANSI_YELLOW + "------------------ | **** MTFBWY **** | ------------------" + ANSI_RESET);
+            conversionLogService.sendLogToEmitter(sessionId, "------------------ | **** MTFBWY **** | ------------------");
+            logStringBuilder.append( "------------------ | **** MTFBWY **** | ------------------");
+            log(sessionId, " ");
+
+            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the converted font folder. ****");
+            conversionLogService.sendLogToEmitter(sessionId, "\n");
+            Files.writeString(Paths.get(zipTargetDir, "_Conversion_Log.txt"), logStringBuilder.toString());        }
+    }  // convertSounds()
+
+    public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath) throws IOException {
+        String filename = inputFile.getName();
+        // Check if the file is a WAV file
+        if (!filename.toLowerCase().endsWith(".wav") && !filename.toLowerCase().endsWith(".mp3")) {
+            // Copy non-audio files to the target directory as is
+            logger.info("Audio Format Check: " + inputFile.getName() + " is not an audio file. Moving along.");
+            logStringBuilder.append(inputFile.getName() + " is not an audio file. Moving along.");
+            Path newTargetPath = tempDirPath.resolve(filename);
+            Files.copy(inputFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+            return;
+        }
+        // Process the WAV file
+        try {
+            logger.info( "Audio Format Check: " + inputFile.getName());
+            logStringBuilder.append( "Audio Format Check: " + inputFile.getName());
+            AudioConverter.convertToWavIfNeeded(inputFile);
+        } catch (UnsupportedAudioFileException e) {
+            logger.error(ANSI_RED + "Unsupported audio file format: " + inputFile.getName(), e + ANSI_RESET);
+            // Handle the exception as needed
         }
     }
+
+
+    public Path zipAudioFiles(Path sourceDirPath, String zipFileName) throws IOException {
+        Path zipPath = sourceDirPath.resolve(zipFileName + ".zip");
+
+        try (FileSystem zipFs = FileSystems.newFileSystem(zipPath, Map.of("create", "true"))) {
+            Files.walk(sourceDirPath)
+                .filter(Files::isRegularFile)
+                .filter(path -> !path.equals(zipPath)) // Exclude the zip file itself
+                .forEach(sourceFilePath -> {
+                    try {
+                        Path relativePathInZip = sourceDirPath.relativize(sourceFilePath);
+                        Path pathInZip = zipFs.getPath("/", relativePathInZip.toString());
+                        Files.createDirectories(pathInZip.getParent());
+                        Files.copy(sourceFilePath, pathInZip, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        logger.error(ANSI_RED + "Error adding file to ZIP: " + sourceFilePath, e + ANSI_RESET);
+                    }
+                });
+        } catch (IOException e) {
+            logger.error(ANSI_RED + "Error creating ZIP file: " + zipPath, e + ANSI_RESET);
+            throw e;
+        }
+
+        return zipPath;
+    }
+
 
     public class MutableInt {
         public int value;
         public MutableInt(int value) {
             this.value = value;
+        }
+    }
+
+
+    public void resetCleanupFlag() {
+        initialCleanupDone = false;
+    }
+
+    public void performInitialCleanup(String tempDirName) {
+        if (!initialCleanupDone) {
+            cleanupTemporaryDirectory(tempDirName);
+            initialCleanupDone = true;
         }
     }
 
@@ -719,16 +993,15 @@ if (wasConverted) {
                             Files.deleteIfExists(path);
                         } catch (IOException e) {
                             // Handle the exception, e.g., logging it.
-                            e.printStackTrace();
+                            logger.error(ANSI_RED + "Error cleaning up temporary directory: " + tempDirName, e + ANSI_RESET);
                         }
                     });
             }
 
-            // Deleting the generated zip file.
 
         } catch (IOException e) {
             // Handle the exception, e.g., logging it.
-            e.printStackTrace();
+            logger.error(ANSI_RED + "Error cleaning up temporary directory: " + tempDirName, e + ANSI_RESET);
         }
     }
 
@@ -745,8 +1018,6 @@ if (wasConverted) {
             realTargetBoard = targetBoard;
         if (is_chained_) {
             // Do the chained conversion;
-            // convert to PROFFIE first and save it in /temporaryDirectory/Converted_to_PROFFIE.            logger.info("** realTargetBoard: " + realTargetBoard);
-// logger.info("((((((((((((( chainConvertSoundFont Starting Round 1 chained, sending  sourceDirName as " + sourceDirName);
             convertSounds(sessionId, srcBoardType, BoardType.PROFFIE, tempDirName, false, sourceDirName);
             second_loop_ = !second_loop_;
 
@@ -756,11 +1027,7 @@ if (wasConverted) {
             List<Path> proffieFiles = Files.walk(tempProffieDir)
                                            .filter(Files::isRegularFile)
                                            .collect(Collectors.toList());
-            // Clear and Set Up Log for Second Conversion
-            // logStringBuilder.setLength(0);  // not needed because we don't log during first loop anyway, and this just wipes out the header???
             String proffieDirName = proffieFiles.get(0).getParent().getFileName().toString();
-// logger.info("((((((((((((( chainConvertSoundFont Starting second_loop_. Stashing originalSourceDirName = " + originalSourceDirName);
-// logger.info("((((((((((((( sending  sourceDirName as " + proffieDirName);
             // Second Conversion Loop: PROFFIE to Final Target
             convertSounds(sessionId, BoardType.PROFFIE, tgtBoardType, tempDirName, false, proffieDirName);
             second_loop_ = !second_loop_;
@@ -770,23 +1037,23 @@ if (wasConverted) {
         }
     }
 
-    public void removeOriginalDirectory(String originalDirName, String tempDirName) {
-        Path originalDir = Paths.get(tempDirName, originalDirName);
-        try {
-            Files.walk(originalDir)
-                 .sorted(Comparator.reverseOrder())  // Important to delete child before parent
-                 .forEach(path -> {
-                     try {
-                         Files.deleteIfExists(path);
-                     } catch (IOException e) {
-                         e.printStackTrace();
-                     }
-                 });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        logger.info("** Completed removal of Original directory: " + originalDir.toString());
+public void removeOriginalDirectory(Path directoryToDelete) {
+    try {
+        Files.walk(directoryToDelete)
+             .sorted(Comparator.reverseOrder())
+             .forEach(path -> {
+                 try {
+                     Files.deleteIfExists(path);
+                 } catch (IOException e) {
+                     logger.error(ANSI_RED + "Failed to delete path: " + path + " - " + e.getMessage() + ANSI_RESET);
+                 }
+             });
+        logger.info("** Completed removal of directory: " + directoryToDelete);
+    } catch (IOException e) {
+        logger.error(ANSI_RED + "Failed to remove directory: " + directoryToDelete + " - " + e.getMessage() + ANSI_RESET);
     }
+}
+
 
     public Path zipConvertedFiles(String sessionId, String tempDirName, String sourceBoard, String targetBoard) throws IOException {
         String targetSubDirPath = tempDirName + "/Converted_to_" + targetBoard;
@@ -794,39 +1061,29 @@ if (wasConverted) {
 
         // Logging the structure
         Path zipSourceDirPath = Paths.get(targetSubDirPath);
-        try {
-            conversionLogService.sendLogToEmitter(sessionId, "\n");
-            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the converted font folder. ****");
-            conversionLogService.sendLogToEmitter(sessionId, "\n");
-            log(sessionId, "\n");
-            Files.writeString(Paths.get(zipTargetDir, "_Conversion_Log.txt"), logStringBuilder.toString());
-        } catch (IOException e) {
-            System.err.println("Failed to write log: " + e.getMessage());
-        // logger.info(p.toString());
-        }
-        logger.info("** Zipping files from directory: " + zipSourceDirPath);
+
+        logger.info("** Zipping " + originalSourceDirName + "_" + targetBoard + " from directory: " + zipSourceDirPath);
 
         try (FileSystem zipFs = FileSystems.newFileSystem(zipPath, Map.of("create", "true"))) {
             Files.walk(zipSourceDirPath)
                 .filter(Files::isRegularFile)
                 .forEach(sourceFilePath -> {
                 try {
-                        Path relativePathInZip = zipSourceDirPath.relativize(sourceFilePath);
-                        String modifiedPathInZip = relativePathInZip.toString().replaceFirst(
-                            "^([^/]+)", "$1_" + targetBoard);
-                        Path pathInZip = zipFs.getPath("/", modifiedPathInZip);
-                        Files.createDirectories(pathInZip.getParent());
+                    Path relativePathInZip = zipSourceDirPath.relativize(sourceFilePath);
+                    String modifiedPathInZip = relativePathInZip.toString().replaceFirst(
+                        "^([^/]+)", "$1_" + targetBoard);
+                    Path pathInZip = zipFs.getPath("/", modifiedPathInZip);
+                    Files.createDirectories(pathInZip.getParent());
 
-                        Files.copy(sourceFilePath, pathInZip, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
+                    Files.copy(sourceFilePath, pathInZip, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    logger.error(ANSI_RED + "Error zipping file: " + sourceFilePath + ANSI_RESET);
                     e.printStackTrace();
-                        System.err.println("Error zipping file: " + sourceFilePath);
                 }
             });
 
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("Error encountered during zip operation: " + e.getMessage());
+            throw new IOException(ANSI_RED + "Error encountered during zip operation: " + e.getMessage() + ANSI_RESET);
         }
         logger.info("** ZIP file created at: " + zipPath);
         return zipPath;

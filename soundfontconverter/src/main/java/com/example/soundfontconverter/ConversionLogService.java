@@ -20,20 +20,20 @@ public void addEmitter(String sessionId, SseEmitter emitter) {
     emitter.onCompletion(() -> removeAndCompleteEmitter(sessionId));
     emitter.onTimeout(() -> removeAndCompleteEmitter(sessionId));
     emitters.put(sessionId, emitter);
-    logger.info("Emitter added for session: {}", sessionId);
+    logger.debug("\nEmitter added for session: {}", sessionId);
 }
 
 private void removeAndCompleteEmitter(String sessionId) {
     SseEmitter emitter = emitters.remove(sessionId);
     if (emitter != null) {
         emitter.complete();
-        logger.info("Emitter completed and removed for session: {}", sessionId);
+        logger.debug("Emitter completed and removed for session: {}", sessionId);
     }
 }
 
     public void removeEmitter(String sessionId) {
         emitters.remove(sessionId);
-        logger.info("Emitter removed for session: {}", sessionId);
+        logger.debug("Emitter removed for session: {}", sessionId);
     }
 
 private void safelySendMessage(String sessionId, SseEmitter.SseEventBuilder message) {
