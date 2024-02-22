@@ -7,11 +7,25 @@
     <link rel="icon" type="image/png" href="/favicon.png">
 </head>
     <style>
+@keyframes backgroundColorChange {
+  0% { background-color: #340000; }
+  50% { background-color: #010133; }
+  100% { background-color: #340000; }
+}
 
+body {
+  animation-name: backgroundColorChange;
+  animation-duration: 60s;
+  animation-iteration-count: infinite;
+}
 body, html {
     background-color: #202020;
     color: #FFFFFF;
     font-family: Arial, sans-serif;
+    height: 100%; /* Full height of the viewport */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling on the body */
 }
 input, select, button {
     background-color: #555;
@@ -32,45 +46,27 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
     background: linear-gradient(to bottom, #FFFFFF, #00FF00);
 }
-
-/* Style for the floating window */
-.floating-window {
-    display: none; /* Initially hidden */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    z-index: 100;
-    transition: opacity 0.5s;
-    opacity: 0; /* Initially transparent */
+.content-container {
+    overflow-y: auto; /* Enable vertical scrolling */
+    height: calc(100% - 60px); /* Adjust this value based on the actual height of your footer */
+    margin-left: 20px;
 }
-
-/* Visible and faded-in state */
-.floating-window.visible {
-    display: block;
-    opacity: 1;
+/* Make page elements like buttons and whitespace non-selectable with drag box */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-
-/* Style for the close button */
-.close-button {
-    float: right;
-    border: none;
-    background-color: transparent;
-    color: red;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* Additional styles as needed... */
 
 .uploadProgressBar {
-    width: 42%;
+    width: 49%;
 }
 .processProgressBar {
-    width: 42%;
+    width: 49%;
+}
+.audioProcessProgressBar {
+    width: 95%;
 }
 button:active,
 input[type="button"]:active,
@@ -89,32 +85,171 @@ input[type="file"]:hover + label {
 h1 {
   text-align: center;
 }
+.audio-only-container {
+    display: flex;
+    align-items: center;
+}
+.audio-only-button {
+    height: 35px;
+    width: 179px;
+    font-size: 1em;
+    border-radius: 10px;
+    border: 1px solid #00AA00;
+}
+.audio-only-container p {
+    margin-right: 10px; /* Adjust as needed for spacing */
+}
+.convert-audio-button {
+    background-color: red;
+    height: 40px;
+    width: 190px;
+    font-size: x-large;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.convert-audio-button.available {
+    background-color: forestgreen;
+}
+.audio-only-window {
+    visibility: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #202020;
+    color: #FFFFFF;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 100;
+    box-shadow: 6px 10px 10px rgba(0, 0, 0, 0.9);
+    transition: opacity 0.25s ease-in-out;
+    opacity: 0; /* Initially transparent */
+    width: 665px; /* Fixed width */
+    height: 465px; /* Fixed height */
+    overflow: auto; /* Add scroll for overflow content */
+}
+#audioOnlyWindow p:nth-of-type(2) {
+    height: 45px; /* Set a fixed height */
+    overflow: hidden; /* Hide overflow text */
+}
+/* Visible and faded-in state */
+.audio-only-window.visible {
+    visibility: visible;
+    opacity: 1;
+/*    transition-delay: 0s;*/
+}
+.centered-header {
+    text-align: center;
+}
+.audio-file-input-container {
+    display: flex;
+}
+.audio-file-input-button {
+    background-color: forestgreen;
+    height: 40px;
+    width: 140px;
+    font-size: large;
+    border-radius: 10px;
+/*    padding: 10px;*/
+/*    background-color: #4CAF50;*/
+/*    color: white;*/
+/*    border: none;*/
+    border-radius: 10px;
+    cursor: pointer;
+}
+/*.audio-file-input-button.available {
+    background-color: forestgreen;
+}*/
+.audio-file-info-display {
+    min-width: 220px;
+    max-width: none%;
+    white-space: pre;
+    text-align: center; /* Default center alignment */
+    margin-left: 10px;
+    background-color: #555;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px transparent;
+/*    cursor: not-allowed;*/
+}
+.audio-file-info-display:hover {
+    box-shadow: 0 0 0 1px transparent !important;
+}
+.audio-file-info-display:active {
+    background-color: #555 !important;
+}
+.audio-file-info-display.files-chosen {
+    text-align: left;
+}
 
+
+/* New class for the button when it's clicked */
+.convert-audio-button.clicked {
+    background-color: dodgerblue;
+}
+/* Style for the close button */
+.close-button {
+    float: right;
+    border: none;
+    background-color: transparent;
+    color: red;
+    font-size: 20px;
+    cursor: pointer;
+}
 .optimize-checkbox, .optimize-label {
     display: none;
 }
 .optimize-checkbox.show, .optimize-label.show {
     display: inline-block;
 }
-.optimize-button.active, .download-button.active {
-    background-color: dodgerblue;
-    color: white;
+
+.multiple-fonts-checkbox-container {
+    display: flex;
+    align-items: center;
 }
-.download-button {
-    display: none;
-    background-color: yellow;
-    color: black;
-    padding: 10px;
-    border-width: thick;
+.file-input-container {
+    display: flex;
+}
+.file-input-button {
+    background-color: red;
+    height: 40px;
+    width: 140px;
+    font-size: large;
     border-radius: 10px;
-    width: 275px; /* Fixed width */
-    font-size: 18px; /* Larger font size */
-    text-align: center; /* Center the text */
+/*    padding: 10px;*/
+/*    background-color: #4CAF50;*/
+/*    color: white;*/
+/*    border: none;*/
+    border-radius: 10px;
+    cursor: pointer;
+}
+.file-input-button.available {
+    background-color: forestgreen;
+}
+.file-info-display {
+    min-width: 220px;
+    max-width: none%;
+    white-space: pre;
+    text-align: center; /* Default center alignment */
+    margin-left: 10px;
+    background-color: #555;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px transparent;
+/*    cursor: not-allowed;*/
+}
+.file-info-display:hover {
+    box-shadow: 0 0 0 1px transparent !important;
+}
+.file-info-display:active {
+    background-color: #555 !important;
+}
+.file-info-display.files-chosen {
+    text-align: left;
 }
 
-.download-button.show {
-    display: block;
-}
 .convert-button {
     background-color: red;
     height: 40px;
@@ -126,12 +261,32 @@ h1 {
 .convert-button.available {
     background-color: forestgreen;
 }
+
 .log-stream {
     height: 250px;
-    width: 42%;
+    width: 97%;
     font-size: small;
     border: 1px solid #00AA00;
     overflow-y: scroll
+}
+
+.download-button {
+    display: none;
+    background-color: yellow;
+    color: black;
+    padding: 10px;
+    border-width: thick;
+    border-radius: 10px;
+    width: 275px; /* Fixed width */
+    font-size: 18px; /* Larger font size */
+    text-align: center; /* Center the text */
+}
+.download-button.show {
+    display: block;
+}
+.download-button.active {
+    background-color: dodgerblue;
+    color: white;
 }
 
 /* Footer */
@@ -141,7 +296,7 @@ h1 {
     padding-left: 10px;
 }
 .footer-container {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -180,18 +335,41 @@ h1 {
 }
     </style>
 <body>
-    <h1>Welcome to the Sound Font Naming Converter 3.1.0</h1>
+<div class="content-container">
+    <h1>Welcome to the Sound Font Naming Converter 4.0.0</h1>
 
-<!-- Button to show the floating window -->
-<!-- <button id="infoButton">What is this?</button> -->
+    <form id="audioForm" action="/audioConvert" method="post" enctype="multipart/form-data">
 
-<!-- Floating window (initially hidden) -->
-<!-- <div id="infoWindow" class="floating-window"> -->
-    <!-- Red X button -->    
-    <!-- <button id="closeButton" class="close-button">&#10006;</button> -->
-    <!-- <p>Popup Info goes here</p> -->
-    <!-- Add more content here as needed -->
-<!-- </div> -->
+        <!-- Button to show the floating window -->
+        <div class="audio-only-container">
+            <p>NEW -></p>
+            <button type="button" id="audioOnlyButton" class="audio-only-button">Convert Audio Only</button>
+        </div>
+        <!-- Floating window (initially hidden) -->
+        <div id="audioOnlyWindow" class="audio-only-window">
+            <!-- Red X button     -->
+            <button id="closeButton" class="close-button">&#10006;</button>
+                <h2 class="centered-header">Convert font to<br>44.1khz 16 bit monaural PCM WAV files.</h2>
+                <br>
+                <p>Add the font folder you wish to convert.</p>
+                <div id="audioFileInputContainer" class="audio-file-input-container">
+                    <div>
+                        <input type="file" id="audioFiles" name="audioFiles" webkitdirectory directory multiple style="display:none;">
+                        <button id="audioFileInputButton" class="audio-file-input-button" title="Upload files">Upload Files</button>
+                    </div>
+                    <!-- <div id="fileInfoDisplay" class="file-info-display"> -->
+                    <input type="button" id="audioFileInfoDisplay" class="audio-file-info-display" value="No files chosen" title="Uploaded files status." />
+                </div>
+                <br>
+                <p>Click "Convert Audio" and then Download the resulting zip file to your computer. Files will be available for 3 minutes.</p>
+                <input type="submit" value="Convert Audio" id="convertAudioButton" class="convert-audio-button" title="Convert selected font audio to 44.1khz 16 bit monaural PCM WAV files.">
+                <div>
+                <!-- audioProcessProgressBar and its status message -->
+                    <p>Progress....</p>
+                    <progress id="audioProcessProgressBar" class="audioProcessProgressBar" max="100" value="0" ></progress>
+                </div>
+        </div>
+    </form>
 
     <!-- Message display for feedback -->
     <div th:if="${message}" th:text="${message}"></div>
@@ -221,25 +399,33 @@ h1 {
 
         <label for="optimizeCheckbox" class="optimize-label">Optimize for FAT32 performance? You should ;)</label>
         <br>
-        <br>
-        <br>
-<!--         <div>
-            <button id="proffieOptimizeButton" type="button" class="optimize-button" onclick="proffieOptimizer()"
-            title="Reorganizes an existing Proffie font for best performance. Just choose a source folder and the process is automated. Save the presented .zip file."> Proffie Easy Optimizer </button>
-        </div> -->
 
         <br>
 
         <p>2. Add the font folder you wish to convert.</p>
-
-        <!-- Directory input -->
-        <div>
-            <input type="file" id="files" name="files" webkitdirectory directory multiple>
+        <!-- Checkbox for selecting multiple fonts -->
+        <div id="multipleFontsCheckboxContainer" class="multiple-fonts-checkbox-container">
+            <p>NEW -></p>
+            <input type="checkbox" id="multipleFontsCheckbox" name="multipleFontsCheckbox">
+            <label for="multipleFontsCheckbox">Multiple Fonts</label>
         </div>
         <br>
 
-        <p>3. Click "Convert" and then Download the resulting zip file to your computer. Files will be available for 3 minutes.</p>
-        <!-- <p>   Files will be available for 3 minutes.</p> -->
+
+        <div id="fileInputContainer" class="file-input-container">
+            <!-- Directory input -->
+            <div>
+                <input type="file" id="files" name="files" webkitdirectory directory multiple style="display:none;">
+                <button id="fileInputButton" class="file-input-button" title="Upload files">Upload Files</button>
+            </div>
+
+            <!-- <div id="fileInfoDisplay" class="file-info-display"> -->
+            <input type="button" id="fileInfoDisplay" class="file-info-display" value="No files chosen" title="Uploaded files status." />
+        </div>
+
+
+        <br>
+        <p>3. Click "Convert" and then Download the resulting zip file to your computer.<br>&nbsp;&nbsp;&nbsp;&nbsp;Files will be available for 3 minutes.</p>
 
         <!-- Convert button -->
         <input type="submit" value="Convert" id="convertInput" class="convert-button" title="Convert selected font folder." >
@@ -253,17 +439,28 @@ h1 {
 
  <!-- Live log window -->
 <div id="conversionLogStream" class="log-stream">
-    <p>Automated cross conversion of saber sound font naming conventions between 4 popular controller boards: Proffieboard, CFX, Golden Harvest 3, and Xenopixel 3.</p>
+    <p>Automated cross conversion of saber sound font naming conventions between popular controller boards:<br>
+    Proffieboard, CFX, Golden Harvest 3, and Xenopixel 3.</p>
     <p>No need to manually rename a font (or many fonts) so it can be used on a different platform. Just click and done.</p>
-    <p>Includes a Proffie to Proffie feature to organize and rename a ProffieOS sound font for the best performance when used on FAT32 formatted media.</p>
-    <p>Usage: Super easy. Barely an inconvenience.</p>
+    <p>Automatic audio file conversion if the source files are not in optimal 44.1kHz, 16 bit, monaural PCM WAV file format.<br>
+        NEW!<br>
+        - Support for .mp3 files. They will be converted to ideal .wav format as well.<br>
+        - Stand-alone audio converter without renaming or restructuring anything with the "Convert Audio Only" button up top.<br>
+          Download starts automatically when finished.<br>
+        - "Multiple Fonts" checkbox allows for selecting a folder of font folders to be processed.<br>
+          This applies automatically to Audio Only conversions.</p>
+
+    <p>Proffie to Proffie conversions organize and rename a ProffieOS sound font for the best performance when used on FAT32 formatted media.<br>
+        The Optimize checkbox is also on by default for other boards to Proffie conversions, but can be turned off. (but why?)</p>
+
+    <p>Usage: Super easy. Barely an inconvenience. (Scroll down)</p>
     <ul>
         <li>Choose a source and target sound board format.</li>
         <li>Choose a font folder from your local computer.</li>
         <li>Click the Convert button.</li>
         <li>Click the Download button to retrieve a zip file containing the newly named font files.</li>
     </ul>
-    <p>Donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>
+    <p>If this tool helped you, donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>
 </div>
 
 
@@ -298,6 +495,8 @@ h1 {
 
         <!-- Download button (Hidden initially) -->
         <input type="button" id="downloadButton" class="download-button" value="Download Converted Files" title="Download converted font." />
+
+</div>  
         <div class="footer-container">
           <span class="footer-title">NoSloppy - 2023</span>
 
@@ -319,29 +518,58 @@ h1 {
         </div>
     </form>
 <script>
-    // let optimize_active_ = true;
+    let isSanitary_ = false;
     let downloadReady_ = false;
     let sourceDirName = "";
-    // let confirmAction;
     let showed_popup_ = false;
     let server_full_ = false;
-    // let disallow_conversion_ = false;
+    let downloadTimeoutId = null;
+    let processIntervalId = null;
     let processProgressValue = 0;
+    let audioProcessIntervalId = null;
+    let audioProcessProgressValue = 0;
+    let both_proffie_ = false;
+    let shouldOpenFileDialog = false;
     const sourceBoard = document.getElementById('sourceBoard');
     const targetBoard = document.getElementById('targetBoard');
-    // const proffieOptimizeButton = document.getElementById('proffieOptimizeButton');
+
     const fileInput = document.getElementById('files');
+    const fileInputButton = document.getElementById('fileInputButton');
+    const fileInfoDisplay = document.getElementById('fileInfoDisplay');
     let selectedFiles = fileInput.files;
+
+    const audioFileInput = document.getElementById('audioFiles');
+    const audioFileInputButton = document.getElementById('audioFileInputButton');
+    const audioFileInfoDisplay = document.getElementById('audioFileInfoDisplay');
+    let audioSelectedFiles = audioFileInput.files;
+    const closeButton = document.getElementById('closeButton');
+
     const optimizeCheckbox = document.getElementById('optimizeCheckbox');
     const downloadButton = document.getElementById('downloadButton');
     const uploadProgressBar = document.getElementById('uploadProgressBar');
     const processProgressBar = document.getElementById('processProgressBar');
     const processProgressStatus = document.getElementById('processProgressStatus');
+    const audioProcessProgressBar = document.getElementById('audioProcessProgressBar');
+    const audioProcessProgressStatus = document.getElementById('audioProcessProgressStatus');
+
+    const multipleFontsCheckbox = document.getElementById('multipleFontsCheckbox');
+    const multipleFontsCheckboxContainer = document.getElementById('multipleFontsCheckboxContainer');
+    let isMultipleFonts = false;
+    let fontFolders = new Map();
+    let dirIdentifier = '';
+
     const form = document.getElementById('uploadForm');
+    const audioForm = document.getElementById('audioForm');
+
     const convertButton = document.getElementById('convertInput');
+    const convertAudioButton = document.getElementById('convertAudioButton');
+    const audioOnlyButton = document.getElementById('audioOnlyButton');
+
     var optimizeLabel = document.querySelector('label[for="optimizeCheckbox"]');
 
     document.addEventListener('DOMContentLoaded', function() {
+        closeButton.click();
+        fileInputButton.classList.remove('available');
         console.log('DOM fully loaded and parsed');
     });
     const updateTitles = () => {
@@ -352,33 +580,47 @@ h1 {
                 });
             } else {
                 elementsToUpdate.forEach((element) => {
-                  element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media. This feature is ON by default. You need to uncheck it to bypass.");
+                  element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media.\nThis feature is ON by default.\nYou need to uncheck it to bypass.");
                 });
             }
     };
 
-optimizeCheckbox.addEventListener('change', function() {
-//    resetMessage(targetBoard);
-});
+    audioOnlyButton.setAttribute("title", "Convert font to 44.1khz 16 bit monaural PCM WAV files.\nNo renaming of files.");
+    multipleFontsCheckboxContainer.setAttribute("title", "Multiple Fonts ON will process a folder containing multiple font folders.\nUnderstand that every immediate subfolder of the one you submit will be processed as an individual font.\nIf a folder containing multiple font folders is submitted and this checkbox is left OFF, all fonts within will be converged into one über font.");
+
+    optimizeCheckbox.addEventListener('change', function() {
+    //    resetMessage(targetBoard);
+    });
 
     // Initialize titles on page load
      updateTitles(targetBoard);
 
-    // document.getElementById('infoButton').addEventListener('click', function() {
-    //     document.getElementById('infoWindow').classList.add('visible');
-    // });
-
-    // document.getElementById('closeButton').addEventListener('click', function() {
-    //     document.getElementById('infoWindow').classList.remove('visible');
-    // });
-
-    sourceBoard.addEventListener('change', function() {
-        convertButton.classList.remove('available');
-        fileInput.value = '';
-        resetMessage(targetBoard);
+    audioOnlyButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        document.getElementById('audioOnlyWindow').classList.add('visible');
     });
 
-    targetBoard.addEventListener('change', function() {
+
+    sourceBoard.addEventListener('change', function(event) {
+        convertButton.classList.remove('available');
+        fileInput.value = '';
+        fileInfoDisplay.value = "No files chosen";
+        fileInfoDisplay.classList.remove('files-chosen');
+        resetMessage(targetBoard);
+        checkIfBoardsAreSame();
+        if (targetBoard.value === "PROFFIE") {
+            if (sourceBoard.value === "PROFFIE") {
+                optimizeCheckbox.checked = true;
+                optimizeCheckbox.disabled = true;
+                updateTitles();
+            } else {
+                optimizeCheckbox.disabled = false;
+            }
+        }
+    });
+
+
+    targetBoard.addEventListener('change', function(event) {
         resetMessage(targetBoard);
         checkIfBoardsAreSame();
         if (targetBoard.value === "PROFFIE") {
@@ -393,54 +635,65 @@ optimizeCheckbox.addEventListener('change', function() {
         }
     });
 
-    function checkIfBoardsAreSame() {
-console.log("((( checkIfBoardsAreSame() called\nsourceBoard.value = " + sourceBoard.value + "\ntargetBoard.value = " + targetBoard.value + "\nshowed_popup_ = " + showed_popup_ + "\nselectedFiles.length = " + selectedFiles.length + "\n convertButton available = " + convertButton.classList.contains('available'));
+function checkIfBoardsAreSame() {
+    shouldOpenFileDialog = !(sourceBoard.value === targetBoard.value && sourceBoard.value !== "PROFFIE");
+console.log("sourceBoard.value = ", sourceBoard.value, " - targetBoard.value = ", targetBoard.value);
 
-        if (sourceBoard.value === "CFX" && (targetBoard.value === "PROFFIE" || targetBoard.value === "GH3")) {
-            if (targetBoard.value === "PROFFIE" && !showed_popup_) {
+    if (sourceBoard.value === "CFX" && targetBoard.value === "PROFFIE") {
+        if (!showed_popup_) {
+            setTimeout(() => {
                 alert("Conversion from CFX to PROFFIE is not required.\nProffieboards already natively support Plecter fonts.\nHowever, you can continue anyway.");
+            }, 100);
                 showed_popup_ = true;
-console.log("((( CFX to PROFFIE is not required - showed_popup_ = " + showed_popup_);
+        }
+        shouldOpenFileDialog = true;
+console.log("selectedFiles.length = ? ", selectedFiles.length);
+        convertButton.classList[selectedFiles.length != 0 ? 'add' : 'remove']('available');
 
-            } else if (targetBoard.value === "GH3") {
+   } else if (sourceBoard.value === "CFX" && targetBoard.value === "GH3") {
+            setTimeout(() => {
                 window.alert("Conversion from CFX to GH3 is not required.\nGH3 already natively supports Plecter fonts.");
-                convertButton.classList.remove('available');
-console.log("((( CFX to GH3 is not required - convertButton available = " + convertButton.classList.contains('available'));
-                fileInput.value = '';
-                return;
+            }, 100);
+        convertButton.classList.remove('available');
+        // fileInput.value = '';
+        shouldOpenFileDialog = false;
 
-            }
         } else if (sourceBoard.value === targetBoard.value) {
             if (sourceBoard.value === "PROFFIE") {
+                both_proffie_ = true;
                 optimizeCheckbox.checked = true;
                 optimizeCheckbox.disabled = true;
                 updateTitles();
-                if (!showed_popup_) alert("You've chosen Proffie to Proffie, which optimizes the folder structure for best performance when using a FAT32 file system (which is what the SD card uses.)");
+                if (!showed_popup_) {
+            setTimeout(() => {
+                    alert("You've chosen Proffie to Proffie, which optimizes the folder structure for best performance when using a FAT32 file system (which is what the SD card uses.)");
+            }, 100);
+                }
                 showed_popup_ = true;
-console.log("((( You've chosen Proffie to Proffie - showed_popup_ = " + showed_popup_);
-           //     fileInput.click();
-            } else {
-                optimizeCheckbox.disabled = false;
-                updateTitles();
-                window.alert("Conversion from " + sourceBoard.value + " to " + targetBoard.value + " is unnecessary.\nPlease choose a different conversion.");
-                convertButton.classList.remove('available');
-console.log("((( Same board and invalid - convertButton available = " + convertButton.classList.contains('available'));
-                fileInput.value = '';
-                return;
-            }
-        } else if (targetBoard.value != "PROFFIE") {
-            optimizeCheckbox.checked = false;
-        }
-        if (selectedFiles.length != 0) {
+            shouldOpenFileDialog = true; // Allow file dialog when both are PROFFIE
             convertButton.classList.add('available');
-console.log("((( Last check in checkIfBoardsAreSame() - selectedFiles.length != 0, \nconvertButton available = " + convertButton.classList.contains('available'));
+            } else {
+                both_proffie_ = false;
+                optimizeCheckbox.disabled = false;
+                updateTitles();// in background to follow not disabled
+            setTimeout(() => {
+                window.alert("Conversion from " + sourceBoard.value + " to " + targetBoard.value + " is unnecessary.\nPlease choose a different conversion.");
+            }, 100);
+                convertButton.classList.remove('available');
+                shouldOpenFileDialog = false;
+                // fileInput.value = '';
+                // return;
+            }
+        } else {
+            if (targetBoard.value != "PROFFIE") optimizeCheckbox.checked = false;
+            shouldOpenFileDialog = true; // Allow file dialog when target board is not PROFFIE
+            // fileInputButton.classList.add('available');
+            // convertButton.classList[selectedFiles.length != 0 ? 'add' : 'remove']('available');
         }
-console.log("((( EXITING checkIfBoardsAreSame() \nsourceBoard.value = " + sourceBoard.value + "\ntargetBoard.value = " + targetBoard.value + "\nshowed_popup_ = " + showed_popup_ + "\nselectedFiles.length = " + selectedFiles.length + "\n convertButton available = " + convertButton.classList.contains('available'));
-
+        convertButton.classList[(shouldOpenFileDialog && isSanitary_ && selectedFiles.length != 0) != 0 ? 'add' : 'remove']('available');
+        //convertButton.classList.remove('available');
+        fileInputButton.classList[shouldOpenFileDialog ? 'add' : 'remove']('available');
     }
-
-    function checkAgainIfBoardsAreSame() {
-}
 
    function showOptimizeUI() {
         optimizeCheckbox.classList.add('show');
@@ -452,86 +705,263 @@ console.log("((( EXITING checkIfBoardsAreSame() \nsourceBoard.value = " + source
         optimizeLabel.classList.remove('show');
     }
 
-    // Choose Files button
-    fileInput.addEventListener('mousedown', function(event) {
-        checkIfBoardsAreSame(event);
-    });
 
-    // Choose Files input (open files dialog)
-    fileInput.addEventListener('change', function() {
-        selectedFiles = fileInput.files;
-        convertButton.classList.add('available');
-    });
-
-
-    // Convert "Button"
-    form.addEventListener('submit', function(event) {
-        console.log("Convert Button: Form is being submitted. optimizeCheckbox.checked = ", optimizeCheckbox.checked, "selectedFiles.length = ", selectedFiles.length);
-
-        if (selectedFiles.length === 0) {
-            alert("No files selected. Please choose files before starting the conversion.");
-            convertButton.classList.remove('available');
-            event.preventDefault();
-            return;
+    multipleFontsCheckbox.addEventListener('change', function(event) {
+        if (this.checked) {
+            console.log("Multiple Fonts turned ON.");
+            setTimeout(() => {
+                window.alert("Multiple Fonts ON will process a folder containing multiple font folders.\nUnderstand that every immediate subfolder of the one you submit will be processed as an individual font.\nIf a folder containing multiple font folders is submitted and this checkbox is left OFF, all fonts within will be converged into one über font.");
+            }, 100);
+        } else {
+            console.log("Multiple Fonts OFF.");
         }
-        checkIfBoardsAreSame();  // Check if target board has been changed to same board since choosing files
-        // if (disallow_conversion_) {
-        //     convertButton.classList.remove('available');
-        //     disallow_conversion_ = false;
-        //     event.preventDefault();
-        //     return;
-        // }
-        console.log("Convert Button activated with files chosen. Reset downloadReady_ = false");
-        // uploadProgressBar.value = 0;
-        // processProgressBar.value = 0;
-        downloadReady_ = false; // Reset the download ready state
+    });
+
+// ------------------ AUDIO CONVERSION --------------------
+            closeButton.addEventListener('click', function(event) {
+                clearInterval(audioProcessIntervalId);
+                audioProcessProgressBar.value = 0;
+                audioFileInput.value = '';
+                convertAudioButton.classList.add('available');
+                document.querySelector('#audioOnlyWindow p:nth-of-type(2)').textContent = 'Click "Convert Audio" and then Download the resulting zip file to your computer.\nFiles will be available for 3 minutes.';
+                this.classList.add('clicked');
+                convertAudioButton.classList.remove('clicked');
+                convertAudioButton.classList.remove('available');
+                convertAudioButton.value = "Convert Audio";
+                audioFileInfoDisplay.value = "No files chosen";
+                audioFileInfoDisplay.classList.remove('files-chosen');
+                event.preventDefault(); // Prevent default form submission
+                document.getElementById('audioOnlyWindow').classList.remove('visible');
+            });
+
+            // New Choose Audio (Upload) Files button
+            audioFileInputButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                audioFileInput.click();
+            });
+
+            // Convert Audio button
+        //     convertAudioButton.addEventListener('click', function() {
+        // });
+
+            // Choose Audio Files input (open files dialog)
+            audioFileInput.addEventListener('change', function(event) {
+                console.log("%%%%%%%% Choose Audio Files input - audioSelectedFiles.length = " + audioSelectedFiles.length);
+                audioSelectedFiles = audioFileInput.files;
+                if (audioSelectedFiles.length > 0) {
+                    const folderName = audioSelectedFiles[0].webkitRelativePath.split('/')[0];
+                    audioFileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${audioSelectedFiles.length}`;
+                    audioFileInfoDisplay.classList.add('files-chosen');
+                    convertAudioButton.classList.add('available');
+                } else {
+                    audioFileInfoDisplay.value = "No files chosen";
+                    audioFileInfoDisplay.classList.remove('files-chosen');
+                    convertAudioButton.classList.remove('available');
+                }
+                document.querySelector('#audioOnlyWindow p:nth-of-type(2)').textContent = 'Click "Convert Audio" and then Download the resulting zip file to your computer.\nFiles will be available for 3 minutes.';
+                this.classList.remove('clicked');
+            });
+
+            // Convert Audio button
+            audioForm.addEventListener('submit', function(event) {
+                console.log("Form submission triggered");
+                event.preventDefault();
+                if (audioSelectedFiles.length === 0) {
+                    alert("No files selected. Please choose files before starting the conversion.");
+                    convertAudioButton.classList.remove('clicked');
+                    convertAudioButton.classList.remove('available');
+                    return;
+                }
+                convertAudioButton.classList.add('clicked');
+                convertAudioButton.value = "Converting...";
+                document.querySelector('#audioOnlyWindow p:nth-of-type(2)').textContent = 'Converting. Please standby for download...';
+                this.classList.add('clicked');
+                updateAudioOnlyProgressBar();
+
+                const formData = new FormData();
+                for (let i = 0; i < audioSelectedFiles.length; i++) {
+                    formData.append('audioFiles', audioSelectedFiles[i]);
+                    // Append the webkitRelativePath as a separate field- why? only needs paths.
+                    formData.append('filePaths', audioSelectedFiles[i].webkitRelativePath);
+                }
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/audioConvert', true);
+                xhr.setRequestHeader("Accept", "application/json");
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log("Audio conversion successful");
+                        const blob = new Blob([xhr.response], { type: 'application/zip' });
+                        const downloadUrl = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = downloadUrl;
+                        link.download = "Converted_Audio_44.1.zip"; // Filename for download
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        setTimeout(() => {
+                            document.getElementById('closeButton').click();
+                        }, 2000);  // 2000 milliseconds = 2 seconds
+                    } else {
+                        // For binary responses, the status code is the primary error indicator
+                        console.error("Audio conversion failed. Status: " + xhr.status);
+                    }
+                };
+                xhr.responseType = 'blob'; // Important to handle binary data
+
+            // // Logging each file in FormData
+            // for (let [key, value] of formData.entries()) {
+            //     console.log("++Logging each file in FormData: ");
+            //     console.log(`${key}: ${value instanceof File ? value.name : value}`);
+            // }
+
+                xhr.send(formData);
+            });
+// -------------------------------------------------------------------
+
+    function checkSanitary(folderName) {
+        const specialChars = /[&^'()´`~!@#$%^&*?<>]/g;
+        if (specialChars.test(folderName)) {
+            alert("Folder names cannot contain special characters like ´ or ( ).\nThey really shouldn't have spaces in the name either.\nPlease rename source folder before uploading.");
+            isSanitary_ = false;
+            return false;
+        }
+        isSanitary_ = true;
+        return true;
+    }
+
+    // New Choose (Upload) Files button
+    fileInputButton.addEventListener('click', function(event) {
+        convertButton.classList.remove('available');
         event.preventDefault();
-        const formData = new FormData(form);
+        resetMessage(targetBoard);
+        checkIfBoardsAreSame(event);
+        if (shouldOpenFileDialog) {
+            fileInput.click();
+        }
+    });
 
 
-        console.log("Is Safari: ", isSafari());
+// Choose Files input (open files dialog)
+fileInput.addEventListener('change', function(event) {
+    selectedFiles = fileInput.files;
+    // Assume not sanitary by default each time files are chosen
+    isSanitary_ = false; // Reset to false to ensure validation is performed again
 
-        // Extract and append directory name if available
-        if (selectedFiles.length > 0 && selectedFiles[0].webkitRelativePath) {
-console.log(`webkitRelativePath is : '${selectedFiles[0].webkitRelativePath}'`);
-            sourceDirName = selectedFiles[0].webkitRelativePath.split('/')[0];
-            formData.append('sourceDirName', sourceDirName);
+    if (selectedFiles.length > 0) {
+        const folderName = selectedFiles[0].webkitRelativePath.split('/')[0];
+        if (checkSanitary(folderName)) {
+            fileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${selectedFiles.length}`;
+            fileInfoDisplay.classList.add('files-chosen');
+            convertButton.classList.add('available');
+        } else {
+            fileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${selectedFiles.length}`;
+            fileInfoDisplay.classList.add('files-chosen');
+            convertButton.classList.remove('available');
+            // Potentially clear file input here if you want to force the user to choose again
+        }
+    } else {
+        fileInfoDisplay.value = "No files chosen";
+        fileInfoDisplay.classList.remove('files-chosen');
+        convertButton.classList.remove('available');
+    }
+});
+
+
+
+    // Convert button
+    form.addEventListener('submit', function(event) {
+        console.log("optimizeCheckbox.checked = ", optimizeCheckbox.checked);
+        console.log("selectedFiles.length = ", selectedFiles.length);
+        processProgressBar.value = 0;
+        checkIfBoardsAreSame();  // Check if target board has been changed to same board since choosing files
+    if (!shouldOpenFileDialog) {
+        event.preventDefault();
+        return;
+    }
+
+  // Check if no files are selected
+    if (selectedFiles.length === 0) {
+        alert("No files selected. Please choose files before starting the conversion.");
+        event.preventDefault(); // Prevent form submission
+        return;
+    }
+    // Check if folder name is unsanitary
+    if (!isSanitary_) {
+        alert("Folder name contains disallowed characters.\nTry to avoid spaces too, it's just good practice.\nPlease rename the source folder before uploading.");
+        convertButton.classList.remove('available');
+        isSanitary_ = false;
+        event.preventDefault(); // Prevent form submission
+        return;
+    }
+        downloadReady_ = false;
+
+    isMultipleFonts = multipleFontsCheckbox.checked; // Use the global variable
+    console.log("Multiple Fonts Checkbox checked: ", isMultipleFonts);
+
+        if (isMultipleFonts) {
+            // Process each font folder individually within the directory
+            fontFolders.clear();
+            Array.from(selectedFiles).forEach(file => {
+                if (!/^\./.test(file.name)) { // Exclude dot files
+                    const splitPath = file.webkitRelativePath.split('/');
+                    if (splitPath.length > 1) {
+                        const folderName = splitPath[1]; // Extract individual font folder name
+                        if (!fontFolders.has(folderName)) {
+                            fontFolders.set(folderName, []);
+                        }
+                        fontFolders.get(folderName).push(file);
+                    }
+                }
+            });
+        console.log("Grouped font folders:", fontFolders); // Log grouped font folders
+
+            processNextFolder();
+        } else {
+            // Logic for handling a single font or merged fonts
+            const topLevelFolderName = selectedFiles[0].webkitRelativePath.split('/')[0];
+            // Filter out dot files before processing
+            const filteredFiles = Array.from(selectedFiles).filter(file => !/^\./.test(file.name));
+        // console.log("Processing single/merged font folder:", topLevelFolderName);
+        processFontFolder(topLevelFolderName, filteredFiles, isMultipleFonts);
         }
 
-console.log(`sourceDirName after appending: '${sourceDirName}'`);
+        event.preventDefault();
+    });
 
-if (optimizeCheckbox.disabled) formData.append('optimizeCheckbox', optimizeCheckbox.checked ? 'true' : 'false');
-if (!optimizeCheckbox.checked) formData.append('optimizeCheckbox', 'false');
+    function processNextFolder() {
+        if (fontFolders.size > 0) {
+            const currentFolder = fontFolders.keys().next().value;
+            const filesToProcess = fontFolders.get(currentFolder);
+            fontFolders.delete(currentFolder); // Remove the processed folder from the map
+            processFontFolder(currentFolder, filesToProcess);
+        } else {
+            console.log("All font folders processed. Initiating finalization...");
+            finalizeConversion();
+        }
+    }
 
-
-// // Logging each file in FormData
-// for (let [key, value] of formData.entries()) {
-//     console.log("++Logging each file in FormData: ");
-//     console.log(`${key}: ${value instanceof File ? value.name : value}`);
-// }
-
+    function sendFormData(formData) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/convert', true);
         xhr.setRequestHeader("Accept", "application/json");
-
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
                 uploadProgressBar.value = percentComplete;
-
                 if (percentComplete < 100) {
                     processProgressStatus.innerText = "Uploading files...";
                  } else {
                     if (optimizeCheckbox.checked && targetBoard.value === "PROFFIE") {
                         processProgressStatus.innerText = "Optimizing Proffie font for performance on FAT32 formatted SD card.\nFiles uploaded. Converting " + sourceDirName + " to " + targetBoard.value + " ...";
                     } else {
-                        processProgressStatus.innerText = "Files uploaded. Converting " + sourceDirName + " from " + sourceBoard + " to " + targetBoard.value + " ...\n\n";
+                        processProgressStatus.innerText = "Files uploaded. Converting " + sourceDirName + " from " + sourceBoard.value + " to " + targetBoard.value + " ...\n\n";
                     }
                     updateProcessProgressBar();
                 }
             }
         };
-
         // Server response
         xhr.onload = function() {
             if (xhr.status === 429) { // Check if the status code is 429
@@ -539,13 +969,14 @@ if (!optimizeCheckbox.checked) formData.append('optimizeCheckbox', 'false');
                 const response = JSON.parse(this.responseText);
                 processProgressStatus.innerText = response.message; // Show server full message
                 resetMessage(targetBoard);
-
             } else if (xhr.status >= 200 && xhr.status < 300) {
                 server_full_ = false;
                 const response = JSON.parse(this.responseText);
             
-                if (response.status === "success") {
-                    downloadButton.dataset.dirIdentifier = response.dirIdentifier; // Store temporaryDirectory UUID Identifier
+                if (response.status === "fontProcessed") {
+                    // console.log("A font folder processed successfully");
+                    processNextFolder();
+ 
                 } else if (response.status === "info") {
                     console.log('Response was info');
                     processProgressStatus.innerText = response.message;
@@ -555,20 +986,104 @@ if (!optimizeCheckbox.checked) formData.append('optimizeCheckbox', 'false');
                     processProgressStatus.innerText = response.message;
                     downloadButton.classList.remove('show');
                 }
-                console.log("Conversion complete, setting downloadReady_ to true.");
-                downloadReady_ = true;
             }
         };
         xhr.send(formData);
+    }
+
+    function isSafari() {
+        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    }
+
+// Function to process a single font folder from a folder of multiple
+function processFontFolder(folderName, files) {
+    // console.log("Starting processFontFolder for folder:", folderName);
+    const formData = new FormData();
+    formData.append('sourceBoard', sourceBoard.value);
+    formData.append('targetBoard', targetBoard.value);
+    formData.append('optimizeCheckbox', optimizeCheckbox.checked ? 'true' : 'false');
+
+    let sourceDirName = folderName; // For multiple fonts, this will be each child folder name
+
+    files.forEach(file => {
+        if (!/^\./.test(file.name)) { // Exclude dot files
+            let filePath = file.webkitRelativePath;
+            // console.log("Original file path: ", filePath);
+
+            // Adjust the file path if processing multiple fonts
+            if (isMultipleFonts) {
+                filePath = filePath.split('/').slice(1).join('/'); // Strip the top-level folder from the path
+                // console.log("Adjusted file path for multiple fonts: ", filePath);
+            }
+
+            formData.append('files', file);
+            formData.append('filePaths', filePath); // Use the adjusted filePath here
+        }
     });
 
-function isSafari() {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // Append sourceDirName to formData. For single fonts, it uses the first segment of the path
+    if (!isMultipleFonts) {
+        sourceDirName = files[0].webkitRelativePath.split('/')[0];
+    }
+    formData.append('sourceDirName', sourceDirName);
+    // console.log("sourceDirName being appended to form: ", sourceDirName);
+
+    console.log("Processing Font Folder: ", folderName);
+    // files.forEach(file => console.log("Processing file: ", file.webkitRelativePath));
+
+    console.log("Is Safari: ", isSafari());
+
+    // // Additional logging for FormData contents
+    // for (let [key, value] of formData.entries()) {
+    //     console.log(`FormData entry - Key: ${key}, Value: ${value instanceof File ? value.name : value}`);
+    // }
+
+    sendFormData(formData);
 }
 
-    // Global variables to store interval and timeout IDs
-    let processIntervalId = null;
-    let downloadTimeoutId = null;
+
+
+        // Logging each file in FormData this can be placed inside the above Function to use.
+        // for (let [key, value] of formData.entries()) {
+        //     console.log("++Logging each file in FormData: ");
+        //     console.log(`${key}: ${value instanceof File ? value.name : value}`);
+        // }
+function finalizeConversion() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/finalizeConversion`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.status === "success") {
+                downloadButton.dataset.dirIdentifier = response.dirIdentifier;
+                console.log("Finalization complete, Download ready.");
+                downloadReady_ = true;
+            }
+        }
+    };
+    xhr.send();
+}
+
+
+    function updateAudioOnlyProgressBar() {
+        // Clear any existing interval
+        if (audioProcessIntervalId) clearInterval(audioProcessIntervalId);
+
+        let startTime = Date.now();
+        audioProcessIntervalId = setInterval(function() {
+            let elapsedTime = Date.now() - startTime;
+
+            // Check if animation reached the end and reset if necessary
+            if (elapsedTime >= 2500) {
+                startTime = Date.now(); // Reset startTime to restart animation
+                elapsedTime = 0; // Reset elapsedTime
+            }
+
+            audioProcessProgressValue = Math.min(100, (elapsedTime / 2500) * 100);
+            document.getElementById('audioProcessProgressBar').value = audioProcessProgressValue;
+        }, 50);
+    }
+
 
     function updateProcessProgressBar() {
         // Clear any existing interval and timeout
@@ -577,8 +1092,13 @@ function isSafari() {
         let startTime = Date.now();
         processIntervalId = setInterval(function() {
             let elapsedTime = Date.now() - startTime;
+            // Check if animation reached the end and download isn't ready
+            if (elapsedTime >= 2500 && !downloadReady_) {
+                startTime = Date.now(); // Reset startTime to restart animation
+                elapsedTime = 0; // Reset elapsedTime
+            }
             if (!server_full_) {
-                processProgressValue = Math.min(100, (elapsedTime / 5000) * 100); 
+                processProgressValue = Math.min(100, (elapsedTime / 2500) * 100); 
             } else {
                 processProgressValue = 0;
             }
@@ -593,7 +1113,7 @@ function isSafari() {
                     downloadButton.value = "Download Converted Files";
                     processProgressStatus.innerText = "Download expired. Please start a new conversion.";
                 },  180000);
-                processProgressStatus.innerText = "Conversion of " + sourceDirName + " from " + sourceBoard + " to " + targetBoard.value + " complete.\nDownload will expire in 3 minutes.";
+                processProgressStatus.innerText = "Conversion of " + sourceDirName + " from " + sourceBoard.value + " to " + targetBoard.value + " complete.\nDownload will expire in 3 minutes.";
             } else {
                 processProgressBar.value = processProgressValue;
             }
@@ -663,11 +1183,11 @@ function isSafari() {
         downloadButton.value = "Download Converted Files";
         uploadProgressBar.value = 0;
         processProgressBar.value = 0;
-        if (!server_full_) {
+        if (!server_full_ && !both_proffie_) {
+            
             optimizeCheckbox.disabled = false;
             updateTitles();
-            showed_popup_ = false;
-console.log("((( showed_popup_ = " + showed_popup_);
+//            showed_popup_ = false;
 
             if (optimizeCheckbox.checked && targetBoard.value === "PROFFIE") {
                 processProgressStatus.innerText = "Optimizing Proffie font for performance on FAT32 formatted SD card.\nWaiting for files to be uploaded. Choose Files and click 'Convert'.";
