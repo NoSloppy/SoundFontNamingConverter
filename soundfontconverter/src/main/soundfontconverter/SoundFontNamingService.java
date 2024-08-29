@@ -357,7 +357,7 @@ public class SoundFontNamingService {
                         }
 
                     // Right off the bat, let's move non-wav files directly to the target folder
-                    if (!fileName.endsWith(".wav") && !fileName.endsWith(".mp3")) {
+                    if (!fileName.endsWith(".wav") && !fileName.endsWith(".mp3") && !fileName.endsWith(".mp4")) {
                         Path nonWavFilePath = targetDirPath.resolve(fileName);
                         copyFile(path, nonWavFilePath);
                         log(sessionId, "- Moved non-wav file -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + fileName);
@@ -369,15 +369,27 @@ public class SoundFontNamingService {
                         fileName = fileName.toLowerCase();
                     }
 
-                        // Check and convert audio file if needed
+
+                    // Check and convert input file to correct wav file if needed
                     if (!is_chained_ || is_chained_ && second_loop_) {
                         File inputFile = path.toFile();
                         try {
-                            wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
-                            if (fileName.toLowerCase().endsWith(".mp3")) {
-                                fileName = fileName.replaceAll("\\.mp3$", ".wav"); // Update the filename extension to .wav
-                                path = Paths.get(inputFile.getParent(), fileName);
+                            wasAudioConverted = false;
+
+                            if (fileName.toLowerCase().endsWith(".mp3") || fileName.toLowerCase().endsWith(".mp4")) {
+                                // Convert MP3 or MP4 to WAV
+                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
+                                if (wasAudioConverted) {
+                                    fileName = fileName.replaceAll("\\.mp3$|\\.mp4$", ".wav");
+                                    path = Paths.get(inputFile.getParent(), fileName);
+                                }
                             }
+
+                            // Now, process the WAV file to ensure it meets the desired format
+                            if (fileName.toLowerCase().endsWith(".wav")) {
+                                AudioConverter.convertToWavIfNeeded(path.toFile());
+                            }
+
                         } catch (UnsupportedAudioFileException | IOException e) {
                             logger.error(ANSI_RED + "Audio conversion failed: " + e.getMessage() + ANSI_RESET);
                         }
@@ -761,7 +773,26 @@ public class SoundFontNamingService {
                                 logStringBuilder.append("Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav\n");
                             }
                             return;
+                        } else if (tgtBoardType == BoardType.GH3 && convertedBaseName.equals("font.wav")) {
+                            String commonKey = "font";
+                            int currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
+                            fileNameCounter.put(commonKey, currentCounter + 1);
 
+                            if (currentCounter == 1) {
+                                originalPath = targetDirPath.resolve(commonKey + ".wav");
+                                copyFile(path, originalPath);
+                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
+                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
+                                logStringBuilder.append( "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav\n");
+                            } else {
+                                log(sessionId, "-- GH3 only uses one font file, so any additional become fontALT files.");
+                                originalPath = targetDirPath.resolve(commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                copyFile(path, originalPath);
+                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                logStringBuilder.append("Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav\n");
+                            }
+                            return;
                         } else if (tgtBoardType == BoardType.XENO3) {
                             outputPath = targetDirPath.resolve(prefix + " (" + count + ").wav");
 
@@ -923,24 +954,34 @@ public class SoundFontNamingService {
 
     public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath) throws IOException {
         String filename = inputFile.getName();
-        // Check if the file is a WAV file
-        if (!filename.toLowerCase().endsWith(".wav") && !filename.toLowerCase().endsWith(".mp3")) {
+        // Check if the file is a WAV, MP3, or MP4 file
+        if (!filename.toLowerCase().endsWith(".wav") && 
+            !filename.toLowerCase().endsWith(".mp3") && 
+            !filename.toLowerCase().endsWith(".mp4")) {
             // Copy non-audio files to the target directory as is
-            logger.info("Audio Format Check: " + inputFile.getName() + " is not an audio file. Moving along.");
-            logStringBuilder.append(inputFile.getName() + " is not an audio file. Moving along.\n");
+            logger.info("Audio Format Check: " + inputFile.getName() + " is not a recognized audio file. Moving along.");
+            logStringBuilder.append(inputFile.getName() + " is not a recognized audio file. Moving along.\n");
             Path newTargetPath = tempDirPath.resolve(filename);
             Files.copy(inputFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
             return;
         }
-        // Process the WAV file
+
+        // Process the WAV file (including those converted from MP3 or MP4)
         try {
-            logger.info( "Audio Format Check: " + inputFile.getName());
-            logStringBuilder.append( "Audio Format Check: " + inputFile.getName() + "\n");
+            logger.info("Audio Format Check: " + inputFile.getName());
+            logStringBuilder.append("Audio Format Check: " + inputFile.getName() + "\n");
+
+            // Ensure the WAV file meets the desired audio format specifications
             AudioConverter.convertToWavIfNeeded(inputFile);
+
         } catch (UnsupportedAudioFileException e) {
             logger.error(ANSI_RED + "Unsupported audio file format: " + inputFile.getName(), e + ANSI_RESET);
             // Handle the exception as needed
+        } catch (IOException e) {
+            logger.error(ANSI_RED + "Audio conversion failed: " + inputFile.getName(), e + ANSI_RESET);
+            // Handle the IOException as needed
         }
+
     }
 
 

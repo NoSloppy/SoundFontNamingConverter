@@ -126,7 +126,6 @@ if (sessionIdentifier == null) {
 }
 String tempDirName = "temporaryDirectory-" + sessionIdentifier;
 
-
     try {
         logger.info(ANSI_GREEN + "----------- Converting Audio Only -------------" + ANSI_RESET);
         isConversionActive.set(true);
@@ -171,7 +170,7 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
 
         return new ResponseEntity<>(zipData, headers, HttpStatus.OK);
     } catch (Exception e) {
-        logger.error(ANSI_RED + "Error occurred during audio conversion: ", e + ANSI_RESET);
+        logger.error(ANSI_RED + "Error occurred during audio conversion: " + e.getMessage(), e + ANSI_RESET);
         return generateErrorResponse("Error occurred during audio conversion: ", e);
     }
 }

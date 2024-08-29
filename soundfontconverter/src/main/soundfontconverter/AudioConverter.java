@@ -39,7 +39,7 @@ public class AudioConverter {
             originalStream.close();
 
             // Define the final output file
-            File convertedOutputFile = new File(inputFile.getAbsolutePath().replaceAll("\\.mp3$", ".wav"));
+            File convertedOutputFile = new File(inputFile.getAbsolutePath().replaceAll("\\.mp3$|\\.mp4$", ".wav"));
 
             // Delete existing output file if it exists
             if (convertedOutputFile.exists() && !convertedOutputFile.delete()) {
@@ -56,7 +56,7 @@ public class AudioConverter {
             }
 
             // Delete the original .mp3 file if applicable
-            if (inputFile.getName().endsWith(".mp3")) {
+            if (inputFile.getName().endsWith(".mp3") || inputFile.getName().endsWith(".mp4")) {
                 inputFile.delete();
             }
             return true;
