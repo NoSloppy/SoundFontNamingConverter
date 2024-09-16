@@ -340,6 +340,7 @@ public class SoundFontNamingService {
                     Path outputPath = null;
                     boolean isAltDirectory = false;
                     boolean wasAudioConverted = false;
+                    boolean wasMetadataStripped = false;
                     String parentDirName = path.getParent().getFileName().toString().toLowerCase();
                     int number = fileName.matches(".*\\d+\\.wav$") ? Integer.parseInt(fileName.replaceAll("\\D+", "")) : 1;
                     String originalFilename = originalFilenames.getOrDefault(path.getFileName().toString(), path.getFileName().toString());
@@ -375,6 +376,7 @@ public class SoundFontNamingService {
                         File inputFile = path.toFile();
                         try {
                             wasAudioConverted = false;
+                            wasMetadataStripped = false;
 
                             if (fileName.toLowerCase().endsWith(".mp3") || fileName.toLowerCase().endsWith(".mp4")) {
                                 // Convert MP3 or MP4 to WAV
@@ -385,9 +387,11 @@ public class SoundFontNamingService {
                                 }
                             }
 
-                            // Now, process the WAV file to ensure it meets the desired format
+                            // Process the WAV file to ensure it meets the desired format
                             if (fileName.toLowerCase().endsWith(".wav")) {
-                                AudioConverter.convertToWavIfNeeded(path.toFile());
+                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(path.toFile());
+                            // Check and strip metadata
+                                wasMetadataStripped = AudioConverter.stripMetadataIfPresent(path.toFile());
                             }
 
                         } catch (UnsupportedAudioFileException | IOException e) {
@@ -804,6 +808,7 @@ public class SoundFontNamingService {
                             outputPath = targetDirPath.resolve(prefix + ".wav");
                         }
 
+                    // Log for audio conversion
                     if (wasAudioConverted) {
                         if (is_chained_ && second_loop_) {
                             conversionLogService.sendLogToEmitter(sessionId, "Audio: Converting " + originalFilename + " to 44.1kHz, 16bit monaural .wav format.");
@@ -811,6 +816,16 @@ public class SoundFontNamingService {
                         } else {
                             conversionLogService.sendLogToEmitter(sessionId, "Audio: Converting " + fileName + " to 44.1kHz, 16bit monaural .wav format.");
                             logStringBuilder.append( "Audio: Converting " + fileName + " to 44.1kHz, 16bit monaural .wav format.\n");
+                        }
+                    }
+                    // Log for metadata stripping
+                    if (wasMetadataStripped) {
+                        if (is_chained_ && second_loop_) {
+                            conversionLogService.sendLogToEmitter(sessionId, "Metadata stripped from: " + originalFilename);
+                            logStringBuilder.append("Metadata stripped from: " + originalFilename + "\n");
+                        } else {
+                            conversionLogService.sendLogToEmitter(sessionId, "Metadata stripped from: " + fileName);
+                            logStringBuilder.append("Metadata stripped from: " + fileName + "\n");
                         }
                     }
 
@@ -969,10 +984,11 @@ public class SoundFontNamingService {
         // Process the WAV file (including those converted from MP3 or MP4)
         try {
             logger.info("Audio Format Check: " + inputFile.getName());
-            logStringBuilder.append("Audio Format Check: " + inputFile.getName() + "\n");
 
             // Ensure the WAV file meets the desired audio format specifications
-            AudioConverter.convertToWavIfNeeded(inputFile);
+            boolean wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
+            // Now check and strip metadata if present
+            boolean wasMetadataStripped = AudioConverter.stripMetadataIfPresent(inputFile);
 
         } catch (UnsupportedAudioFileException e) {
             logger.error(ANSI_RED + "Unsupported audio file format: " + inputFile.getName(), e + ANSI_RESET);
