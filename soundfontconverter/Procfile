@@ -1,1 +1,0 @@
-web: java -javaagent:./lib/newrelic/newrelic.jar -jar target/soundfontconverter-0.0.1-SNAPSHOT.jar
