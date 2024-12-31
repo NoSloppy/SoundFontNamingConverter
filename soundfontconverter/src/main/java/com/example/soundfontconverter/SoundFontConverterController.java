@@ -116,6 +116,7 @@ public void downloadConvertedFiles(@RequestParam String targetBoard, @RequestPar
 public ResponseEntity<?> convertAudioOnly(
         @RequestParam("audioFiles") MultipartFile[] audioFiles,
         @RequestParam("filePaths") List<String> filePaths,
+        @RequestParam(value = "applyHighPassCheckbox", required = false) String highPassCheckbox, // <----- ADDED
         HttpSession session) {
 
 // Retrieve or create a unique session-specific identifier for audio conversion
@@ -136,6 +137,10 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
             Files.createDirectories(tempDirPath);
         }
 
+        boolean applyHighPass = (highPassCheckbox != null && highPassCheckbox.equals("on")); // <----- ADDED
+        logger.info("convertAudioOnly: High-Pass Checkbox value received: " + highPassCheckbox); // Logs the raw checkbox value
+        logger.info("convertAudioOnly: High-Pass Filter enabled: " + applyHighPass); // Logs the interpreted boolean value
+
         // Process and save uploaded files preserving directory structure.
         for (int i = 0; i < audioFiles.length; i++) {
             MultipartFile audioFile = audioFiles[i];
@@ -147,7 +152,7 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
             // Copy and process the file
             Files.copy(audioFile.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
             // weed out non-wav or non-mp3 files
-            soundFontNamingService.convertAudioIfNeeded(targetPath, targetPath.toFile(), tempDirPath);
+            soundFontNamingService.convertAudioIfNeeded(targetPath, targetPath.toFile(), tempDirPath, applyHighPass);
         }
         // Zip the processed files
         Path resultZip = soundFontNamingService.zipAudioFiles(tempDirPath, "Converted_Audio_Only");
@@ -183,6 +188,7 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
             @RequestParam(required = false) String optimizeCheckbox,
             @RequestParam String sourceDirName,
             @RequestParam("filePaths") String[] filePaths, // Added this line to receive the array of file paths
+            @RequestParam(value = "applyHighPassCheckbox", required = false) String highPassCheckbox,
         HttpSession session) {
 
         session.setAttribute("sourceBoard", sourceBoard);
@@ -190,6 +196,8 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
 
         boolean optimize = "true".equals(optimizeCheckbox); // Interpret the value
 
+        // <----- ADDED CODE: Interpret the highPassCheckbox value
+        boolean applyHighPass = (highPassCheckbox != null && highPassCheckbox.equals("on"));
         String sessionId = request.getSession().getId();
 
         // Check if the session exceeds the maximum allowed
@@ -287,10 +295,11 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
         // logger.info("File saved at: " + savePath);
     }
 
-            logger.info("isSafari = " + isSafari(request));
+            logger.info("+_+_+_+_+_+_+_+_+_+_+_+_+_+_isSafari = " + isSafari(request));
 
             // 4. Convert files.    
-            soundFontNamingService.chainConvertSoundFont(sessionId, sourceBoard, targetBoard, tempDirName, optimize, sourceDirName);
+            // <----- MODIFIED: Pass the applyHighPass flag to chainConvertSoundFont
+            soundFontNamingService.chainConvertSoundFont(sessionId, sourceBoard, targetBoard, tempDirName, optimize, sourceDirName, applyHighPass);
 
             // 5. After converting filesRemove the original directory.
             Path commonParentDir = findCommonParentDirectory(savedFiles);

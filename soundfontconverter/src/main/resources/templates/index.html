@@ -204,10 +204,10 @@ h1 {
     display: inline-block;
 }
 
-.multiple-fonts-checkbox-container {
+/*.multiple-fonts-checkbox-container {
     display: flex;
     align-items: center;
-}
+}*/
 .file-input-container {
     display: flex;
 }
@@ -336,13 +336,12 @@ h1 {
     </style>
 <body>
 <div class="content-container">
-    <h1>Welcome to the Sound Font Naming Converter 4.0.1</h1>
+    <h1>Welcome to the Sound Font Naming Converter 4.0.3</h1>
 
     <form id="audioForm" action="/audioConvert" method="post" enctype="multipart/form-data">
 
         <!-- Button to show the floating window -->
         <div class="audio-only-container">
-            <p>NEW -></p>
             <button type="button" id="audioOnlyButton" class="audio-only-button">Convert Audio Only</button>
         </div>
         <!-- Floating window (initially hidden) -->
@@ -361,6 +360,12 @@ h1 {
                     <input type="button" id="audioFileInfoDisplay" class="audio-file-info-display" value="No files chosen" title="Uploaded files status." />
                 </div>
                 <br>
+                <!-- Add High-Pass Filter Checkbox -->
+                <div>
+                    <input type="checkbox" id="audioHighPassCheckbox" name="applyHighPassCheckbox">
+                    <label for="audioHighPassCheckbox">Enable High-Pass Filter</label>
+                </div>
+
                 <p>Click "Convert Audio" and then Download the resulting zip file to your computer. Files will be available for 3 minutes.</p>
                 <input type="submit" value="Convert Audio" id="convertAudioButton" class="convert-audio-button" title="Convert selected font audio to 44.1khz 16 bit monaural PCM WAV files.">
                 <div>
@@ -402,15 +407,20 @@ h1 {
 
         <br>
 
-        <p>2. Add the font folder you wish to convert.</p>
+        <p>2. Add the font folder you wish to convert and choose options.</p>
         <!-- Checkbox for selecting multiple fonts -->
         <div id="multipleFontsCheckboxContainer" class="multiple-fonts-checkbox-container">
-            <p>NEW -></p>
             <input type="checkbox" id="multipleFontsCheckbox" name="multipleFontsCheckbox">
-            <label for="multipleFontsCheckbox">Multiple Fonts</label>
+            <label for="multipleFontsCheckbox">Multiple Fonts (hover mouse over this for important info)</label>
         </div>
         <br>
 
+        <!-- Checkbox for enabling High-Pass Filter -->
+        <div id="highPassCheckboxContainer" class="high-pass-checkbox-container">
+            <input type="checkbox" id="renameHighPassCheckbox" name="applyHighPassCheckbox">
+            <label for="renameHighPassCheckbox">Enable High-Pass Filter (reduces frequencies below 100 Hz to prevent distortion)</label>
+        </div>
+        <br>
 
         <div id="fileInputContainer" class="file-input-container">
             <!-- Directory input -->
@@ -454,13 +464,22 @@ h1 {
         <li>Click the Convert button.</li>
         <li>Click the Download button to retrieve a zip file containing the newly named font files.</li>
     </ul>
-    <p>  NEW in 4.0.1<br>
+    <p>  NEW in 4.0.3<br>
+        - Added optional Enable High Pass filter to both renaming and audio convert only routines.<br>
+        - Automatically apply 40 sample fade-in and fade-out to front and end of wavs to prevent clicking.<br>
+        - Automatically scroll to bottom to reveal Download button when ready.<br>
+        - Fixed optimization checkbox hover tips.<br>
+    <p>  As of 4.0.2<br>
+        - Metadata tags are removed (Artist, Title, Genre etc...)<br>
+    <p>  As of 4.0.1<br>
+        - Support for mp4 video files!<br>
+          Audio will be grabbed from video files and converted to ideal .wav format as well.<br>
         - Specific GH3 naming fixes.<br>
         - CFX results now properly do not number the first blaster.wav file.<br>
         - Tracks, extras, bonus etc… files no longer changed to all lowercase.<br>
         - Verso 2.0 support - also add blast1.wav for blaster firing sound.<br>
-         As of 4.0.0<br>
-        - Support for .mp3 files. They will be converted to ideal .wav format as well.<br>
+         As of 4.0.0 <br>
+        - Support for .mp3 files. They will be converted to ideal .wav format<br>
         - Stand-alone audio converter without renaming or restructuring anything with the "Convert Audio Only" button up top.<br>
           Download starts automatically when finished.<br>
         - "Multiple Fonts" checkbox allows for selecting a folder of font folders to be processed.<br>
@@ -546,6 +565,7 @@ h1 {
     const audioFileInput = document.getElementById('audioFiles');
     const audioFileInputButton = document.getElementById('audioFileInputButton');
     const audioFileInfoDisplay = document.getElementById('audioFileInfoDisplay');
+    const audioHighPassCheckbox = document.getElementById('audioHighPassCheckbox');
     let audioSelectedFiles = audioFileInput.files;
     const closeButton = document.getElementById('closeButton');
 
@@ -560,6 +580,8 @@ h1 {
     const multipleFontsCheckbox = document.getElementById('multipleFontsCheckbox');
     const multipleFontsCheckboxContainer = document.getElementById('multipleFontsCheckboxContainer');
     let isMultipleFonts = false;
+    const renameHighPassCheckbox = document.getElementById('renameHighPassCheckbox');
+
     let fontFolders = new Map();
     let dirIdentifier = '';
 
@@ -579,23 +601,37 @@ h1 {
     });
     const updateTitles = () => {
         const elementsToUpdate = [optimizeCheckbox, optimizeLabel];
-            if (optimizeCheckbox.disabled) {
-                elementsToUpdate.forEach((element) => {
-                  element.setAttribute("title", "You've chosen Proffie to Proffie, this feature can not be disabled.");
-                });
-            } else {
-                elementsToUpdate.forEach((element) => {
-                  element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media.\nThis feature is ON by default.\nYou need to uncheck it to bypass.");
-                });
-            }
+        if (!optimizeCheckbox.checked) {
+            elementsToUpdate.forEach((element) => {
+                element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media.\nThis feature is ON by default.\nYou need to uncheck it to bypass.");
+            });
+        } else {
+            elementsToUpdate.forEach((element) => {
+                element.setAttribute("title", "Proffie font optimization ON! Good choice ;)");
+            });
+        }
+        if (optimizeCheckbox.disabled) {
+            elementsToUpdate.forEach((element) => {
+                element.setAttribute("title", "You've chosen Proffie to Proffie, this feature can not be disabled.");
+            });
+        }
     };
+
+
+
+            // if (optimizeCheckbox.disabled) {
+            //     elementsToUpdate.forEach((element) => {
+            //       element.setAttribute("title", "You've chosen Proffie to Proffie, this feature can not be disabled.");
+            //     });
+    //         } else {
+    //             elementsToUpdate.forEach((element) => {
+    //               element.setAttribute("title", "Organizes and renames an existing ProffieOS sound font for the best performance when used on FAT32 formatted media.\nThis feature is ON by default.\nYou need to uncheck it to bypass.");
+    //             });
+    //         }
+    // };
 
     audioOnlyButton.setAttribute("title", "Convert font to 44.1khz 16 bit monaural PCM WAV files.\nNo renaming of files.");
     multipleFontsCheckboxContainer.setAttribute("title", "Multiple Fonts ON will process a folder containing multiple font folders.\nUnderstand that every immediate subfolder of the one you submit will be processed as an individual font.\nIf a folder containing multiple font folders is submitted and this checkbox is left OFF, all fonts within will be converged into one über font.");
-
-    optimizeCheckbox.addEventListener('change', function() {
-    //    resetMessage(targetBoard);
-    });
 
     // Initialize titles on page load
      updateTitles(targetBoard);
@@ -616,11 +652,11 @@ h1 {
             if (sourceBoard.value === "PROFFIE") {
                 optimizeCheckbox.checked = true;
                 optimizeCheckbox.disabled = true;
-                updateTitles();
             } else {
                 optimizeCheckbox.disabled = false;
             }
         }
+        updateTitles();
     });
 
 
@@ -716,7 +752,9 @@ showed_popup_ = false;
         optimizeLabel.classList.remove('show');
     }
 
-
+    optimizeCheckbox.addEventListener('change', function(event) {
+        updateTitles();
+    });
     multipleFontsCheckbox.addEventListener('change', function(event) {
         if (this.checked) {
             console.log("Multiple Fonts turned ON.");
@@ -727,6 +765,18 @@ showed_popup_ = false;
             console.log("Multiple Fonts OFF.");
         }
     });
+    // Listener for the Audio-Only section checkbox
+    audioHighPassCheckbox.addEventListener('change', function() {
+        renameHighPassCheckbox.checked = this.checked; // Sync state
+        console.log("High Pass Filter Checkbox: ", this.checked ? "ON" : "OFF");
+    });
+    // Listener for the Renaming section checkbox
+    renameHighPassCheckbox.addEventListener('change', function() {
+        audioHighPassCheckbox.checked = this.checked; // Sync state
+        console.log("High Pass Filter Checkbox: ", this.checked ? "ON" : "OFF");
+    });
+
+
 
 // ------------------ AUDIO CONVERSION --------------------
             closeButton.addEventListener('click', function(event) {
@@ -761,9 +811,16 @@ showed_popup_ = false;
                 audioSelectedFiles = audioFileInput.files;
                 if (audioSelectedFiles.length > 0) {
                     const folderName = audioSelectedFiles[0].webkitRelativePath.split('/')[0];
-                    audioFileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${audioSelectedFiles.length}`;
-                    audioFileInfoDisplay.classList.add('files-chosen');
-                    convertAudioButton.classList.add('available');
+                    if (checkSanitary(folderName)) {
+                        audioFileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${audioSelectedFiles.length}`;
+                        audioFileInfoDisplay.classList.add('files-chosen');
+                        convertAudioButton.classList.add('available');
+                    } else {
+                        audioFileInput.value = ''; // Clear the file input to force the user to choose again
+                        audioFileInfoDisplay.value = "Invalid folder name. Please rename folder and try again.";
+                        audioFileInfoDisplay.classList.remove('files-chosen');
+                        convertAudioButton.classList.remove('available');
+                    }
                 } else {
                     audioFileInfoDisplay.value = "No files chosen";
                     audioFileInfoDisplay.classList.remove('files-chosen');
@@ -775,7 +832,7 @@ showed_popup_ = false;
 
             // Convert Audio button
             audioForm.addEventListener('submit', function(event) {
-                console.log("Form submission triggered");
+                console.log("Audio COnvert Form submission triggered");
                 event.preventDefault();
                 if (audioSelectedFiles.length === 0) {
                     alert("No files selected. Please choose files before starting the conversion.");
@@ -795,6 +852,16 @@ showed_popup_ = false;
                     // Append the webkitRelativePath as a separate field- why? only needs paths.
                     formData.append('filePaths', audioSelectedFiles[i].webkitRelativePath);
                 }
+
+                // Add High-Pass Filter Checkbox Value
+                // Check the state of either checkbox
+                const highPassValue =
+                  (audioHighPassCheckbox && audioHighPassCheckbox.checked) ||
+                  (renameHighPassCheckbox && renameHighPassCheckbox.checked) ? 'on' : null;
+
+                // Append the High-Pass Filter value to formData
+                formData.append('applyHighPassCheckbox', highPassValue);
+
 
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '/audioConvert', true);
@@ -831,16 +898,20 @@ showed_popup_ = false;
             });
 // -------------------------------------------------------------------
 
-    function checkSanitary(folderName) {
-        const specialChars = /[&^'()´`~!@#$%^&*?<>]/g;
-        if (specialChars.test(folderName)) {
-            alert("Folder names cannot contain special characters like ´ or ( ).\nThey really shouldn't have spaces in the name either.\nPlease rename source folder before uploading.");
-            isSanitary_ = false;
-            return false;
-        }
-        isSanitary_ = true;
-        return true;
+function checkSanitary(folderName) {
+    const specialChars = /[&^'()´`~!@#$%^&*?<>]/g; // Existing special character checks
+    const specificUnicodeChars = /[\u202F\u00A0]/g; // Specific Unicode characters like narrow no-break space (\u202F) and non-breaking space (\u00A0)
+    const nonAsciiChars = /[^\x00-\x7F]/g; // Catch any non-ASCII character
+
+    if (specialChars.test(folderName) || specificUnicodeChars.test(folderName) || nonAsciiChars.test(folderName)) {
+        alert("Folder names cannot contain special characters, non-ASCII characters, or certain Unicode characters.\nIt shouldn't really contain spaces either.\nPlease rename the source folder before uploading.");
+        isSanitary_ = false;
+        return false;
     }
+
+    isSanitary_ = true;
+    return true;
+}
 
     // New Choose (Upload) Files button
     fileInputButton.addEventListener('click', function(event) {
@@ -852,7 +923,6 @@ showed_popup_ = false;
             fileInput.click();
         }
     });
-
 
 // Choose Files input (open files dialog)
 fileInput.addEventListener('change', function(event) {
@@ -867,7 +937,8 @@ fileInput.addEventListener('change', function(event) {
             fileInfoDisplay.classList.add('files-chosen');
             convertButton.classList.add('available');
         } else {
-            fileInfoDisplay.value = `Chosen folder: ${folderName}\n# of files selected: ${selectedFiles.length}`;
+            fileInput.value = ''; // Clear the file input to force the user to choose again
+            fileInfoDisplay.value = "Invalid folder name. Please rename folder and try again.";
             fileInfoDisplay.classList.add('files-chosen');
             convertButton.classList.remove('available');
             // Potentially clear file input here if you want to force the user to choose again
@@ -883,6 +954,7 @@ fileInput.addEventListener('change', function(event) {
 
     // Convert button
     form.addEventListener('submit', function(event) {
+console.log("Renaming form submission triggered");
         console.log("optimizeCheckbox.checked = ", optimizeCheckbox.checked);
         console.log("selectedFiles.length = ", selectedFiles.length);
         processProgressBar.value = 0;
@@ -910,6 +982,19 @@ fileInput.addEventListener('change', function(event) {
 
     isMultipleFonts = multipleFontsCheckbox.checked; // Use the global variable
     console.log("Multiple Fonts Checkbox checked: ", isMultipleFonts);
+
+// Check the state of both checkboxes
+const isAudioHighPassEnabled = document.getElementById("audioHighPassCheckbox")?.checked || false; // Audio-only
+const isRenameHighPassEnabled = document.getElementById("renameHighPassCheckbox")?.checked || false; // Renaming
+
+// Log the states for debugging
+console.log("Audio High-Pass Checkbox checked: ", isAudioHighPassEnabled);
+console.log("Rename High-Pass Checkbox checked: ", isRenameHighPassEnabled);
+
+// Determine if high-pass should be enabled for the current context
+const isHighPassEnabled = isAudioHighPassEnabled || isRenameHighPassEnabled; 
+console.log("High-Pass Filter enabled: ", isHighPassEnabled);
+
 
         if (isMultipleFonts) {
             // Process each font folder individually within the directory
@@ -953,10 +1038,17 @@ fileInput.addEventListener('change', function(event) {
         }
     }
 
-    function sendFormData(formData) {
+        function sendFormData(formData) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/convert', true);
         xhr.setRequestHeader("Accept", "application/json");
+
+    // Log the entire form data to the console before sending
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`); // Log each key-value pair
+    }
+
+
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
@@ -973,6 +1065,9 @@ fileInput.addEventListener('change', function(event) {
                 }
             }
         };
+
+
+
         // Server response
         xhr.onload = function() {
             if (xhr.status === 429) { // Check if the status code is 429
@@ -999,6 +1094,15 @@ fileInput.addEventListener('change', function(event) {
                 }
             }
         };
+        // Add High-Pass Filter Checkbox Value
+        // Check the state of either checkbox
+        const highPassValue =
+          (audioHighPassCheckbox && audioHighPassCheckbox.checked) ||
+          (renameHighPassCheckbox && renameHighPassCheckbox.checked) ? 'on' : null;
+
+        // Append the High-Pass Filter value to formData
+        formData.append('applyHighPassCheckbox', highPassValue);
+
         xhr.send(formData);
     }
 
@@ -1117,7 +1221,9 @@ function finalizeConversion() {
                 clearInterval(processIntervalId);
                 processProgressBar.value = 100;
                 downloadButton.classList.add('show');
-                
+                // Scroll the entire page to the bottom
+    const contentContainer = document.querySelector('.content-container');
+    contentContainer.scrollTo({ top: contentContainer.scrollHeight, behavior: 'smooth' });
                 // Set a timer to hide the download button after 3 minutes
                 downloadTimeoutId = setTimeout(() => {
                     downloadButton.classList.remove('show');

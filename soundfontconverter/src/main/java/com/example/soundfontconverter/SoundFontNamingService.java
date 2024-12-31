@@ -194,7 +194,7 @@ public class SoundFontNamingService {
     //     return lastAltDir.equals(currentAltDirName);
     // }
 
-    private void convertSounds(String sessionId, BoardType srcBoardType, BoardType tgtBoardType, String tempDirName, boolean optimizeCheckbox, String sourceDirName) throws IOException {
+    private void convertSounds(String sessionId, BoardType srcBoardType, BoardType tgtBoardType, String tempDirName, boolean optimizeCheckbox, String sourceDirName, boolean applyHighPass) throws IOException {
         soundCounter.clear();
         String key = BoardType.getKey(srcBoardType, tgtBoardType);
         String effectiveSourceDirName = (is_chained_ && second_loop_) ? originalSourceDirName : sourceDirName;
@@ -380,7 +380,7 @@ public class SoundFontNamingService {
 
                             if (fileName.toLowerCase().endsWith(".mp3") || fileName.toLowerCase().endsWith(".mp4")) {
                                 // Convert MP3 or MP4 to WAV
-                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
+                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile, applyHighPass); // <----- ADDED applyHighPass
                                 if (wasAudioConverted) {
                                     fileName = fileName.replaceAll("\\.mp3$|\\.mp4$", ".wav");
                                     path = Paths.get(inputFile.getParent(), fileName);
@@ -389,7 +389,7 @@ public class SoundFontNamingService {
 
                             // Process the WAV file to ensure it meets the desired format
                             if (fileName.toLowerCase().endsWith(".wav")) {
-                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(path.toFile());
+                                wasAudioConverted = AudioConverter.convertToWavIfNeeded(path.toFile(), applyHighPass); // <----- ADDED applyHighPass
                             // Check and strip metadata
                                 wasMetadataStripped = AudioConverter.stripMetadataIfPresent(path.toFile());
                             }
@@ -967,7 +967,7 @@ public class SoundFontNamingService {
         }
     }  // convertSounds()
 
-    public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath) throws IOException {
+    public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath, boolean applyHighPass) throws IOException {
         String filename = inputFile.getName();
         // Check if the file is a WAV, MP3, or MP4 file
         if (!filename.toLowerCase().endsWith(".wav") && 
@@ -986,7 +986,7 @@ public class SoundFontNamingService {
             logger.info("Audio Format Check: " + inputFile.getName());
 
             // Ensure the WAV file meets the desired audio format specifications
-            boolean wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile);
+            boolean wasAudioConverted = AudioConverter.convertToWavIfNeeded(inputFile, applyHighPass); // <----- PASS applyHighPass
             // Now check and strip metadata if present
             boolean wasMetadataStripped = AudioConverter.stripMetadataIfPresent(inputFile);
 
@@ -1070,7 +1070,7 @@ public class SoundFontNamingService {
         }
     }
 
-    public void chainConvertSoundFont(String sessionId, String sourceBoard, String targetBoard, String tempDirName, boolean optimize, String sourceDirName) throws IOException {
+    public void chainConvertSoundFont(String sessionId, String sourceBoard, String targetBoard, String tempDirName, boolean optimize, String sourceDirName, boolean applyHighPass) throws IOException {
         BoardType srcBoardType = BoardType.valueOf(sourceBoard.toUpperCase());
         BoardType tgtBoardType = BoardType.valueOf(targetBoard.toUpperCase());
         originalSourceBoard = sourceBoard;
@@ -1083,7 +1083,8 @@ public class SoundFontNamingService {
             realTargetBoard = targetBoard;
         if (is_chained_) {
             // Do the chained conversion;
-            convertSounds(sessionId, srcBoardType, BoardType.PROFFIE, tempDirName, false, sourceDirName);
+            convertSounds(sessionId, srcBoardType, BoardType.PROFFIE, tempDirName, false, sourceDirName, applyHighPass); // <----- Added applyHighPass
+
             second_loop_ = !second_loop_;
 
             // Now use the converted PROFFIE files as source for the actual target.
@@ -1094,11 +1095,13 @@ public class SoundFontNamingService {
                                            .collect(Collectors.toList());
             String proffieDirName = proffieFiles.get(0).getParent().getFileName().toString();
             // Second Conversion Loop: PROFFIE to Final Target
-            convertSounds(sessionId, BoardType.PROFFIE, tgtBoardType, tempDirName, false, proffieDirName);
+            convertSounds(sessionId, BoardType.PROFFIE, tgtBoardType, tempDirName, false, proffieDirName, applyHighPass); // <----- Added applyHighPass
+
             second_loop_ = !second_loop_;
         } else {
             // Direct Conversion (including Proffie to Proffie)
-            convertSounds(sessionId, srcBoardType, tgtBoardType, tempDirName, optimize, sourceDirName);
+            convertSounds(sessionId, srcBoardType, tgtBoardType, tempDirName, optimize, sourceDirName, applyHighPass); // <----- Added applyHighPass
+
         }
     }
 
