@@ -67,17 +67,16 @@ public class AudioConverter {
                 logger.error("Failed to delete existing output file: " + outputFile.getName());
             }
 
-// Move temporary file to final output location
-try {
-logger.info("Temporary file format before move: " + AudioSystem.getAudioInputStream(tempFile).getFormat().toString());
-    java.nio.file.Files.move(tempFile.toPath(), outputFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-outputFile = new File(outputFile.getAbsolutePath());
-    logger.info("Temporary file moved to final output: " + outputFile.getName());
-} catch (IOException e) {
-    logger.error("Failed to move temporary file to final output file: " + e.getMessage());
-    throw e;
-}
-
+            // Move temporary file to final output location
+            try {
+            // logger.info("Temporary file format before move: " + AudioSystem.getAudioInputStream(tempFile).getFormat().toString());
+                java.nio.file.Files.move(tempFile.toPath(), outputFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            outputFile = new File(outputFile.getAbsolutePath());
+                // logger.info("Temporary file moved to final output: " + outputFile.getName());
+            } catch (IOException e) {
+                logger.error("Failed to move temporary file to final output file: " + e.getMessage());
+                throw e;
+            }
 
             // Delete the original .mp3 or .mp4 file if applicable
             if (inputFile.getName().endsWith(".mp3") || inputFile.getName().endsWith(".mp4")) {
@@ -87,62 +86,60 @@ outputFile = new File(outputFile.getAbsolutePath());
             originalStream.close();  // Close the stream if no conversion is needed
         }
 
+        // Ensure the outputFile after conversion is properly flushed and re-read
+        try {
+            // logger.info("Re-reading the output file after conversion: " + outputFile.getName());
 
-// Ensure the outputFile after conversion is properly flushed and re-read
-try {
-    logger.info("Re-reading the output file after conversion: " + outputFile.getName());
+            // Rename the file to avoid caching issues
+            File renamedFile = new File(outputFile.getAbsolutePath() + "_converted.wav");
+            if (!outputFile.renameTo(renamedFile)) {
+                logger.error("Failed to rename file for re-reading: " + outputFile.getName());
+                throw new IOException("Failed to rename file for re-reading");
+            }
+            outputFile = renamedFile;
+            // logger.info("Output file renamed for re-read: " + outputFile.getName());
 
-    // Rename the file to avoid caching issues
-    File renamedFile = new File(outputFile.getAbsolutePath() + "_converted.wav");
-    if (!outputFile.renameTo(renamedFile)) {
-        logger.error("Failed to rename file for re-reading: " + outputFile.getName());
-        throw new IOException("Failed to rename file for re-reading");
-    }
-    outputFile = renamedFile;
-    logger.info("Output file renamed for re-read: " + outputFile.getName());
+            // Re-read the output file's audio format
+            AudioInputStream finalStream = AudioSystem.getAudioInputStream(outputFile);
+            AudioFormat finalFormat = finalStream.getFormat();
+            // logger.info("Final converted file format (re-read): " + finalFormat.toString());
 
-    // Re-read the output file's audio format
-    AudioInputStream finalStream = AudioSystem.getAudioInputStream(outputFile);
-    AudioFormat finalFormat = finalStream.getFormat();
-    logger.info("Final converted file format (re-read): " + finalFormat.toString());
-
-    finalStream.close(); // Ensure this stream is closed after reading
-} catch (UnsupportedAudioFileException | IOException e) {
-    logger.error("Error while validating the final converted file format: " + e.getMessage(), e);
-    throw e; // Ensure any issues are raised
-}
+            finalStream.close(); // Ensure this stream is closed after reading
+        } catch (UnsupportedAudioFileException | IOException e) {
+            logger.error("Error while validating the final converted file format: " + e.getMessage(), e);
+            throw e; // Ensure any issues are raised
+        }
 
 
-// Apply fade-in/out on the renamed file before renaming back
-logger.info("Applying fade-in/out on renamed file: " + outputFile.getName());
-applyFadeInOut(outputFile);
+        // Apply fade-in/out on the renamed file before renaming back
+        // logger.info("Applying fade-in/out on renamed file: " + outputFile.getName());
+        applyFadeInOut(outputFile);
 
-// Revert to the original file name after fade-in/out
-try {
-    String originalFileName = inputFile.getAbsolutePath();
-    File revertedFile = new File(originalFileName);
-    if (!outputFile.renameTo(revertedFile)) {
-        logger.error("Failed to revert file name to original: " + revertedFile.getName());
-        throw new IOException("Failed to revert file name to original");
-    }
-    outputFile = revertedFile;
-    logger.info("Output file reverted to original name after fade-in/out: " + outputFile.getName());
-} catch (IOException e) {
-    logger.error("Error while reverting file name after fade-in/out: " + e.getMessage(), e);
-    throw e;
-}
-
+        // Revert to the original file name after fade-in/out
+        try {
+            String originalFileName = inputFile.getAbsolutePath();
+            File revertedFile = new File(originalFileName);
+            if (!outputFile.renameTo(revertedFile)) {
+                logger.error("Failed to revert file name to original: " + revertedFile.getName());
+                throw new IOException("Failed to revert file name to original");
+            }
+            outputFile = revertedFile;
+            // logger.info("Output file reverted to original name after fade-in/out: " + outputFile.getName());
+        } catch (IOException e) {
+            logger.error("Error while reverting file name after fade-in/out: " + e.getMessage(), e);
+            throw e;
+        }
 
         return !outputFile.equals(inputFile);  // Return true if the file was converted
     }
 
     private static void applyFadeInOut(File file) {
-logger.info("Starting fade-in/out on file: " + file.getName());
-try (AudioInputStream fadeStream = AudioSystem.getAudioInputStream(file)) {
-    logger.info("Format before fade-in/out: " + fadeStream.getFormat().toString());
-} catch (UnsupportedAudioFileException | IOException e) {
-    logger.error("Error reading audio file format for fade-in/out: " + e.getMessage(), e);
-}
+        // logger.info("Starting fade-in/out on file: " + file.getName());
+        // try (AudioInputStream fadeStream = AudioSystem.getAudioInputStream(file)) {
+        //     logger.info("Format before fade-in/out: " + fadeStream.getFormat().toString());
+        // } catch (UnsupportedAudioFileException | IOException e) {
+        //     logger.error("Error reading audio file format for fade-in/out: " + e.getMessage(), e);
+        // }
 
         try {
             // Read audio file
@@ -347,24 +344,22 @@ try (AudioInputStream fadeStream = AudioSystem.getAudioInputStream(file)) {
         originalAudioStream.close();
         return true;
 
-    } catch (Exception e) {
-        logger.error("Error while applying high-pass filter: " + e.getMessage(), e);
-        return false;
+        } catch (Exception e) {
+            logger.error("Error while applying high-pass filter: " + e.getMessage(), e);
+            return false;
+        }
     }
-}
 
-// Utility method to calculate RMS
-private static double calculateRMS(int[] samples) {
-    double sum = 0;
-    for (int sample : samples) {
-        sum += sample * sample;
+    // Utility method to calculate RMS
+    private static double calculateRMS(int[] samples) {
+        double sum = 0;
+        for (int sample : samples) {
+            sum += sample * sample;
+        }
+        return Math.sqrt(sum / samples.length);
     }
-    return Math.sqrt(sum / samples.length);
-}
 
 
-
-        // Method to strip metadata and return boolean indicating if metadata was stripped
     public static boolean stripMetadataIfPresent(File inputFile) {
         boolean wasMetadataStripped = false;
         
@@ -384,8 +379,7 @@ private static double calculateRMS(int[] samples) {
         return wasMetadataStripped;  // Return whether metadata was stripped
     }
 
-
-    // Method to check for metadata
+    // Check for metadata
     public static boolean hasMetadata(String filePath) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("ffmpeg", "-i", filePath, "-f", "ffmetadata", "-");
         processBuilder.redirectErrorStream(true);
@@ -410,7 +404,7 @@ private static double calculateRMS(int[] samples) {
         return hasImportantMetadata;  // If true, the file will be processed; if false, it will be skipped
     }
 
-    // Method to strip metadata
+    // Strip metadata
     public static void stripMetadata(String inputFilePath) throws IOException, InterruptedException {
         String tempFilePath = inputFilePath + "_temp.wav";  // Create a temporary file for output
         ProcessBuilder processBuilder = new ProcessBuilder(
