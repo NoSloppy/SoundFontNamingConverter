@@ -8,3 +8,5 @@ in.wav,pwroff.wav
 swng.wav,swing.wav
 ccchange.wav,change.wav
 ccend.wav,save.wav
+mexit.wav,save.wav
+mselect.wav,change.wav

@@ -80,7 +80,7 @@ public class SoundFontConverterController {
 public void downloadConvertedFiles(@RequestParam String targetBoard, @RequestParam String dirIdentifier, HttpServletResponse response) {
     try {
         String tempDirName = "temporaryDirectory-" + dirIdentifier;
-        Path fileLocation = Paths.get(tempDirName, "Converted_to_" + targetBoard + ".zip");
+        Path fileLocation = Paths.get(tempDirName, "Renamed_to_" + targetBoard + ".zip");
 
         if (!Files.exists(fileLocation)) {
             // Log an error if the file does not exist
@@ -138,8 +138,8 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
         }
 
         boolean applyHighPass = (highPassCheckbox != null && highPassCheckbox.equals("on")); // <----- ADDED
-        logger.info("convertAudioOnly: High-Pass Checkbox value received: " + highPassCheckbox); // Logs the raw checkbox value
-        logger.info("convertAudioOnly: High-Pass Filter enabled: " + applyHighPass); // Logs the interpreted boolean value
+        // logger.info("convertAudioOnly: High-Pass Checkbox value received: " + highPassCheckbox); // Logs the raw checkbox value
+        logger.info("High-Pass Filter enabled: " + applyHighPass); // Logs the interpreted boolean value
 
         // Process and save uploaded files preserving directory structure.
         for (int i = 0; i < audioFiles.length; i++) {
@@ -203,7 +203,7 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
         // Check if the session exceeds the maximum allowed
         synchronized (activeSessions) {
             if (!activeSessions.contains(sessionId) && activeSessions.size() >= MAX_CONCURRENT_SESSIONS) {
-                return new ResponseEntity<>(Map.of("status", "error", "message", "Server full. Wait time 3 minutes or less.\nClick 'Convert' to try again"), HttpStatus.TOO_MANY_REQUESTS);
+                return new ResponseEntity<>(Map.of("status", "error", "message", "Server full. Wait time 3 minutes or less.\nClick 'Rename' to try again"), HttpStatus.TOO_MANY_REQUESTS);
             }
             activeSessions.add(sessionId);
         }
@@ -295,13 +295,14 @@ String tempDirName = "temporaryDirectory-" + sessionIdentifier;
         // logger.info("File saved at: " + savePath);
     }
 
-            logger.info("+_+_+_+_+_+_+_+_+_+_+_+_+_+_isSafari = " + isSafari(request));
+            logger.info("isSafari = " + isSafari(request));
+            logger.info("High-Pass Filter enabled: " + applyHighPass); // Logs the interpreted boolean value
 
-            // 4. Convert files.    
+            // 4. Rename files.    
             // <----- MODIFIED: Pass the applyHighPass flag to chainConvertSoundFont
             soundFontNamingService.chainConvertSoundFont(sessionId, sourceBoard, targetBoard, tempDirName, optimize, sourceDirName, applyHighPass);
 
-            // 5. After converting filesRemove the original directory.
+            // 5. After renaming files, Remove the original directory.
             Path commonParentDir = findCommonParentDirectory(savedFiles);
             soundFontNamingService.removeOriginalDirectory(commonParentDir);
 
@@ -320,7 +321,7 @@ public ResponseEntity<?> finalizeConversion(HttpSession session) {
     String targetBoard = (String) session.getAttribute("targetBoard");
 
     try {
-        // 6. Zip the converted files.
+        // 6. Zip the renamed files.
         Path resultZip = soundFontNamingService.zipConvertedFiles(sessionId, tempDirName, sourceBoard, targetBoard);
 
         // 7. After successful conversion, schedule cleanup

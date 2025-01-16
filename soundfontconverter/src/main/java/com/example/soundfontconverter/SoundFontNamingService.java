@@ -31,6 +31,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class SoundFontNamingService {
 
+    private static final String VERSION = "4.3.2";
     private final ConversionLogService conversionLogService;
     private static final Logger logger = LoggerFactory.getLogger(SoundFontConverterController.class);
     public static final String ANSI_RESET = "\u001B[0m";
@@ -45,7 +46,7 @@ public class SoundFontNamingService {
 
     enum BoardType {
         CFX,
-        GH3,
+        GOLDEN_HARVEST,
         PROFFIE,
         VERSO,
         XENO3;
@@ -64,11 +65,12 @@ public class SoundFontNamingService {
     private boolean initialCleanupDone = false;
     private static final String PROFFIE_ADDS_PATH = "./inis";
     private static final String VERSO_ADDS_PATH = "./Verso_Blast";
+    private static final String GOLDEN_HARVEST_ADDS_PATH = "./GOLDEN_HARVEST_settings";
     private static final Map<String, String> CFX_TO_PROFFIE = new HashMap<>();
     private static final Map<String, String> CFX_TO_VERSO = new HashMap<>();
-    private static final Map<String, String> GH3_TO_PROFFIE = new HashMap<>();
+    private static final Map<String, String> GOLDEN_HARVEST_TO_PROFFIE = new HashMap<>();
     private static final Map<String, String> PROFFIE_TO_CFX = new HashMap<>();
-    private static final Map<String, String> PROFFIE_TO_GH3 = new HashMap<>();
+    private static final Map<String, String> PROFFIE_TO_GOLDEN_HARVEST = new HashMap<>();
     private static final Map<String, String> PROFFIE_TO_VERSO = new HashMap<>();
     private static final Map<String, String> PROFFIE_TO_XENO3 = new HashMap<>();
     private static final Map<String, String> VERSO_TO_CFX = new HashMap<>();
@@ -109,8 +111,8 @@ public class SoundFontNamingService {
     private static void initializeMappings() {
         safeLoadMappingsFromCSV("./CSV/CFX_TO_PROFFIE.csv", CFX_TO_PROFFIE);
         safeLoadMappingsFromCSV("./CSV/PROFFIE_TO_CFX.csv", PROFFIE_TO_CFX);
-        safeLoadMappingsFromCSV("./CSV/GH3_TO_PROFFIE.csv", GH3_TO_PROFFIE);
-        safeLoadMappingsFromCSV("./CSV/PROFFIE_TO_GH3.csv", PROFFIE_TO_GH3);
+        safeLoadMappingsFromCSV("./CSV/GOLDEN_HARVEST_TO_PROFFIE.csv", GOLDEN_HARVEST_TO_PROFFIE);
+        safeLoadMappingsFromCSV("./CSV/PROFFIE_TO_GOLDEN_HARVEST.csv", PROFFIE_TO_GOLDEN_HARVEST);
         safeLoadMappingsFromCSV("./CSV/VERSO_TO_PROFFIE.csv", VERSO_TO_PROFFIE);
         safeLoadMappingsFromCSV("./CSV/PROFFIE_TO_VERSO.csv", PROFFIE_TO_VERSO);
         safeLoadMappingsFromCSV("./CSV/XENO3_TO_PROFFIE.csv", XENO3_TO_PROFFIE);
@@ -119,8 +121,8 @@ public class SoundFontNamingService {
 
         soundMappings.put(BoardType.getKey(BoardType.CFX, BoardType.PROFFIE), CFX_TO_PROFFIE);
         soundMappings.put(BoardType.getKey(BoardType.PROFFIE, BoardType.CFX), PROFFIE_TO_CFX);
-        soundMappings.put(BoardType.getKey(BoardType.GH3, BoardType.PROFFIE), GH3_TO_PROFFIE);
-        soundMappings.put(BoardType.getKey(BoardType.PROFFIE, BoardType.GH3), PROFFIE_TO_GH3);
+        soundMappings.put(BoardType.getKey(BoardType.GOLDEN_HARVEST, BoardType.PROFFIE), GOLDEN_HARVEST_TO_PROFFIE);
+        soundMappings.put(BoardType.getKey(BoardType.PROFFIE, BoardType.GOLDEN_HARVEST), PROFFIE_TO_GOLDEN_HARVEST);
         soundMappings.put(BoardType.getKey(BoardType.VERSO, BoardType.PROFFIE), VERSO_TO_PROFFIE);
         soundMappings.put(BoardType.getKey(BoardType.PROFFIE, BoardType.VERSO), PROFFIE_TO_VERSO);
         soundMappings.put(BoardType.getKey(BoardType.XENO3, BoardType.PROFFIE), XENO3_TO_PROFFIE);
@@ -133,9 +135,9 @@ public class SoundFontNamingService {
         for (Map.Entry<String, String> entry : PROFFIE_TO_CFX.entrySet()) {
             CFX_TO_PROFFIE.putIfAbsent(entry.getValue(), entry.getKey());
         }
-        // GH3 to Proffie mapping
-        for (Map.Entry<String, String> entry : PROFFIE_TO_GH3.entrySet()) {
-            GH3_TO_PROFFIE.putIfAbsent(entry.getValue(), entry.getKey());
+        // Golden Harvest to Proffie mapping
+        for (Map.Entry<String, String> entry : PROFFIE_TO_GOLDEN_HARVEST.entrySet()) {
+            GOLDEN_HARVEST_TO_PROFFIE.putIfAbsent(entry.getValue(), entry.getKey());
         }
         // Verso to Proffie mapping
         for (Map.Entry<String, String> entry : PROFFIE_TO_VERSO.entrySet()) {
@@ -205,20 +207,20 @@ public class SoundFontNamingService {
 
         if (is_chained_) {  // means neither source nor target boards are PROFFIE
             if (!second_loop_) {
-                logger.info("** First step: Converting " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
-                logger.info("** Second step: Converting from " + tgtBoardType + " to " + sourceDirName + "_" + realTargetBoard);
-                logger.info("** Last step: Zipping " + sourceDirName + "_" + realTargetBoard + " into CONVERTED_to_" + realTargetBoard + ".zip");
+                logger.info("** First step: Renaming " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
+                logger.info("** Second step: Renaming from " + tgtBoardType + " to " + sourceDirName + "_" + realTargetBoard);
+                logger.info("** Last step: Zipping " + sourceDirName + "_" + realTargetBoard + " into RENAMED_to_" + realTargetBoard + ".zip");
                 logger.info(" ");
             }
         } else {
             logger.info("** First step: Converting " + sourceDirName + " from " + srcBoardType + " to " + tgtBoardType);
-            logger.info("** Last step: Zipping " + sourceDirName + "_" + tgtBoardType + " into CONVERTED_to_" + tgtBoardType + ".zip");
+            logger.info("** Last step: Zipping " + sourceDirName + "_" + tgtBoardType + " into RENAMED_to_" + tgtBoardType + ".zip");
             logger.info(" ");
         }
 
-        // Include a special case for GH3 output directory naming
-        String shortTargetDir = "Converted_to_" + tgtBoardType + "/" + 
-                                   (tgtBoardType == BoardType.GH3 ? "sound1 - " : "") + 
+        // Include a special case for Golden Harvest output directory naming
+        String shortTargetDir = "Renamed_to_" + tgtBoardType + "/" + 
+                                   (tgtBoardType == BoardType.GOLDEN_HARVEST ? "sound1 - " : "") + 
                                    sourceDirName;
         Path targetDirPath = Paths.get(tempDirName, shortTargetDir);
         Path extrasDirPath = targetDirPath.resolve("extras");
@@ -226,14 +228,14 @@ public class SoundFontNamingService {
 
         // Prepare Log file
         ensureDirectoryExists(targetDirPath);
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
-        String currentDate = sdf.format(new Date());
+        String currentDate = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss").format(new Date());
+
 
         if (!is_chained_) {
             logger.info( "------------------------------------------------");
             conversionLogService.sendLogToEmitter(sessionId, "---------------------------------------------------------------------\n");
             logStringBuilder.append( "------------------------------------------------\n");
-            log(sessionId, "Converted with SoundFont Naming Converter 4.0.0");
+            log(sessionId, "Renamed with Sound Font Naming Converter " + VERSION);
             log(sessionId, "Brian Conner a.k.a NoSloppy");
             log(sessionId, currentDate);
             logger.info(" ");
@@ -246,7 +248,7 @@ public class SoundFontNamingService {
             logStringBuilder.append("\n");
         } else if (!second_loop_) {
             logger.info( "------------------------------------------------");
-            logger.info( "Converted with SoundFont Naming Converter 4.0.0");
+            logger.info( "Renamed with Sound Font Naming Converter " + VERSION);
             logger.info( "Brian Conner a.k.a NoSloppy");
             logger.info( currentDate);
             logger.info(" ");
@@ -255,7 +257,7 @@ public class SoundFontNamingService {
             logger.info(" ");
         } else {
             conversionLogService.sendLogToEmitter(sessionId, "---------------------------------------------------------------------\n");
-            conversionLogService.sendLogToEmitter(sessionId, "Converted with SoundFont Naming Converter 4.0.0");
+            conversionLogService.sendLogToEmitter(sessionId, "Renamed with Sound Font Naming Converter " + VERSION);
             conversionLogService.sendLogToEmitter(sessionId, "Brian Conner a.k.a NoSloppy");
             conversionLogService.sendLogToEmitter(sessionId, currentDate);
             conversionLogService.sendLogToEmitter(sessionId, "\n");
@@ -265,7 +267,7 @@ public class SoundFontNamingService {
             conversionLogService.sendLogToEmitter(sessionId, "\n");
 
             logStringBuilder.append( "------------------------------------------------\n");
-            logStringBuilder.append( "Converted with SoundFont Naming Converter 4.0.0\n");
+            logStringBuilder.append( "Renamed with Sound Font Naming Converter " + VERSION + "\n");
             logStringBuilder.append( "Brian Conner a.k.a NoSloppy\n");
             logStringBuilder.append( currentDate + "\n\n");
             logStringBuilder.append( "Converting: " + effectiveSourceDirName + " from " + originalSourceBoard + " to " + tgtBoardType + "\n");
@@ -286,8 +288,8 @@ public class SoundFontNamingService {
 
         Path fullPath;
         if (is_chained_ && second_loop_) {
-            // In the second loop, adjust the path to point to the converted files
-            fullPath = Paths.get(tempDirName, "Converted_to_PROFFIE", sourceDirName);
+            // In the second loop, adjust the path to point to the renamed files
+            fullPath = Paths.get(tempDirName, "Renamed_to_PROFFIE", sourceDirName);
         } else {
             // In the first loop, or non-chained conversions
             fullPath = Paths.get(tempDirName, sourceDirName);
@@ -547,7 +549,7 @@ public class SoundFontNamingService {
                                         // Create poweroff.wav
                                         Path poweroffPath = targetDirPath.resolve("poweroff.wav");
                                         copyFile(path, poweroffPath);
-                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
+                                        log(sessionId, "Renamed: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
                                         // Also create pwroff2.wav
                                         Path pwroff2Path = targetDirPath.resolve("pwroff2.wav");
                                         copyFile(path, pwroff2Path);
@@ -563,7 +565,7 @@ public class SoundFontNamingService {
                                         Path poweroffPath = targetDirPath.resolve(newPrefix + ".wav");
                                         copyFile(path, poweroffPath);
                                         // Log the file creation
-                                        log(sessionId, "Converted: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
+                                        log(sessionId, "Renamed: " + path.getFileName() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + poweroffPath.getFileName());
                                     }
                                     fileNameCounter.put(commonKey, currentCounter + 1);
                                     loggedFiles.add(path.getFileName().toString()); // Add the filename to the set
@@ -747,7 +749,7 @@ public class SoundFontNamingService {
                                     }
                                    String logPathPrefix = is_chained_ ? shortTargetDir : effectiveSourceDirName + "_" + tgtBoardType.toString();
                                         log(sessionId, "- Numbered the first file: ");
-                                        // log is ok here. "Converted_to_PROFFIE" won't show in user logs if is_chained_
+                                        // log is ok here. "Renamed_to_PROFFIE" won't show in user logs if is_chained_
                                         log(sessionId, logPathPrefix + "/" + prefix + ".wav" + " -> " + logPathPrefix + "/" + newPath.getFileName());
                                 }
                             }
@@ -762,22 +764,29 @@ public class SoundFontNamingService {
                             if (currentCounter == 1) {
                                 originalPath = targetDirPath.resolve("font.wav");
                                 copyFile(path, originalPath);
-                                // log(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
-                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
-                                logStringBuilder.append( "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString() + "\n");
-                            } else {
-                                log(sessionId, "-- Verso only uses one font file, so any additional become boots.");
-                                int nextBootCounter = fileNameCounter.getOrDefault("boot", 1);
-                                originalPath = targetDirPath.resolve("boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
-                                fileNameCounter.put("boot", nextBootCounter + 1);
+                                logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString());
+                                logStringBuilder.append( "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + path.getFileName().toString() + "\n");
+                            // } else {  // Process additional font.wavs as boot.wavs
+                            //     log(sessionId, "-- Verso only uses one font file, so any additional become boot.wav files.");
+                            //     int nextBootCounter = fileNameCounter.getOrDefault("boot", 1);
+                            //     originalPath = targetDirPath.resolve("boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
+                            //     fileNameCounter.put("boot", nextBootCounter + 1);
+                            //     copyFile(path, originalPath);
+                            //     logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
+                            //     conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
+                            //     logStringBuilder.append("Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav\n");
+                            // }
+                            } else {  // Process additional font.wavs as fontALT.wavs
+                                log(sessionId, "-- Verso only uses one font file, so any additional become fontALT files.");
+                                originalPath = targetDirPath.resolve(commonKey + "ALT" + (currentCounter - 1) + ".wav");
                                 copyFile(path, originalPath);
-                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav");
-                                logStringBuilder.append("Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/boot" + (nextBootCounter == 1 ? "" : nextBootCounter) + ".wav\n");
+                                logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                logStringBuilder.append("Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav\n");
                             }
                             return;
-                        } else if (tgtBoardType == BoardType.GH3 && convertedBaseName.equals("font.wav")) {
+                        } else if (tgtBoardType == BoardType.GOLDEN_HARVEST && convertedBaseName.equals("font.wav")) {
                             String commonKey = "font";
                             int currentCounter = fileNameCounter.getOrDefault(commonKey, 1);
                             fileNameCounter.put(commonKey, currentCounter + 1);
@@ -785,16 +794,16 @@ public class SoundFontNamingService {
                             if (currentCounter == 1) {
                                 originalPath = targetDirPath.resolve(commonKey + ".wav");
                                 copyFile(path, originalPath);
-                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
-                                logStringBuilder.append( "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav\n");
+                                logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav");
+                                logStringBuilder.append( "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + ".wav\n");
                             } else {
-                                log(sessionId, "-- GH3 only uses one font file, so any additional become fontALT files.");
+                                log(sessionId, "-- Golden Harvest only uses one font file, so any additional become fontALT files.");
                                 originalPath = targetDirPath.resolve(commonKey + "ALT" + (currentCounter - 1) + ".wav");
                                 copyFile(path, originalPath);
-                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
-                                logStringBuilder.append("Converted: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav\n");
+                                logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav");
+                                logStringBuilder.append("Renamed: " + sourceDirName + " " + path.getFileName().toString() + " -> " + effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + commonKey + "ALT" + (currentCounter - 1) + ".wav\n");
                             }
                             return;
                         } else if (tgtBoardType == BoardType.XENO3) {
@@ -852,19 +861,16 @@ public class SoundFontNamingService {
                                 // Format with parenthesis for when final target XENO3 board
                                 finalTargetFilename = prefix + " (" + count + ").wav";
                                 targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
-                                // log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                logStringBuilder.append( "Converted: " + originalFilename + " -> " + targetPathLog + "\n");
-                                logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + targetPathLog);
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + originalFilename + " -> " + targetPathLog);
+                                logStringBuilder.append( "Renamed: " + originalFilename + " -> " + targetPathLog + "\n");
+                                logger.info("Renamed: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + targetPathLog);
                             } else {
                                 // target is not PROFFIE or XENO3 (so Loop 2 of chained)
                                 finalTargetFilename = prefix + formattedCount + ".wav";
                                 targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + finalTargetFilename;
-                                // log(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                conversionLogService.sendLogToEmitter(sessionId, "Converted: " + originalFilename + " -> " + targetPathLog);
-                                logStringBuilder.append( "Converted: " + originalFilename + " -> " + targetPathLog + "\n");
-                                // logger.info("Converted: " + sourceDirName + " " + originalFilename + " -> temp " + path.getFileName().toString() + " -> " + targetPathLog);
-                                logger.info("Now Converting temp PROFFIE version of:  " + path.getFileName().toString() + " -> " + targetPathLog);
+                                conversionLogService.sendLogToEmitter(sessionId, "Renamed: " + originalFilename + " -> " + targetPathLog);
+                                logStringBuilder.append( "Renamed: " + originalFilename + " -> " + targetPathLog + "\n");
+                                logger.info("Loop 2: Renaming temp Proffie version of:  " + path.getFileName().toString() + " -> " + targetPathLog);
                             }
                         } else {
                             if ("PROFFIE".equals(realTargetBoard)) {
@@ -876,23 +882,23 @@ public class SoundFontNamingService {
                                                            + (altCount > 1 ? prefix + "/" : "") 
                                                            + outputPath.getFileName().toString();
                                     targetPathLog = sourceDirName + "_" + realTargetBoard + "/" + altTargetPath;
-                                    log(sessionId, "Converted: " + sourcePathLog + " -> " + targetPathLog);
+                                    log(sessionId, "Renamed: " + sourcePathLog + " -> " + targetPathLog);
                                 } else {
                                     // Regular handling for non-alt files
                                     targetPathLog = count > 1 && optimizeCheckbox 
                                                     ? sourceDirName + "_" + realTargetBoard + "/" + prefix + "/" + outputPath.getFileName().toString()
                                                     : sourceDirName + "_" + realTargetBoard + "/" + outputPath.getFileName().toString();
-                                    log(sessionId, "Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
+                                    log(sessionId, "Renamed: " + path.getFileName().toString() + " -> " + targetPathLog);
                                 }
                             } else if (srcBoardType == BoardType.PROFFIE) {
                                 // For all non-chained conversions when source is PROFFIE
                                 targetPathLog = effectiveSourceDirName + "_" + tgtBoardType.toString() + "/" + outputPath.getFileName().toString();
-                                log(sessionId, "Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
+                                log(sessionId, "Renamed: " + path.getFileName().toString() + " -> " + targetPathLog);
 
                             } else {
                                 // For Loop 1 of chained conversions when going to imtermediary PROFFIE
                                 targetPathLog = outputPath.toString().replace(tempDirName + "/", "");
-                                logger.info("Converted: " + path.getFileName().toString() + " -> " + targetPathLog);
+                                logger.info("Renamed: " + path.getFileName().toString() + " -> " + targetPathLog);
                             }
                         }
 
@@ -919,21 +925,24 @@ public class SoundFontNamingService {
         }
 
         // After processing all files, check if need to add default INIs for PROFFIE, or add blast1.wav if VERSO.
-        if (!is_chained_) {
+        if (!is_chained_) {  // source or target is PROFFIE
             if (tgtBoardType == BoardType.PROFFIE) {
                 for (String defaultFile : new String[]{"config.ini", "smoothsw.ini"}) {
                     if (!Files.exists(targetDirPath.resolve(defaultFile)) || srcBoardType != BoardType.PROFFIE) {
-                        log(sessionId, "-- Proffie needs a config.ini and smoothsw.ini file, so the default files have been added here for you.");
-                        Files.copy(Paths.get(PROFFIE_ADDS_PATH, defaultFile), targetDirPath.resolve(defaultFile), StandardCopyOption.REPLACE_EXISTING);
+                        log(sessionId, "-- Proffie needs a missing " + defaultFile + " file, so it has been added here for you.");
+                        Files.copy(Paths.get(PROFFIE_ADDS_PATH, defaultFile), targetDirPath.resolve(defaultFile));
                         log(sessionId, "Added missing default file -> " + sourceDirName + "_" + realTargetBoard + "/" + defaultFile);
                     }
                 }
-            }
-            else if (tgtBoardType == BoardType.VERSO) {
+            } else if (tgtBoardType == BoardType.VERSO) {
                 logger.info( ":----------------------------------------------> ");  // divider between each file
                 log(sessionId, "-- Verso uses a 'blaster firing' sound before the 'deflection' sound, so it's been added for you.");
                 Files.copy(Paths.get(VERSO_ADDS_PATH, "blast1.wav"), targetDirPath.resolve("blast1.wav"));
                 log(sessionId, "Added blast1.wav -> " + sourceDirName + "_" + realTargetBoard + "/blast1.wav");
+            } else if (tgtBoardType == BoardType.GOLDEN_HARVEST) {
+                log(sessionId, "-- Golden Harvest settings.txt file has been added for you.");
+                Files.copy(Paths.get(GOLDEN_HARVEST_ADDS_PATH, "settings.txt"), targetDirPath.resolve("settings.txt"), StandardCopyOption.REPLACE_EXISTING);
+                log(sessionId, "Added settings.txt -> " + sourceDirName + "_" + realTargetBoard + "/settings.txt");
             }
             logger.info(" ");
             conversionLogService.sendLogToEmitter(sessionId, "\n");
@@ -942,17 +951,23 @@ public class SoundFontNamingService {
             conversionLogService.sendLogToEmitter(sessionId, "------------------ | **** MTFBWY **** | ------------------");
             logStringBuilder.append( "------------------ | **** MTFBWY **** | ------------------\n");
             log(sessionId, " ");
-
-            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the converted font folder. ****");
+            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the renamed font folder. ****");
             conversionLogService.sendLogToEmitter(sessionId, "\n");
             Files.writeString(Paths.get(zipTargetDir, "_Conversion_Log.txt"), logStringBuilder.toString());
         } else if (second_loop_) {
+            // Add blast1.wav for Verso board.
             if (tgtBoardType == BoardType.VERSO) {
                 logger.info( ":----------------------------------------------> ");  // divider between each file
                 log(sessionId, "-- Verso uses a 'blaster firing' sound before the 'deflection' sound, so it's been added for you.");
                 Files.copy(Paths.get(VERSO_ADDS_PATH, "blast1.wav"), targetDirPath.resolve("blast1.wav"));
                 log(sessionId, "Added blast1.wav -> " + sourceDirName + "_" + realTargetBoard + "/blast1.wav");
             }
+            // Add settings.txt file for Golden Harvest board.
+            if (tgtBoardType == BoardType.GOLDEN_HARVEST) {
+                log(sessionId, "-- Golden Harvest settings.txt file has been added for you.");
+                Files.copy(Paths.get(GOLDEN_HARVEST_ADDS_PATH, "settings.txt"), targetDirPath.resolve("settings.txt"), StandardCopyOption.REPLACE_EXISTING);
+                log(sessionId, "Added settings.txt -> " + sourceDirName + "_" + realTargetBoard + "/settings.txt");
+            }
             logger.info(" ");
             conversionLogService.sendLogToEmitter(sessionId, "\n");
             logStringBuilder.append("\n");
@@ -961,10 +976,11 @@ public class SoundFontNamingService {
             logStringBuilder.append( "------------------ | **** MTFBWY **** | ------------------\n");
             log(sessionId, " ");
 
-            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the converted font folder. ****");
+            conversionLogService.sendLogToEmitter(sessionId, "**** _Conversion_Log.txt file is included in the renamed font folder. ****");
             conversionLogService.sendLogToEmitter(sessionId, "\n");
             Files.writeString(Paths.get(zipTargetDir, "_Conversion_Log.txt"), logStringBuilder.toString());
         }
+
     }  // convertSounds()
 
     public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath, boolean applyHighPass) throws IOException {
@@ -1087,9 +1103,9 @@ public class SoundFontNamingService {
 
             second_loop_ = !second_loop_;
 
-            // Now use the converted PROFFIE files as source for the actual target.
+            // Now use the renamed PROFFIE files as source for the actual target.
 
-            Path tempProffieDir = Paths.get(tempDirName, "Converted_to_PROFFIE");
+            Path tempProffieDir = Paths.get(tempDirName, "Renamed_to_PROFFIE");
             List<Path> proffieFiles = Files.walk(tempProffieDir)
                                            .filter(Files::isRegularFile)
                                            .collect(Collectors.toList());
@@ -1124,8 +1140,8 @@ public void removeOriginalDirectory(Path directoryToDelete) {
 
 
     public Path zipConvertedFiles(String sessionId, String tempDirName, String sourceBoard, String targetBoard) throws IOException {
-        String targetSubDirPath = tempDirName + "/Converted_to_" + targetBoard;
-        Path zipPath = Paths.get(tempDirName, "Converted_to_" + targetBoard + ".zip");
+        String targetSubDirPath = tempDirName + "/Renamed_to_" + targetBoard;
+        Path zipPath = Paths.get(tempDirName, "Renamed_to_" + targetBoard + ".zip");
 
         // Logging the structure
         Path zipSourceDirPath = Paths.get(targetSubDirPath);
