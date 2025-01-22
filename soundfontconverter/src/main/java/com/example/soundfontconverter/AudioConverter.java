@@ -30,9 +30,10 @@ public class AudioConverter {
                 false   // Little Endian
         );
 
+        boolean wasFormatChanged = false;
         File outputFile = inputFile;  // Default output file is the same as the input
 
-        // Apply high-pass filter if ooption is ON
+        // Apply high-pass filter if option is ON
         if (applyHighPass) {
             boolean highPassSuccess = applyHighPassFilter(outputFile);
             if (!highPassSuccess) {
@@ -48,6 +49,7 @@ public class AudioConverter {
 
         // Check if conversion is needed
         if (!originalFormat.matches(targetFormat)) {
+            wasFormatChanged = true;
             AudioInputStream convertedStream = AudioSystem.getAudioInputStream(targetFormat, originalStream);
             logger.info("Audio: Converting " + inputFile.getName() + " to 44.1kHz, 16bit monaural .wav format.");
 
@@ -130,7 +132,7 @@ public class AudioConverter {
             throw e;
         }
 
-        return !outputFile.equals(inputFile);  // Return true if the file was converted
+        return wasFormatChanged; // Return true only if the format was changed
     }
 
     private static void applyFadeInOut(File file) {
