@@ -1,3 +1,5 @@
+<p>If this tool helps you, donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>  
+
 Automated cross conversion of saber sound font naming conventions between popular controller boards:  
 Proffieboard, CFX, Golden Harvest 3, Verso, and Xenopixel 3.    
 No need to manually rename a font (or many fonts) so it can be used on a different platform. Just click and done.  
@@ -12,26 +14,23 @@ Usage: Super easy. Barely an inconvenience.
 - Choose a font folder from your local computer.  
 - Click the Convert button.  
 - Click the Download button to retrieve a zip file containing the newly named font files.
- 
-NEW in 4.0.3  
-        - Added optional Enable High Pass filter to both renaming and audio convert only routines.  
-        - Automatically apply 40 sample fade-in and fade-out to front and end of wavs to prevent clicking.  
-        - Automatically scroll to bottom to reveal Download button when ready.  
-        - Fixed optimization checkbox hover tips.
-        
-As of 4.0.2  
-        - Metadata tags are removed (Artist, Title, Genre etc...)  
-        
-As of 4.0.1  
-        - Specific GH3 naming fixes.  
-        - CFX results now properly do not number the first blaster.wav file.  
-        - Tracks, extras, bonus etc… files no longer changed to all lowercase.  
-        - Verso 2.0 support - also add blast1.wav for blaster firing sound. 
-        
-As of 4.0.0  
-        - Support for .mp3 files. They will be converted to ideal .wav format as well.  
-        - Stand-alone audio converter without renaming or restructuring anything with the "Convert Audio Only" button up top.  
-Download starts automatically when finished.  
-        - "Multiple Fonts" checkbox allows for selecting a folder of font folders to be processed.  
-          This applies automatically to Audio Only conversions.  
-    <p>If this tool helped you, donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>
+- Option to Convert Audio Only - file structure remains unchanged, but all audio (even from mp4 video files) gets converted for use on saber boards. 
+
+Click the Version Changelog button at the bottom of the page to see incremental updates.
+
+## *NEW - Running Locally with Docker
+
+1. Install Docker Desktop  
+Download and install Docker Desktop (https://www.docker.com/products/docker-desktop/).  
+Windows & Mac: Just install and run it.  
+Linux: Install via package manager (apt, yum, etc.).  
+
+2. Build and Run the App  
+Open a terminal and run:
+```
+docker build -t soundfontconverter .
+docker run -p 8080:8080 soundfontconverter
+```  
+3. Open a browser and go to:
+ http://localhost:8080/  
+Enjoy!
