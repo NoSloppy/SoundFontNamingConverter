@@ -930,7 +930,8 @@ public class SoundFontNamingService {
                 for (String defaultFile : new String[]{"config.ini", "smoothsw.ini"}) {
                     if (!Files.exists(targetDirPath.resolve(defaultFile)) || srcBoardType != BoardType.PROFFIE) {
                         log(sessionId, "-- Proffie needs a missing " + defaultFile + " file, so it has been added here for you.");
-                        Files.copy(Paths.get(PROFFIE_ADDS_PATH, defaultFile), targetDirPath.resolve(defaultFile));
+                        // Files.copy(Paths.get(PROFFIE_ADDS_PATH, defaultFile), targetDirPath.resolve(defaultFile));
+                        Files.copy(Paths.get(PROFFIE_ADDS_PATH, defaultFile), targetDirPath.resolve(defaultFile), StandardCopyOption.REPLACE_EXISTING);
                         log(sessionId, "Added missing default file -> " + sourceDirName + "_" + realTargetBoard + "/" + defaultFile);
                     }
                 }
