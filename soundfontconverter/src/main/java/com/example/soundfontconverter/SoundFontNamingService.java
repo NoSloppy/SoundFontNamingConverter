@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class SoundFontNamingService {
 
-    private static final String VERSION = "4.3.3";
+    private static final String VERSION = "4.3.4";
     private final ConversionLogService conversionLogService;
     private static final Logger logger = LoggerFactory.getLogger(SoundFontConverterController.class);
     public static final String ANSI_RESET = "\u001B[0m";

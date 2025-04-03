@@ -70,19 +70,31 @@ public class AudioConverter {
             }
 
             // Move temporary file to final output location
+            // try {
+            // // logger.info("Temporary file format before move: " + AudioSystem.getAudioInputStream(tempFile).getFormat().toString());
+            //     java.nio.file.Files.move(tempFile.toPath(), outputFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            // outputFile = new File(outputFile.getAbsolutePath());
+            //     // logger.info("Temporary file moved to final output: " + outputFile.getName());
+            // } catch (IOException e) {
+            //     logger.error("Failed to move temporary file to final output file: " + e.getMessage());
+            //     throw e;
+            // }
+            // Move temporary file to final output location
             try {
-            // logger.info("Temporary file format before move: " + AudioSystem.getAudioInputStream(tempFile).getFormat().toString());
                 java.nio.file.Files.move(tempFile.toPath(), outputFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            outputFile = new File(outputFile.getAbsolutePath());
-                // logger.info("Temporary file moved to final output: " + outputFile.getName());
+                logger.info("Converted file moved to: " + outputFile.getAbsolutePath());
+                if (!outputFile.exists()) {
+                    logger.error("Moved file does not exist at expected location: " + outputFile.getAbsolutePath());
+                }
             } catch (IOException e) {
-                logger.error("Failed to move temporary file to final output file: " + e.getMessage());
+                logger.error("Failed to move temp file to: " + outputFile.getAbsolutePath(), e);
                 throw e;
             }
 
             // Delete the original .mp3 or .mp4 file if applicable
             if (inputFile.getName().endsWith(".mp3") || inputFile.getName().endsWith(".mp4")) {
                 inputFile.delete();
+inputFile = outputFile;
             }
         } else {
             originalStream.close();  // Close the stream if no conversion is needed
