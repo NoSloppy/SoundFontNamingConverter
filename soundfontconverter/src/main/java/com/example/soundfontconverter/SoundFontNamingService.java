@@ -986,8 +986,6 @@ public class SoundFontNamingService {
 
     public void convertAudioIfNeeded(Path targetPath, File inputFile, Path tempDirPath, boolean applyHighPass) throws IOException {
         String filename = inputFile.getName();
-logger.info("🚨 convertAudioIfNeeded() called with inputFile: " + filename);
-logger.info("🚨 targetPath: " + targetPath.toString());        // Check if the file is a WAV, MP3, or MP4 file
         // Check if the file is a WAV, MP3, or MP4 file
         if (!filename.toLowerCase().endsWith(".wav") && 
             !filename.toLowerCase().endsWith(".mp3") && 
