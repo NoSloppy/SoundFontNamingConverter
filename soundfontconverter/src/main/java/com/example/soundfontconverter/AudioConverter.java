@@ -33,20 +33,6 @@ public class AudioConverter {
         boolean wasFormatChanged = false;
         File outputFile = inputFile;  // Default output file is the same as the input
 
-        // Apply high-pass filter if option is ON
-        if (applyHighPass) {
-            boolean highPassSuccess = applyHighPassFilter(outputFile);
-            if (!highPassSuccess) {
-                logger.error("High-pass filter failed for file: " + outputFile.getName());
-            } else {
-                logger.info("High-pass filter applied successfully to file: " + outputFile.getName());
-            }
-            // Reinitialize originalStream to reflect the high-pass filter modifications
-            originalStream.close(); // Close the old stream
-            originalStream = AudioSystem.getAudioInputStream(outputFile);
-            originalFormat = originalStream.getFormat(); // Update originalFormat
-        }
-
         // Check if conversion is needed
         if (!originalFormat.matches(targetFormat)) {
             wasFormatChanged = true;
@@ -94,10 +80,24 @@ public class AudioConverter {
             // Delete the original .mp3 or .mp4 file if applicable
             if (inputFile.getName().endsWith(".mp3") || inputFile.getName().endsWith(".mp4")) {
                 inputFile.delete();
-inputFile = outputFile;
+                inputFile = outputFile;
             }
         } else {
             originalStream.close();  // Close the stream if no conversion is needed
+        }
+
+        // Apply high-pass filter if option is ON
+        if (applyHighPass) {
+            boolean highPassSuccess = applyHighPassFilter(outputFile);
+            if (!highPassSuccess) {
+                logger.error("High-pass filter failed for file: " + outputFile.getName());
+            } else {
+                logger.info("High-pass filter applied successfully to file: " + outputFile.getName());
+            }
+            // Reinitialize originalStream to reflect the high-pass filter modifications
+            originalStream.close(); // Close the old stream
+            originalStream = AudioSystem.getAudioInputStream(outputFile);
+            originalFormat = originalStream.getFormat(); // Update originalFormat
         }
 
         // Ensure the outputFile after conversion is properly flushed and re-read
@@ -123,7 +123,6 @@ inputFile = outputFile;
             logger.error("Error while validating the final converted file format: " + e.getMessage(), e);
             throw e; // Ensure any issues are raised
         }
-
 
         // Apply fade-in/out on the renamed file before renaming back
         // logger.info("Applying fade-in/out on renamed file: " + outputFile.getName());
