@@ -1,5 +1,9 @@
 <p>If this tool helps you, donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>  
 
+
+Current version live and up here:  
+https://www.soundfontnamingconverter.com  
+
 Automated cross conversion of saber sound font naming conventions between popular controller boards:  
 Proffieboard, CFX, Golden Harvest 3, Verso, and Xenopixel 3.    
 No need to manually rename a font (or many fonts) so it can be used on a different platform. Just click and done.  
