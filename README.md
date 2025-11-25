@@ -1,5 +1,8 @@
 <p>If this tool helps you, donations are appreciated ;) <a href="https://www.buymeacoffee.com/brianconner">Buy me a coffee</a></p>  
 
+This is the OLD repo. New version found here:  
+https://github.com/NoSloppy/SoundFontNamingConverter5/tree/master
+
 
 Current version live and up here:  
 https://www.soundfontnamingconverter.com  
